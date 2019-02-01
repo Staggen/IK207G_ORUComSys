@@ -1,0 +1,16 @@
+﻿@model Datalayer.Models.ProfileModels
+
+<div class="row">
+    <div class="col-md-4">
+        <img src="@Url.Action("RenderProfileImage", "Profile", new { userId = ViewBag.ProfileId })" id="ProfileImage" />
+        <br /><strong>Name</strong><br />
+        @Html.DisplayFor((m) => m.FirstName) @Html.DisplayFor((m) => m.LastName)
+        <br />
+        @if (Request.IsAuthenticated && ViewBag.ProfileId.Equals(ViewBag.CurrentUserId)) {
+            @Html.ActionLink("Edit Profile Information", "Manage", "Profile", new { area = "" }, new { id = "EditProfileInfoBtn", @class = "btn btn-info" })
+            <br />
+            @Html.ActionLink("Manage Account Details", "Index", "Manage", new { area = "" }, new { id = "ManageAccountBtn", @class = "btn btn-info" })
+            <br />
+        }
+    </div>
+</div>

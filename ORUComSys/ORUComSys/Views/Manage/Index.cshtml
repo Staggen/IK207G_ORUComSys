@@ -1,0 +1,25 @@
+﻿@model ORUComSys.Models.IndexViewModel
+@{
+    ViewBag.Title = "Manage";
+}
+
+<h2>@ViewBag.Title.</h2>
+
+<p class="text-success">@ViewBag.StatusMessage</p>
+<div>
+    <h4>Change your account settings</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>Password:</dt>
+        <dd>
+            @if (Model.HasPassword) {
+                <a href="@Url.Action("ChangePassword")" class="btn btn-warning">Change Password</a>
+            } else {
+                <a href="@Url.Action("SetPassword")" class="btn btn-warning">Set Password</a>
+            }
+        </dd>
+    </dl>
+</div>
+<div>
+    @Html.ActionLink("Back to Profile", "Index", "Profile", new { id = ViewBag.CurrentUserId }, new { @class = "btn btn-info" })
+</div>
