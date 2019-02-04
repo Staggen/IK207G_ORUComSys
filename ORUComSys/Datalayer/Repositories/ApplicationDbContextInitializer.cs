@@ -105,6 +105,7 @@ namespace Datalayer.Repositories {
                 FirstName = "Elias",
                 LastName = "Stagg",
                 IsActivated = true,
+                IsAdmin = true,
                 ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png")
             };
 
