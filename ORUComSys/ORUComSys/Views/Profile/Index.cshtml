@@ -6,8 +6,8 @@
         <br /><strong>Name</strong><br />
         @Html.DisplayFor((m) => m.FirstName) @Html.DisplayFor((m) => m.LastName)
         <br />
-        @if (Request.IsAuthenticated && !ViewBag.CurrentUserId.Equals(ViewBag.ProfileId) && ViewBag.IsAdmin) {
-            <button type="button" class="btn btn-info" id="MakeAdmin">Set user to Admin</button>
+        @if (Request.IsAuthenticated && !ViewBag.CurrentUserId.Equals(ViewBag.ProfileId) && ViewBag.IsAdmin && !Model.IsAdmin) {
+            <button type="button" class="btn btn-success" id="MakeAdmin">Set user to Admin</button>
             <br />
         }
         @if (Request.IsAuthenticated && ViewBag.ProfileId.Equals(ViewBag.CurrentUserId)) {
