@@ -1,0 +1,48 @@
+﻿@model IEnumerable<Datalayer.Models.ProfileModels>
+
+@{
+    ViewBag.Title = "Invited";
+}
+
+<h2>Invited</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LastName)
+        </th>
+    
+        <th>Invite</th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.FirstName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LastName)
+        </td>
+        <td>
+          <button value="@Html.DisplayFor(modelItem=>item.Id)" class="InviteBtn">Invite</button>
+        </td>
+    </tr>
+}
+
+</table>
+@section Scripts{
+    <script>
+        $(".InviteBtn").on('click', function () {
+            var userid = $(this).val();
+            var id = @ViewBag.Id;
+            $.post("/Meeting/Invited?Id=" + id + "&userId=" + userid, function () {
+               
+                window.location.reload;
+            });
+        });      
+
+    </script>
+}

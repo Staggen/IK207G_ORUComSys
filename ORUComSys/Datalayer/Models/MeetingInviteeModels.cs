@@ -5,12 +5,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Datalayer.Models {
     public class MeetingInviteeModels : IIdentifiable<int> {
         [Key]
-        [ForeignKey("Proposal")]
         public int Id { get; set; }
-        public virtual MeetingProposalModels Proposal { get; set; }
+
+        [ForeignKey("Meeting")]
+        public int Proposal { get; set; }
+        public virtual MeetingProposalModels Meeting { get; set; }
         [Required]
         [ForeignKey("User")]
         public string UserId { get; set; }
         public virtual ApplicationUser User { get; set; }
+
+        public bool Accepted { get; set; }
     }
 }

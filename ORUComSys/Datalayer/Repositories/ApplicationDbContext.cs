@@ -29,7 +29,7 @@ namespace Datalayer.Repositories {
         public DbSet<MeetingProposalModels> Proposals { get; set; }
         public DbSet<PostModels> Posts { get; set; }
         public DbSet<ProfileModels> Profiles { get; set; }
-
+        public DbSet<DeterminedMeetings> DeterminedMeetings { get; set; }
         // End of DbSet(s)
     }
 }
