@@ -9,13 +9,13 @@ using System.Web.Routing;
 namespace ORUComSys {
     public class MvcApplication : HttpApplication {
         protected void Application_Start() {
-            Database.SetInitializer(new ApplicationDbContextInitializer());
-            GlobalConfiguration.Configure(WebApiConfig.Register);
-
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            Database.SetInitializer(new ApplicationDbContextInitializer());
+            GlobalConfiguration.Configure(WebApiConfig.Register);
         }
     }
 }

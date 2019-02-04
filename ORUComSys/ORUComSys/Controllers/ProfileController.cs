@@ -115,5 +115,13 @@ namespace ORUComSys.Controllers {
 
             return new FileContentResult(profile.ProfileImage, "image/jpeg");
         }
+
+        [HttpPost]
+        public void MakeAdmin(string userId) {
+            ProfileModels profile = profileRepository.Get(userId);
+            profile.IsAdmin = true;
+            profileRepository.Edit(profile);
+            profileRepository.Save();
+        }
     }
 }

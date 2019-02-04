@@ -12,8 +12,8 @@ namespace ORUComSys.Controllers {
         }
 
         [HttpPost]
-        public void MakeAdmin(string profileId) {
-            ProfileModels profile = profileRepository.Get(profileId);
+        public void MakeAdmin(string userId) {
+            ProfileModels profile = profileRepository.Get(userId);
             profile.IsAdmin = true;
             profileRepository.Edit(profile);
             profileRepository.Save();

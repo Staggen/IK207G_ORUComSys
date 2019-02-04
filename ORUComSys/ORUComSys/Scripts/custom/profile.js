@@ -8,12 +8,14 @@ function MakeAdmin() {
     var currentUrl = window.location.href;
     var urlArray = currentUrl.split("/Profile/Index/");
     var profileId = urlArray[1];
+
     $.ajax({
+        url: "/Profile/MakeAdmin?userId=" + profileId,
         type: "POST",
-        url: "/api/ProfileApi/" + profileId,
-        contentType: "JSON",
         success: () => {
-            $("#MakeAdmin").addClass("d-none");
+            if (!$("#MakeAdmin").hasClass("d-none")) {
+                $("#MakeAdmin").addClass("d-none");
+            }
             console.log("MakeAdmin() => Success!");
         },
         error: () => {
