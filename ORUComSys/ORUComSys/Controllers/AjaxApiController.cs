@@ -5,15 +5,12 @@ using System;
 using System.Web.Http;
 
 namespace ORUComSys.Controllers {
+    [Authorize]
     public class AjaxApiController : ApiController {
-        private ProfileRepository profileRepository;
-        private UserRepository userRepository;
         private PostRepository postRepository;
 
         public AjaxApiController() {
             ApplicationDbContext context = new ApplicationDbContext();
-            profileRepository = new ProfileRepository(context);
-            userRepository = new UserRepository(context);
             postRepository = new PostRepository(context);
         }
 
