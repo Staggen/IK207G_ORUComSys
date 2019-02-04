@@ -16,13 +16,13 @@ namespace ORUComSys.Controllers {
             profileRepository = new ProfileRepository(context);
         }
 
-        public ActionResult Index(string id) {
+        public ActionResult Index(string userId) {
             string currentUserId = User.Identity.GetUserId();
-            ProfileModels profile = null;
             object profileId = Request.RequestContext.RouteData.Values["id"];
-            if (!string.IsNullOrWhiteSpace(id)) {
-                profile = profileRepository.Get(id);
-                ViewBag.ProfileId = id;
+            ProfileModels profile = null;
+            if (!string.IsNullOrWhiteSpace(userId)) {
+                profile = profileRepository.Get(userId);
+                ViewBag.ProfileId = userId;
                 ViewBag.CurrentUserId = currentUserId;
                 ViewBag.IsAdmin = profileRepository.Get(currentUserId).IsAdmin;
             } else if (string.IsNullOrWhiteSpace((string)profileId)) {
@@ -37,7 +37,6 @@ namespace ORUComSys.Controllers {
                 ViewBag.IsAdmin = profileRepository.Get(currentUserId).IsAdmin;
             }
             return View(profile);
-
         }
 
         public ActionResult Create() {
