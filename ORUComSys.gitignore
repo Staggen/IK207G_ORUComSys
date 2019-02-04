@@ -1,0 +1,6 @@
+# User-specific files
+*.suo
+*.user
+*.sln.docstates
+*.cache
+applicationhost.config
