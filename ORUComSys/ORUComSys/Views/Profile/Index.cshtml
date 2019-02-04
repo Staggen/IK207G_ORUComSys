@@ -1,6 +1,6 @@
 ﻿@model Datalayer.Models.ProfileModels
 
-<div class="row">
+<div class="row" id="ProfilePageDiv">
     <div class="col-md-4">
         <img src="@Url.Action("RenderProfileImage", "Profile", new { userId = ViewBag.ProfileId })" id="ProfileImage" />
         <br /><strong>Name</strong><br />
@@ -19,5 +19,5 @@
     </div>
 </div>
 @section Scripts{
-    <script src="~/Scripts/custom/profile-makeAdmin.js"></script>
+    <script src="~/Scripts/custom/profile.js"></script>
 }

@@ -6,7 +6,7 @@ using System.Data.Entity;
 using System.IO;
 
 namespace Datalayer.Repositories {
-    public class ApplicationDbContextInitializer : DropCreateDatabaseAlways<ApplicationDbContext> { // Re-create database with example data every time you boot the project.
+    public class ApplicationDbContextInitializer : DropCreateDatabaseIfModelChanges<ApplicationDbContext> { // Re-create database with example data every time you boot the project.
         protected override void Seed(ApplicationDbContext context) {
             base.Seed(context);
             SeedUsers(context);
@@ -104,6 +104,7 @@ namespace Datalayer.Repositories {
                 Id = eliasU.Id,
                 FirstName = "Elias",
                 LastName = "Stagg",
+                IsAdmin = true,
                 IsActivated = true,
                 ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png")
             };
