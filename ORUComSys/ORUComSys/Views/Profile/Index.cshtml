@@ -1,13 +1,13 @@
 ﻿@model Datalayer.Models.ProfileModels
 
-<div class="row">
+<div class="row" id="ProfilePageDiv">
     <div class="col-md-4">
         <img src="@Url.Action("RenderProfileImage", "Profile", new { userId = ViewBag.ProfileId })" id="ProfileImage" />
         <br /><strong>Name</strong><br />
         @Html.DisplayFor((m) => m.FirstName) @Html.DisplayFor((m) => m.LastName)
         <br />
-        @if (Request.IsAuthenticated && !ViewBag.CurrentUserId.Equals(ViewBag.ProfileId) && ViewBag.IsAdmin) {
-            <button type="button" class="btn btn-info" id="MakeAdmin">Set user to Admin</button>
+        @if (Request.IsAuthenticated && !ViewBag.CurrentUserId.Equals(ViewBag.ProfileId) && ViewBag.IsAdmin && !Model.IsAdmin) {
+            <button type="button" class="btn btn-success" id="MakeAdmin">Make Admin</button>
             <br />
         }
         @if (Request.IsAuthenticated && ViewBag.ProfileId.Equals(ViewBag.CurrentUserId)) {
@@ -19,5 +19,5 @@
     </div>
 </div>
 @section Scripts{
-    <script src="~/Scripts/custom/profile-makeAdmin.js"></script>
+    <script src="~/Scripts/custom/profile.js"></script>
 }

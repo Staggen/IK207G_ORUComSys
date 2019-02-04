@@ -105,6 +105,7 @@ namespace Datalayer.Repositories {
                 FirstName = "Elias",
                 LastName = "Stagg",
                 IsActivated = true,
+                IsAdmin = true,
                 ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png")
             };
 
@@ -157,7 +158,25 @@ namespace Datalayer.Repositories {
                 ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png")
             };
 
+            // Define Categories
+            CategoryModels cat1 = new CategoryModels {
+                Name = "Meeting Notes"
+            };
+
+            context.Categories.AddRange(new[] { cat1 });
             context.Profiles.AddRange(new[] { albinP, darioP, eliasP, moazP, nicoP, oskarP, patrikP, pernillaP, salehP });
+            context.SaveChanges();
+
+            // Define Posts
+            PostModels post1 = new PostModels {
+                PostFromId = nicoU.Id,
+                Forum = ForumType.Formal,
+                Content = "Please see the attached file for notes from the annual cheese making meeting!",
+                CategoryId = 1,
+                PostDateTime = new DateTime(2019, 01, 13, 23, 45, 02)
+            };
+
+            context.Posts.AddRange(new[] { post1 });
             context.SaveChanges();
         }
     }

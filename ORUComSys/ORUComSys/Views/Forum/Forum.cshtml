@@ -1,0 +1,12 @@
+﻿@using ORUComSys.Models
+@model PostViewModels
+
+<h2>@ViewBag.Title</h2>
+
+<div id="postSection">
+    @Html.Partial("_ForumPosts", Model)
+</div>
+
+@section Scripts{
+    <script src="~/Scripts/custom/forum-posts.js"></script>
+}

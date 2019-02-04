@@ -1,0 +1,25 @@
+﻿@model IEnumerable<Datalayer.Models.ProfileModels>
+<div class="row">
+    <div class="col-md-12">
+        <h1>User Search: </h1>
+        <input type="text" class="form-control" id="SearchField" placeholder="Search users by name" />
+        <br />
+        @foreach (var item in Model) {
+            string HashTargetId = "#CardId-" + item.Id;
+            <div class="card border border-secondary mb-2" id="@HashTargetId">
+                <div class="card-body">
+                    <div class="media">
+                        <a href="@Url.Action("Index", "Profile", new { id = item.Id })" class="card-link">
+                            <img class="mr-1" src="@Url.Action("RenderProfileImage", "Profile", new { id = item.Id })" height="32" width="32" />
+                            <span class="badge badge-light personal-info">@item.FirstName @item.LastName</span>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        }
+    </div>
+</div>
+@section Scripts{
+    <script src="~/Scripts/custom/search.js"></script>
+}
