@@ -10,7 +10,7 @@ function MakeAdmin() {
     var profileId = urlArray[1];
 
     $.ajax({
-        url: "/Profile/MakeAdmin?userId=" + profileId,
+        url: "/Profile/MakeAdmin/" + profileId,
         type: "POST",
         success: () => {
             if (!$("#MakeAdmin").hasClass("d-none")) {
