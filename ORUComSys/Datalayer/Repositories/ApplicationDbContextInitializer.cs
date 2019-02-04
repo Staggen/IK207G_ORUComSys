@@ -6,7 +6,7 @@ using System.Data.Entity;
 using System.IO;
 
 namespace Datalayer.Repositories {
-    public class ApplicationDbContextInitializer : DropCreateDatabaseAlways<ApplicationDbContext> { // Re-create database with example data every time you boot the project.
+    public class ApplicationDbContextInitializer : DropCreateDatabaseIfModelChanges<ApplicationDbContext> { // Re-create database with example data every time you boot the project.
         protected override void Seed(ApplicationDbContext context) {
             base.Seed(context);
             SeedUsers(context);
@@ -156,8 +156,22 @@ namespace Datalayer.Repositories {
                 IsActivated = true,
                 ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png")
             };
+            CategoryModels cat1 = new CategoryModels {
+                Name = "Meeting Notes"
+            };
+            context.Categories.AddRange(new[] { cat1 });
+            context.SaveChanges();
+
+            PostModels post1 = new PostModels {
+                PostFromId = nicoU.Id,
+                Forum = ForumType.Formal,
+                Content = "Please see the attached file for notes from the annual cheese making meeting!",
+                CategoryId = 1,
+                PostDateTime = new DateTime(2019, 01, 13, 23, 45, 02)
+            };
 
             context.Profiles.AddRange(new[] { albinP, darioP, eliasP, moazP, nicoP, oskarP, patrikP, pernillaP, salehP });
+            context.Posts.AddRange(new[] { post1 });
             context.SaveChanges();
         }
     }

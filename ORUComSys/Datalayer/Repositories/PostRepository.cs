@@ -9,5 +9,9 @@ namespace Datalayer.Repositories {
         public List<PostModels> GetAllPostsForUserById(string userId) {
             return items.Where((p) => p.PostFromId.Equals(userId)).OrderByDescending((p) => p.PostDateTime).ToList();
         }
+
+        public List<PostModels> GetAllPostsByForumType(ForumType type) {
+            return items.Where((p) => p.Forum == type).OrderByDescending((p) => p.PostDateTime).ToList();
+        }
     }
 }
