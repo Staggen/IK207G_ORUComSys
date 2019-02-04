@@ -16,17 +16,25 @@ namespace ORUComSys.Controllers {
             profileRepository = new ProfileRepository(context);
         }
 
-        public ActionResult Index(string userId) {
+        public ActionResult Index(string id) {
             string currentUserId = User.Identity.GetUserId();
             ProfileModels profile = null;
-            if(!string.IsNullOrWhiteSpace(userId)) {
-                profile = profileRepository.Get(userId);
-                ViewBag.ProfileId = userId;
+            object profileId = Request.RequestContext.RouteData.Values["id"];
+            if (!string.IsNullOrWhiteSpace(id)) {
+                profile = profileRepository.Get(id);
+                ViewBag.ProfileId = id;
                 ViewBag.CurrentUserId = currentUserId;
+                ViewBag.IsAdmin = profileRepository.Get(currentUserId).IsAdmin;
+            } else if (string.IsNullOrWhiteSpace((string)profileId)) {
+                profile = profileRepository.Get((string)profileId);
+                ViewBag.ProfileId = (string)profileId;
+                ViewBag.CurrentUserId = currentUserId;
+                ViewBag.IsAdmin = profileRepository.Get(currentUserId).IsAdmin;
             } else {
                 profile = profileRepository.Get(currentUserId);
                 ViewBag.ProfileId = currentUserId;
                 ViewBag.CurrentUserId = currentUserId;
+                ViewBag.IsAdmin = profileRepository.Get(currentUserId).IsAdmin;
             }
             return View(profile);
 
@@ -103,15 +111,23 @@ namespace ORUComSys.Controllers {
         [AllowAnonymous]
         public FileContentResult RenderProfileImage(string userId) {
             // Converts the stored byte-array to an image. This action is called with razor in views to be used in img tags.
-            var profileId = Request.RequestContext.RouteData.Values["id"];
+            object profileId = Request.RequestContext.RouteData.Values["id"];
             ProfileModels profile = null;
-            if (userId != null) {
+            if (!string.IsNullOrWhiteSpace(userId)) {
                 profile = profileRepository.Get(userId);
             } else {
                 profile = profileRepository.Get((string)profileId);
             }
 
             return new FileContentResult(profile.ProfileImage, "image/jpeg");
+        }
+
+        [HttpPost]
+        public void MakeAdmin(string IdToAdmin) {
+            ProfileModels profileToAdmin = profileRepository.Get(IdToAdmin);
+            profileToAdmin.IsAdmin = true;
+            profileRepository.Add(profileToAdmin);
+            profileRepository.Save();
         }
     }
 }
