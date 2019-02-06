@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Web.Mvc;
 
 namespace ORUComSys.Controllers {
+    [Authorize]
     public class ForumController : Controller {
         private PostRepository postRepository;
         private ProfileRepository profileRepository;
