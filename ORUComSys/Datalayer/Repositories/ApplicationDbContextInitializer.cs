@@ -163,6 +163,18 @@ namespace Datalayer.Repositories {
                 Name = "Meeting Notes"
             };
 
+            CategoryModels cat2 = new CategoryModels {
+                Name = "Event"
+            };
+
+            CategoryModels cat3 = new CategoryModels {
+                Name = "Economy"
+            };
+
+            CategoryModels cat4 = new CategoryModels {
+                Name = "Other"
+            };
+
             context.Categories.AddRange(new[] { cat1 });
             context.Profiles.AddRange(new[] { albinP, darioP, eliasP, moazP, nicoP, oskarP, patrikP, pernillaP, salehP });
             context.SaveChanges();
