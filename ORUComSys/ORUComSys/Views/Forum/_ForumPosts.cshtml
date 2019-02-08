@@ -1,19 +1,8 @@
 ﻿@using Microsoft.AspNet.Identity
 @using ORUComSys.Models
-@model PostViewModels
-<div class="card border border-danger bg-light mb-3" id="CreatePostCard">
-    <div class="card-header">
-        <h4><span class="card-title">Create Post</span></h4>
-    </div>
-    <div class="card-body">
-        <textarea rows="6" class="form-control card-text" id="PostText" placeholder="What's on your mind?"></textarea>
-    </div>
-    <footer class="card-footer">
-        <p class="float-left card-text">Characters Remaining: <span class="badge badge-pill badge-success" id="TextAreaWordCounter">280</span></p>
-        <button class="btn btn-primary float-right" id="SubmitPost">Submit Post</button>
-    </footer>
-</div>
-@if (Model.CurrentUser.IsAdmin) {
+@model PostViewModelsForUsers
+
+@if (Model.CurrentUser.IsAdmin) { 
     <div>
         @foreach (var post in Model.PostList) {
             string TargetId = "deletePost" + post.Id;

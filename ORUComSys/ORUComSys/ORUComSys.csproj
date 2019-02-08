@@ -302,7 +302,8 @@
     <Content Include="Views\Forum\Index.cshtml" />
     <Content Include="Views\Search\Index.cshtml" />
     <Content Include="Views\Forum\_ForumPosts.cshtml" />
-    <Content Include="Views\Forum\Forum.cshtml" />
+    <Content Include="Views\Forum\FormalForum.cshtml" />
+    <Content Include="Views\Forum\InformalForum.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

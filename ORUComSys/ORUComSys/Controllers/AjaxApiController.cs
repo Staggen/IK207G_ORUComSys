@@ -1,8 +1,11 @@
 ﻿using Datalayer.Models;
-using Datalayer.Repositories;
-using Microsoft.AspNet.Identity;
 using System;
+using System.Web;
+using Microsoft.AspNet.Identity;
+using Datalayer.Repositories;
+using System.IO;
 using System.Web.Http;
+using System.Linq;
 
 namespace ORUComSys.Controllers {
     public class AjaxApiController : ApiController {
@@ -15,23 +18,6 @@ namespace ORUComSys.Controllers {
             profileRepository = new ProfileRepository(context);
             userRepository = new UserRepository(context);
             postRepository = new PostRepository(context);
-        }
-
-        [HttpPost]
-        public void AddPost(PostModels post) {
-            if (ModelState.IsValid) {
-
-                PostModels postModel = new PostModels() {
-                    Content = post.Content,
-                    PostFromId = User.Identity.GetUserId(),
-                    PostDateTime = DateTime.Now,
-                    Forum = post.Forum,
-                    CategoryId = 1
-                };
-
-                postRepository.Add(postModel);
-                postRepository.Save();
-            }
         }
 
         [HttpDelete]

@@ -3,15 +3,17 @@
     var currentUrl = window.location.href;
     var urlArray = currentUrl.split("/Forum/");
     Id = urlArray[1].split("/")[0];
+    Update_Posts(Id);
+    $("#SubmitPost").prop('disabled', true);
+    ClearBox();
 });
 var Id;
 
-$("#postSection").on("click", "#SubmitPost", AddPost);
-$("#postSection").on("click", ".deleteBtn", DeletePost);
-$("#postSection").on("keyup", "#PostText", AdjustCounter);
+$("#postWall").on("click", ".deleteBtn", DeletePost);
+$("#CreatePostCard").on("keyup", "#Content", AdjustCounter);
 
 function AdjustCounter() {
-    var number = $("#PostText").val().length;
+    var number = $("#Content").val().length;
     if (number <= 0) {
         if ($("#CreatePostCard").hasClass("border-success")) {
             $("#CreatePostCard").removeClass("border-success");
@@ -19,6 +21,7 @@ function AdjustCounter() {
         if (!$("#CreatePostCard").hasClass("border-danger")) {
             $("#CreatePostCard").addClass("border-danger");
         }
+        $("#SubmitPost").prop('disabled', true);
     }
     else if (number < 250) {
         if ($("#TextAreaWordCounter").hasClass("badge-danger")) {
@@ -36,6 +39,7 @@ function AdjustCounter() {
         if (!$("#CreatePostCard").hasClass("border-success")) {
             $("#CreatePostCard").addClass("border-success");
         }
+        $("#SubmitPost").prop('disabled', false);
     }
     if (number >= 250) {
         if ($("#TextAreaWordCounter").hasClass("badge-danger")) {
@@ -53,6 +57,7 @@ function AdjustCounter() {
         if (!$("#CreatePostCard").hasClass("border-success")) {
             $("#CreatePostCard").addClass("border-success");
         }
+        $("#SubmitPost").prop('disabled', false);
     }
     if (number > 280) {
         if ($("#TextAreaWordCounter").hasClass("badge-warning")) {
@@ -70,30 +75,13 @@ function AdjustCounter() {
         if (!$("#CreatePostCard").hasClass("border-danger")) {
             $("#CreatePostCard").addClass("border-danger");
         }
+        $("#SubmitPost").prop('disabled', false);
     }
     $("#TextAreaWordCounter").text(280 - number);
 }
-
-function AddPost() {
-    if ($("#PostText").val() != "" && $("#PostText").val().length <= 280) {
-
-        post = { Content: $("#PostText").val(), Forum: Id };
-
-        $.ajax({
-            type: "POST",
-            url: "/api/AjaxApi/AddPost",
-            data: JSON.stringify(post),
-            contentType: "application/json;charset=UTF-8",
-            success: () => {
-                Update_Posts(Id);
-            },
-            error: () => {
-                alert("Error: Failure to add post");
-            }
-        });
-    } else {
-        alert("Your post needs to consist of between 1 and 280 characters.")
-    }
+function ClearBox() {
+    $("#Content").val("");
+    console.log("lmao");
 }
 
 function DeletePost() {
@@ -120,7 +108,7 @@ function Update_Posts(type) {
     var serviceUrl = "/Forum/UpdatePosts/" + type;
     var request = $.post(serviceUrl);
     request.done(function (data) {
-        $("#postSection").html(data);
+        $("#postWall").html(data);
     }).fail(() => {
         console.log("Error: Failure to update posts");
     });

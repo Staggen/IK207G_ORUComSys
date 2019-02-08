@@ -1,0 +1,31 @@
+﻿@using ORUComSys.Models
+@model PostViewModels
+
+<h2>Formal Forum</h2>
+@using (Html.BeginForm("Formal", "Forum", FormMethod.Post, new { enctype = "multipart/form-data" })) {
+    @Html.AntiForgeryToken()
+    <div class="card border border-danger bg-light mb-3" id="CreatePostCard">
+        <div class="card-header">
+            <h4><span class="card-title">Create Post</span></h4>
+        </div>
+        <div class="card-body">
+            @Html.EditorFor(model => model.Content, new { htmlAttributes = new { @class = "form-control card-text", @placeholder = "Write here", @id = "Content" } })  @*<textarea rows="6" class="form-control card-text" id="Content" placeholder="What's on your mind?"></textarea>*@
+            <div class="form-group">
+                <input type="file" id="AttachedFile" name="AttachedFile" accept=".jpg, .png, .pdf, .gif" />
+            </div>
+        </div>
+        <footer class="card-footer">
+            <p class="float-left card-text">Characters Remaining: <span class="badge badge-pill badge-success" id="TextAreaWordCounter">280</span></p>
+            <input type="submit" class="btn btn-primary float-right" value="Submit Post" id="SubmitPost">
+        </footer>
+    </div>
+}
+
+<div id="postWall">
+    
+</div>
+
+
+@section Scripts{
+    <script src="~/Scripts/custom/forum-posts.js"></script>
+}
