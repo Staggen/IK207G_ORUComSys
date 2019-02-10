@@ -46,3 +46,34 @@ select {
     box-shadow: none;
     padding: 5px 10px 5px 10px;
 }
+
+.centered-box {
+    margin: 0 auto;
+    float: none;
+}
+
+#login-title {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+}
+
+#login-subtitle {
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 500;
+}
+
+#login-page {
+    background: #BAD7D8;
+}
+
+#login-content {
+    -webkit-border-radius: 10px 10px 10px 10px;
+    border-radius: 10px 10px 10px 10px;
+    background: #20579B;
+    padding: 30px;
+    width: 90%;
+    max-width: 450px;
+    -webkit-box-shadow: 0 10px 20px 0 rgba(0,0,0,0.3);
+    box-shadow: 0 10px 20px 0 rgba(0,0,0,0.3);
+}
