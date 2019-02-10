@@ -22,10 +22,19 @@
                 <div class="card-header">
                     <div class="media">
                         <a href="@Url.Action("Index", "Profile", new { id = post.PostFrom.Id })" class="card-link">
-                            <img class="mr-1" src="@Url.Action("RenderProfileImage", "Profile", new { id = post.PostFrom.Id })" height="32" width="32" />
-                            <span class="badge badge-light">@post.PostFrom.FirstName @post.PostFrom.LastName</span>
+                            <img class="mr-1" src="@Url.Action("RenderProfileImage", "Profile", new { id = post.PostFrom.Id })" height="48" width="48" />
                         </a>
                         <div class="media-body">
+                            <a href="@Url.Action("Index", "Profile", new { id = post.PostFrom.Id })" class="card-link">
+                                <span class="badge badge-primary">
+                                    @post.PostFrom.FirstName @post.PostFrom.LastName
+                                </span>
+                            </a>
+                            <br />
+                            <span class="badge">
+                                <strong>Published: </strong>
+                                <span>@post.PostDateTime</span>
+                            </span>
                             <button type="button" class="btn close" data-toggle="modal" data-target="@HashTargetId">&times;</button>
                         </div>
                     </div>
@@ -34,10 +43,8 @@
                     <p class="card-text">@post.Content</p>
                 </div>
                 <footer class="card-footer">
-                    <div>
-                        <strong>Published: </strong>
-                        <span>@post.PostDateTime</span>
-                    </div>
+                    <textarea class="rounded border border-primary card-text commentTextArea" placeholder="Write a comment..."></textarea>
+                    <!-- Add partial view for textarea here! -->
                 </footer>
             </div>
             <!-- Modal for deleting posts -->
@@ -71,24 +78,28 @@
                 <div class="card-header">
                     <div class="media">
                         <a href="@Url.Action("Index", "Profile", new { id = post.PostFrom.Id })" class="card-link">
-                            <img class="mr-1" src="@Url.Action("RenderProfileImage", "Profile", new { id = post.PostFrom.Id })" height="32" width="32" />
-                            <span class="badge badge-light">@post.PostFrom.FirstName @post.PostFrom.LastName</span>
+                            <img class="mr-1" src="@Url.Action("RenderProfileImage", "Profile", new { id = post.PostFrom.Id })" height="48" width="48" />
+                            
                         </a>
-                        @if (post.PostFrom.Id.Equals(User.Identity.GetUserId())) {
-                            <div class="media-body">
+                        <div class="media-body">
+                            <a href="@Url.Action("Index", "Profile", new { id = post.PostFrom.Id })">
+                                <span class="badge badge-primary">@post.PostFrom.FirstName @post.PostFrom.LastName</span>
+                            </a>
+                            <span class="badge">
+                                <strong>Published: </strong>
+                                <span>@post.PostDateTime</span>
+                            </span>
+                            @if (post.PostFrom.Id.Equals(User.Identity.GetUserId())) {
                                 <button type="button" class="close" data-toggle="modal" data-target="@HashTargetId">&times;</button>
-                            </div>
-                        }
+                            }
+                        </div>
                     </div>
                 </div>
                 <div class="card-body">
                     <p class="card-text">@post.Content</p>
                 </div>
                 <footer class="card-footer">
-                    <div>
-                        <strong>Published: </strong>
-                        <span>@post.PostDateTime</span>
-                    </div>
+                    <!-- Add partial view for comments here! -->
                 </footer>
             </div>
             <!-- Modal for deleting posts -->

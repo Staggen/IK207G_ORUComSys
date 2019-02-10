@@ -1,4 +1,5 @@
 ﻿using Datalayer.Repositories;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -24,6 +25,8 @@ namespace Datalayer.Models {
         public byte[] ProfileImage { get; set; }
 
         public bool IsActivated { get; set; } = true; // Maybe not set to default here?
+
+        public DateTime LastLogin { get; set; }
 
         [Display(Name = "Admin")]
         public bool IsAdmin { get; set; }

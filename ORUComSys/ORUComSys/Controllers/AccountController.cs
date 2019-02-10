@@ -4,6 +4,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using ORUComSys.Models;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -71,9 +72,11 @@ namespace ORUComSys.Controllers {
             switch (result) {
                 case SignInStatus.Success:
                     string currentUserId = userRepository.GetUserIdByEmail(model.Email);
+                    ProfileModels profile = profileRepository.Get(currentUserId);
                     if (!profileRepository.IfProfileExists(currentUserId)) {
                         return RedirectToAction("Create", "Profile"); // If user has no profile, they get to create one
                     }
+                    profile.LastLogin = DateTime.Now;
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");

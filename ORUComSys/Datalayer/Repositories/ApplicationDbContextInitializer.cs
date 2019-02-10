@@ -89,7 +89,8 @@ namespace Datalayer.Repositories {
                 FirstName = "Albin",
                 LastName = "Salmonson",
                 IsActivated = true,
-                ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png")
+                ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png"),
+                LastLogin = DateTime.Now
             };
 
             ProfileModels darioP = new ProfileModels {
@@ -97,7 +98,8 @@ namespace Datalayer.Repositories {
                 FirstName = "Dario",
                 LastName = "Borojevic",
                 IsActivated = true,
-                ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png")
+                ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png"),
+                LastLogin = DateTime.Now
             };
 
             ProfileModels eliasP = new ProfileModels {
@@ -106,7 +108,8 @@ namespace Datalayer.Repositories {
                 LastName = "Stagg",
                 IsActivated = true,
                 IsAdmin = true,
-                ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png")
+                ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png"),
+                LastLogin = DateTime.Now
             };
 
             ProfileModels moazP = new ProfileModels {
@@ -114,7 +117,8 @@ namespace Datalayer.Repositories {
                 FirstName = "Moaz",
                 LastName = "Bahtiti",
                 IsActivated = true,
-                ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png")
+                ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png"),
+                LastLogin = DateTime.Now
             };
 
             ProfileModels nicoP = new ProfileModels {
@@ -122,7 +126,8 @@ namespace Datalayer.Repositories {
                 FirstName = "Nicolas",
                 LastName = "Björkefors",
                 IsActivated = true,
-                ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png")
+                ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png"),
+                LastLogin = DateTime.Now
             };
 
             ProfileModels oskarP = new ProfileModels {
@@ -131,7 +136,8 @@ namespace Datalayer.Repositories {
                 LastName = "Olofsson",
                 IsAdmin = true,
                 IsActivated = true,
-                ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png")
+                ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png"),
+                LastLogin = DateTime.Now
             };
 
             ProfileModels patrikP = new ProfileModels {
@@ -139,7 +145,8 @@ namespace Datalayer.Repositories {
                 FirstName = "Patrik",
                 LastName = "Zetterblom",
                 IsActivated = true,
-                ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png")
+                ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png"),
+                LastLogin = DateTime.Now
             };
 
             ProfileModels pernillaP = new ProfileModels {
@@ -147,7 +154,8 @@ namespace Datalayer.Repositories {
                 FirstName = "Pernilla",
                 LastName = "Gerdin",
                 IsActivated = true,
-                ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png")
+                ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png"),
+                LastLogin = DateTime.Now
             };
 
             ProfileModels salehP = new ProfileModels {
@@ -155,7 +163,8 @@ namespace Datalayer.Repositories {
                 FirstName = "Saleh",
                 LastName = "Hassan",
                 IsActivated = true,
-                ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png")
+                ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png"),
+                LastLogin = DateTime.Now
             };
 
             // Define Categories
