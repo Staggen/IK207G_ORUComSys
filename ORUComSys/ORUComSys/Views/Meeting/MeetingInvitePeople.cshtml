@@ -1,0 +1,32 @@
+﻿@model IEnumerable<Datalayer.Models.ProfileModels>
+@{ 
+    ViewBag.Title = "Send Invites";
+}
+<div class="row">
+    <div class="col-md-12">
+        <h1>User Search: </h1>
+        <input type="text" class="form-control" id="SearchField" placeholder="Search users by name" />
+        <br />
+        @foreach (var profile in Model) {
+            string HashTargetId = "#CardId-" + profile.Id;
+            <div class="card border border-secondary mb-2" id="@HashTargetId">
+                <div class="card-body">
+                    <div class="media">
+                        <a href="@Url.Action("Index", "Profile", new { id = profile.Id })" class="card-link">
+                            <img class="mr-1" src="@Url.Action("RenderProfileImage", "Profile", new { id = profile.Id })" height="32" width="32" />
+                        </a>
+                        <div class="media-body">
+                            <a href="@Url.Action("Index", "Profile", new { id = profile.Id })" class="card-link">
+                                <span class="badge badge-primary personal-info">@profile.FirstName @profile.LastName</span>
+                            </a>
+                            <button type="button" class="btn btn-success invite-button float-right" id="@profile.Id" data-meeting-id="@ViewBag.MeetingId">Invite</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+@section Scripts{
+    <script src="~/Scripts/custom/meeting-invites.js"></script>
+}

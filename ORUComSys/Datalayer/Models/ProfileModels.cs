@@ -24,6 +24,13 @@ namespace Datalayer.Models {
         [Display(Name = "Profile Image")]
         public byte[] ProfileImage { get; set; }
 
+        [DataType(DataType.PhoneNumber, ErrorMessage = "You need to have a valid phone number!")]
+        public int PhoneNumber { get; set; }
+
+        public string Title { get; set; }
+
+        public string Description { get; set; }
+
         public bool IsActivated { get; set; } = true; // Maybe not set to default here?
 
         public DateTime LastLogin { get; set; }

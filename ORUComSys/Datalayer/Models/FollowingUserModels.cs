@@ -9,7 +9,7 @@ namespace Datalayer.Models {
 
         [ForeignKey("User")]
         public string UserId { get; set; }
-        public virtual ApplicationUser User { get; set; }
+        public virtual ProfileModels User { get; set; }
 
         [ForeignKey("FollowedUser")]
         public string FollowedUserId { get; set; }

@@ -1,11 +1,19 @@
 ﻿@model Datalayer.Models.ProfileModels
+@{ 
+    ViewBag.Title = "Profile";
+}
 
 <div class="row" id="ProfilePageDiv">
     <div class="col-md-4">
         <img src="@Url.Action("RenderProfileImage", "Profile", new { userId = ViewBag.ProfileId })" id="ProfileImage" />
         <br /><strong>Name</strong><br />
         @Html.DisplayFor((m) => m.FirstName) @Html.DisplayFor((m) => m.LastName)
-        <br />
+        <br /><strong>Phone Number</strong><br />
+        @Html.DisplayFor((m) => m.PhoneNumber)
+        <br /><strong>Title</strong><br />
+        @Html.DisplayFor((m) => m.Title)
+        <br /><strong>Description</strong><br />
+        @Html.DisplayFor((m) => m.Description)
         @if (Request.IsAuthenticated && !ViewBag.CurrentUserId.Equals(ViewBag.ProfileId) && ViewBag.IsAdmin && !Model.IsAdmin) {
             <button type="button" class="btn btn-success" id="MakeAdmin">Make Admin</button>
             <br />

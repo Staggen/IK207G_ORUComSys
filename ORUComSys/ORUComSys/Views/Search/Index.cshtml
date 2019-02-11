@@ -11,10 +11,13 @@
                     <div class="media">
                         <a href="@Url.Action("Index", "Profile", new { id = item.Id })" class="card-link">
                             <img class="mr-1" src="@Url.Action("RenderProfileImage", "Profile", new { id = item.Id })" height="32" width="32" />
-                            <span class="badge badge-light personal-info">@item.FirstName @item.LastName</span>
                         </a>
+                        <div class="media-body">
+                            <a href="@Url.Action("Index", "Profile", new { id = item.Id })" class="card-link">
+                                <span class="badge badge-primary personal-info">@item.FirstName @item.LastName</span>
+                            </a>
+                        </div>
                     </div>
-
                 </div>
             </div>
         }

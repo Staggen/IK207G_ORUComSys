@@ -1,24 +1,15 @@
 ﻿@using Microsoft.AspNet.Identity
 @using ORUComSys.Models
-@model PostViewModels
-<div class="card border border-danger bg-light mb-3" id="CreatePostCard">
-    <div class="card-header">
-        <h4><span class="card-title">Create Post</span></h4>
-    </div>
-    <div class="card-body">
-        <textarea rows="6" class="form-control card-text" id="PostText" placeholder="What's on your mind?"></textarea>
-    </div>
-    <footer class="card-footer">
-        <p class="float-left card-text">Characters Remaining: <span class="badge badge-pill badge-success" id="TextAreaWordCounter">280</span></p>
-        <button class="btn btn-primary float-right" id="SubmitPost">Submit Post</button>
-    </footer>
-</div>
+@model PostViewModelsForUsers
+
 @if (Model.CurrentUser.IsAdmin) {
     <div>
         @foreach (var post in Model.PostList) {
             string TargetId = "deletePost" + post.Id;
             string HashTargetId = "#deletePost" + post.Id;
-            <div class="card border border-primary bg-light mb-3">
+            string ReactButtonId = "react-button" + post.Id;
+            string HashReactButtonId = "#react-button" + post.Id;
+            <div class="card border border-primary bg-light mb-3 submitted-post">
                 <div class="card-header">
                     <div class="media">
                         <a href="@Url.Action("Index", "Profile", new { id = post.PostFrom.Id })" class="card-link">
@@ -42,9 +33,43 @@
                 <div class="card-body">
                     <p class="card-text">@post.Content</p>
                 </div>
+
+                <!-- Here goes the popup div for the list of reactions by people. -->
+                <div id="reaction-list-popup" class="d-none bg-secondary text-white">
+
+                </div>
+
+                <!-- Here goes the popup div for reactions. -->
+                <div id="reaction-popup" class="d-none bg-secondary text-white">
+                    <button class="btn btn-primary" id="like-button" data-post-id="@post.Id" name="like">Like</button>
+                    <button class="btn btn-danger" id="love-button" data-post-id="@post.Id" name="love">Love</button>
+                    <button class="btn btn-warning" id="hate-button" data-post-id="@post.Id" name="hate">Hate</button>
+                    <button class="btn btn-info" id="xd-button" data-post-id="@post.Id" name="xd">XD</button>
+                </div>
+
+                <!-- Here goes the first footer, used for reactions and categories. -->
+                <footer class="card-footer">
+                    <div>
+                        <strong>Category: </strong>
+                        <span class="category-label">@post.Category.ToString()</span>
+                        <button type="button" class="btn btn-secondary float-right react-button" id="@HashReactButtonId">React</button>
+                        <button type="button" class="btn btn-secondary float-right mr-2 reaction-count" data-post-id="@post.Id" id="reaction-count">@post.Reactions.Count</button>
+                    </div>
+                </footer>
+                <!-- Here goes the second card footer, used for the comments section. Yes, you can have two footers. -->
                 <footer class="card-footer">
                     <textarea class="rounded border border-primary card-text commentTextArea" placeholder="Write a comment..."></textarea>
-                    <!-- Add partial view for textarea here! -->
+                    <button type="button" class="btn btn-primary comment-button">Comment</button>
+                    <!-- Add partial view for Comment here! -->
+                    @*
+
+
+
+                        Here!
+
+
+
+                    *@
                 </footer>
             </div>
             <!-- Modal for deleting posts -->
@@ -74,12 +99,13 @@
         @foreach (var post in Model.PostList) {
             string TargetId = "deletePost" + post.Id;
             string HashTargetId = "#deletePost" + post.Id;
+            string ReactButtonId = "react-button" + post.Id;
+            string HashReactButtonId = "#react-button" + post.Id;
             <div class="card border border-primary bg-light mb-3">
                 <div class="card-header">
                     <div class="media">
                         <a href="@Url.Action("Index", "Profile", new { id = post.PostFrom.Id })" class="card-link">
                             <img class="mr-1" src="@Url.Action("RenderProfileImage", "Profile", new { id = post.PostFrom.Id })" height="48" width="48" />
-                            
                         </a>
                         <div class="media-body">
                             <a href="@Url.Action("Index", "Profile", new { id = post.PostFrom.Id })">
@@ -98,8 +124,44 @@
                 <div class="card-body">
                     <p class="card-text">@post.Content</p>
                 </div>
+
+                <!-- Here goes the popup div for the list of reactions by people. -->
+                <div id="reaction-list-popup" class="d-none bg-secondary text-white">
+
+                </div>
+
+                <!-- Here goes the popup div for reactions. -->
+                <div id="reaction-popup" class="d-none bg-secondary text-white">
+                    <button class="btn btn-primary" id="like-button" data-post-id="@post.Id" name="like">Like</button>
+                    <button class="btn btn-danger" id="love-button" data-post-id="@post.Id" name="love">Love</button>
+                    <button class="btn btn-warning" id="hate-button" data-post-id="@post.Id" name="hate">Hate</button>
+                    <button class="btn btn-info" id="xd-button" data-post-id="@post.Id" name="xd">XD</button>
+                </div>
+
+                <!-- Here goes the first footer, used for reactions and categories. -->
                 <footer class="card-footer">
-                    <!-- Add partial view for comments here! -->
+                    <div>
+                        <strong>Category: </strong>
+                        <span class="category-label">@post.Category.ToString()</span>
+                        <button type="button" class="btn btn-secondary float-right react-button" id="@HashReactButtonId">React</button>
+                        <button type="button" class="btn btn-secondary float-right mr-2 reaction-count" data-post-id="@post.Id" id="reaction-count">@post.Reactions.Count</button>
+                    </div>
+                </footer>
+
+                <!-- Here goes the second card footer, used for the comments section. Yes, you can have two footers. -->
+                <footer class="card-footer">
+                    <textarea class="rounded border border-primary card-text commentTextArea" placeholder="Write a comment..."></textarea>
+                    <button type="button" class="btn btn-primary comment-button">Comment</button>
+                    <!-- Add partial view for Comment here! -->
+                    @*
+
+
+
+                        Here!
+
+
+
+                    *@
                 </footer>
             </div>
             <!-- Modal for deleting posts -->

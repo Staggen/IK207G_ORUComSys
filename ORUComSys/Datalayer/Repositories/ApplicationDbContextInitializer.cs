@@ -89,6 +89,9 @@ namespace Datalayer.Repositories {
                 FirstName = "Albin",
                 LastName = "Salmonson",
                 IsActivated = true,
+                PhoneNumber = 12345678,
+                Title = "Lord of the Universe",
+                Description = "Why do we get to set our own titles?",
                 ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png"),
                 LastLogin = DateTime.Now
             };
@@ -98,6 +101,9 @@ namespace Datalayer.Repositories {
                 FirstName = "Dario",
                 LastName = "Borojevic",
                 IsActivated = true,
+                PhoneNumber = 12345678,
+                Title = "Lord of the Universe",
+                Description = "Why do we get to set our own titles?",
                 ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png"),
                 LastLogin = DateTime.Now
             };
@@ -108,6 +114,9 @@ namespace Datalayer.Repositories {
                 LastName = "Stagg",
                 IsActivated = true,
                 IsAdmin = true,
+                PhoneNumber = 12345678,
+                Title = "Lord of the Universe",
+                Description = "Why do we get to set our own titles?",
                 ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png"),
                 LastLogin = DateTime.Now
             };
@@ -117,6 +126,9 @@ namespace Datalayer.Repositories {
                 FirstName = "Moaz",
                 LastName = "Bahtiti",
                 IsActivated = true,
+                PhoneNumber = 12345678,
+                Title = "Lord of the Universe",
+                Description = "Why do we get to set our own titles?",
                 ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png"),
                 LastLogin = DateTime.Now
             };
@@ -126,6 +138,9 @@ namespace Datalayer.Repositories {
                 FirstName = "Nicolas",
                 LastName = "Björkefors",
                 IsActivated = true,
+                PhoneNumber = 12345678,
+                Title = "Lord of the Universe",
+                Description = "Why do we get to set our own titles?",
                 ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png"),
                 LastLogin = DateTime.Now
             };
@@ -136,6 +151,9 @@ namespace Datalayer.Repositories {
                 LastName = "Olofsson",
                 IsAdmin = true,
                 IsActivated = true,
+                PhoneNumber = 12345678,
+                Title = "Lord of the Universe",
+                Description = "Why do we get to set our own titles?",
                 ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png"),
                 LastLogin = DateTime.Now
             };
@@ -145,6 +163,9 @@ namespace Datalayer.Repositories {
                 FirstName = "Patrik",
                 LastName = "Zetterblom",
                 IsActivated = true,
+                PhoneNumber = 12345678,
+                Title = "Lord of the Universe",
+                Description = "Why do we get to set our own titles?",
                 ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png"),
                 LastLogin = DateTime.Now
             };
@@ -154,6 +175,9 @@ namespace Datalayer.Repositories {
                 FirstName = "Pernilla",
                 LastName = "Gerdin",
                 IsActivated = true,
+                PhoneNumber = 12345678,
+                Title = "Lord of the Universe",
+                Description = "Why do we get to set our own titles?",
                 ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png"),
                 LastLogin = DateTime.Now
             };
@@ -163,28 +187,40 @@ namespace Datalayer.Repositories {
                 FirstName = "Saleh",
                 LastName = "Hassan",
                 IsActivated = true,
+                PhoneNumber = 12345678,
+                Title = "Lord of the Universe",
+                Description = "Why do we get to set our own titles?",
                 ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png"),
                 LastLogin = DateTime.Now
             };
 
             // Define Categories
             CategoryModels cat1 = new CategoryModels {
-                Name = "Meeting Notes"
+                Name = "Notes",
+                Category = CategoryType.Notes
             };
 
             CategoryModels cat2 = new CategoryModels {
-                Name = "Event"
+                Name = "Economy",
+                Category = CategoryType.Economy
             };
 
             CategoryModels cat3 = new CategoryModels {
-                Name = "Economy"
+                Name = "Event",
+                Category = CategoryType.Event
             };
 
             CategoryModels cat4 = new CategoryModels {
-                Name = "Other"
+                Name = "Security",
+                Category = CategoryType.Security
             };
 
-            context.Categories.AddRange(new[] { cat1 });
+            CategoryModels cat5 = new CategoryModels {
+                Name = "Other",
+                Category = CategoryType.Other
+            };
+
+            context.Categories.AddRange(new[] { cat1, cat2, cat3, cat4, cat5 });
             context.Profiles.AddRange(new[] { albinP, darioP, eliasP, moazP, nicoP, oskarP, patrikP, pernillaP, salehP });
             context.SaveChanges();
 
@@ -196,9 +232,43 @@ namespace Datalayer.Repositories {
                 CategoryId = 1,
                 PostDateTime = new DateTime(2019, 01, 13, 23, 45, 02)
             };
+            PostModels post2 = new PostModels {
+                PostFromId = eliasU.Id,
+                Forum = ForumType.Formal,
+                Content = "Look ma, I can react to things!",
+                CategoryId = 2,
+                PostDateTime = new DateTime(2019, 02, 10, 18, 45, 00)
+            };
 
-            context.Posts.AddRange(new[] { post1 });
+            context.Posts.AddRange(new[] { post1, post2 });
             context.SaveChanges();
+
+            // Define Reactions
+
+            ReactionModels reaction1 = new ReactionModels {
+                PostId = post1.Id,
+                ProfileId = eliasU.Id,
+                Reaction = ReactionType.Like
+            };
+            ReactionModels reaction2 = new ReactionModels {
+                PostId = post1.Id,
+                ProfileId = oskarU.Id,
+                Reaction = ReactionType.Hate
+            };
+            ReactionModels reaction3 = new ReactionModels {
+                PostId = post2.Id,
+                ProfileId = eliasU.Id,
+                Reaction = ReactionType.XD
+            };
+            ReactionModels reaction4 = new ReactionModels {
+                PostId = post2.Id,
+                ProfileId = patrikU.Id,
+                Reaction = ReactionType.Hate
+            };
+
+            context.Reactions.AddRange(new[] { reaction1, reaction2, reaction3, reaction4 });
+            context.SaveChanges();
+
         }
     }
 }

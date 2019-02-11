@@ -30,7 +30,7 @@ namespace ORUComSys.Controllers {
             ProfileModels profile = profileRepository.Get(currentUserId);
 
             List<FollowingCategoryModels> Categories = followingCategoryRepository.GetAllFollowedCategoriesByUserId(currentUserId);
-            List<MeetingInviteeModels> ProposalInvites = meetingInviteeRepository.GetAllMeetingProposalsForUserId(currentUserId);
+            List<MeetingInviteeModels> ProposalInvites = meetingInviteeRepository.GetAllMeetingInvitesForUserId(currentUserId);
 
             List<PostModels> CombinedPostList = null;
             CombinedPostList.AddRange(postRepository.GetAllPostsInCategorySinceLastUserLoginByUserId(currentUserId, Categories, profile.LastLogin));
@@ -54,7 +54,7 @@ namespace ORUComSys.Controllers {
             CombinedPostList.AddRange(postRepository.GetAllPostsFromFollowedUserByUserId(currentUserId, profile.LastLogin));
 
             NotificationsViewModels notifications = new NotificationsViewModels {
-                Invites = meetingInviteeRepository.GetAllMeetingProposalsForUserId(currentUserId),
+                Invites = meetingInviteeRepository.GetAllMeetingInvitesForUserId(currentUserId),
                 Posts = CombinedPostList.Distinct().ToList()
             };
 
