@@ -6,7 +6,6 @@
     <title>@ViewBag.Title - My ASP.NET Application</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
-
 </head>
 <body>
     <div class="navbar navbar-expand-md fixed-top navbar-dark bg-dark">
@@ -37,6 +36,8 @@
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/popper")
+    @Styles.Render("~/Content/fontawesome")
     @RenderSection("scripts", required: false)
 </body>
 </html>

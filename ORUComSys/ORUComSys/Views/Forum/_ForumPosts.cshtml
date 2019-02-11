@@ -2,33 +2,54 @@
 @using ORUComSys.Models
 @model PostViewModelsForUsers
 
+
 @if (Model.CurrentUser.IsAdmin) { 
     <div>
         @foreach (var post in Model.PostList) {
             string TargetId = "deletePost" + post.Id;
             string HashTargetId = "#deletePost" + post.Id;
-            <div class="card border border-primary bg-light mb-3">
-                <div class="card-header">
-                    <div class="media">
-                        <a href="@Url.Action("Index", "Profile", new { id = post.PostFrom.Id })" class="card-link">
-                            <img class="mr-1" src="@Url.Action("RenderProfileImage", "Profile", new { id = post.PostFrom.Id })" height="32" width="32" />
-                            <span class="badge badge-light">@post.PostFrom.FirstName @post.PostFrom.LastName</span>
-                        </a>
-                        <div class="media-body">
-                            <button type="button" class="btn close" data-toggle="modal" data-target="@HashTargetId">&times;</button>
-                        </div>
+            string ReactButtonId = "react-button" + post.Id;
+            string HashReactButtonId = "#react-button" + post.Id;
+        <div class="card border border-primary bg-light mb-3 submitted-post">
+            <div class="card-header">
+                <div class="media">
+                    <a href="@Url.Action("Index", "Profile", new { id = post.PostFrom.Id })" class="card-link">
+                        <img class="mr-1" src="@Url.Action("RenderProfileImage", "Profile", new { id = post.PostFrom.Id })" height="32" width="32" />
+                        <span class="badge badge-light">@post.PostFrom.FirstName @post.PostFrom.LastName</span>
+                    </a>
+                    <div class="media-body">
+                        <button type="button" class="btn close" data-toggle="modal" data-target="@HashTargetId">&times;</button>
                     </div>
                 </div>
-                <div class="card-body">
-                    <p class="card-text">@post.Content</p>
-                </div>
-                <footer class="card-footer">
-                    <div>
-                        <strong>Published: </strong>
-                        <span>@post.PostDateTime</span>
-                    </div>
-                </footer>
             </div>
+            <div class="card-body">
+                <p class="card-text">@post.Content</p>
+            </div>
+
+           <!-- Here goes the popup div for list of reactions by people.-->
+            <div id="reaction-list-popup" class="d-none bg-secondary text-white">
+                
+            </div>
+
+            <!-- Here goes the popup div for reactions.-->
+            <div id="reaction-popup" class="d-none bg-secondary text-white">
+                <button class="btn btn-primary" id="like-button" data-post-id="@post.Id" name="like">Like</button>
+                <button class="btn btn-danger" id="love-button" data-post-id="@post.Id" name="love">Love</button>
+                <button class="btn btn-warning" id="hate-button" data-post-id="@post.Id" name="hate">Hate</button>
+                <button class="btn btn-info" id="xd-button" data-post-id="@post.Id" name="xd">XD</button>
+            </div>
+
+            <footer class="card-footer">
+                <div>
+                    <strong>Published: </strong>
+                    <span>@post.PostDateTime</span>
+                    <strong>Category: </strong>
+                    <span class="category-label">@post.Category.ToString()</span>
+                    <button type="button" class="btn btn-secondary float-right react-button" id="@HashReactButtonId">React</button>
+                    <button type="button" class="btn btn-secondary float-right mr-2 reaction-count" data-post-id="@post.Id" id="reaction-count">@post.Reactions.Count</button>
+                </div>
+            </footer>
+        </div>
             <!-- Modal for deleting posts -->
             <div class="modal fade" id="@TargetId" tabindex="-1" role="dialog">
                 <div class="modal-dialog" role="document">
@@ -45,6 +66,7 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                             <button type="button" class="btn btn-danger deleteBtn" data-post-id="@post.Id">Delete Post</button>
+                            <button type="button" class="btn btn-secondary float-right mr-2 reaction-count" id="reaction-count">@post.Reactions.Count</button>
                         </div>
                     </div>
                 </div>
@@ -56,30 +78,50 @@
         @foreach (var post in Model.PostList) {
             string TargetId = "deletePost" + post.Id;
             string HashTargetId = "#deletePost" + post.Id;
-            <div class="card border border-primary bg-light mb-3">
-                <div class="card-header">
-                    <div class="media">
-                        <a href="@Url.Action("Index", "Profile", new { id = post.PostFrom.Id })" class="card-link">
-                            <img class="mr-1" src="@Url.Action("RenderProfileImage", "Profile", new { id = post.PostFrom.Id })" height="32" width="32" />
-                            <span class="badge badge-light">@post.PostFrom.FirstName @post.PostFrom.LastName</span>
-                        </a>
-                        @if (post.PostFrom.Id.Equals(User.Identity.GetUserId())) {
-                            <div class="media-body">
-                                <button type="button" class="close" data-toggle="modal" data-target="@HashTargetId">&times;</button>
-                            </div>
-                        }
-                    </div>
+            string ReactButtonId = "react-button" + post.Id;
+            string HashReactButtonId = "#react-button" + post.Id;
+        <div class="card border border-primary bg-light mb-3 submitted-post">
+            <div class="card-header">
+                <div class="media">
+                    <a href="@Url.Action("Index", "Profile", new { id = post.PostFrom.Id })" class="card-link">
+                        <img class="mr-1" src="@Url.Action("RenderProfileImage", "Profile", new { id = post.PostFrom.Id })" height="32" width="32" />
+                        <span class="badge badge-light">@post.PostFrom.FirstName @post.PostFrom.LastName</span>
+                    </a>
+                    @if (post.PostFrom.Id.Equals(User.Identity.GetUserId())) {
+                        <div class="media-body">
+                            <button type="button" class="close" data-toggle="modal" data-target="@HashTargetId">&times;</button>
+                        </div>
+                    }
                 </div>
-                <div class="card-body">
-                    <p class="card-text">@post.Content</p>
-                </div>
-                <footer class="card-footer">
-                    <div>
-                        <strong>Published: </strong>
-                        <span>@post.PostDateTime</span>
-                    </div>
-                </footer>
             </div>
+            <div class="card-body">
+                <p class="card-text">@post.Content</p>
+            </div>
+
+            <!-- Here goes the popup div for list of reactions by people.-->
+            <div id="reaction-list-popup" class="d-none bg-secondary text-white">
+
+            </div>
+
+            <!-- Here goes the popup div for reactions.-->
+            <div id="reaction-popup" class="d-none bg-secondary text-white">
+                <button class="btn btn-primary" id="like-button" data-post-id="@post.Id" name="like">Like</button>
+                <button class="btn btn-danger" id="love-button" data-post-id="@post.Id" name="love">Love</button>
+                <button class="btn btn-warning" id="hate-button" data-post-id="@post.Id" name="hate">Hate</button>
+                <button class="btn btn-info" id="xd-button" data-post-id="@post.Id" name="xd">XD</button>
+            </div>
+
+            <footer class="card-footer">
+                <div>
+                    <strong>Published: </strong>
+                    <span>@post.PostDateTime |</span>
+                    <strong>Category: </strong>
+                    <span class="category-label">@post.Category</span>
+                    <button type="button" class="btn btn-secondary float-right react-button" id="@HashReactButtonId">React</button>
+                    <button type="button" class="btn btn-secondary float-right mr-2 reaction-count" data-post-id="@post.Id" id="reaction-count">@post.Reactions.Count</button>
+                </div>
+            </footer>
+        </div>
             <!-- Modal for deleting posts -->
             <div class="modal fade" id="@TargetId" tabindex="-1" role="dialog">
                 <div class="modal-dialog" role="document">

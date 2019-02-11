@@ -19,9 +19,20 @@ namespace ORUComSys {
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
                       "~/Scripts/bootstrap.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/popper").Include(
+        "~/Scripts/umd/popper.js",
+        "~/Scripts/umd/popper-utils.js",
+        "~/Scripts/custom/global-notifications.js"
+    ));
+
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
+
+            bundles.Add(new StyleBundle("~/Content/fontawesome").Include(
+                "~/Content/fontawesome/font-awesome.css",
+                "~/Content/fontawesome/font-awesome.min.css"
+                ));
         }
     }
 }

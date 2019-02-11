@@ -16,7 +16,7 @@ namespace Datalayer.Repositories {
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder) {
-            modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>(); // Enable cascade delete when you remove something that requires it.
+            //modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>(); // Enable cascade delete when you remove something that requires it.
             base.OnModelCreating(modelBuilder);
         }
 
@@ -29,6 +29,7 @@ namespace Datalayer.Repositories {
         public DbSet<MeetingProposalModels> Proposals { get; set; }
         public DbSet<PostModels> Posts { get; set; }
         public DbSet<ProfileModels> Profiles { get; set; }
+        public DbSet<ReactionModels> Reactions { get; set; }
 
         // End of DbSet(s)
     }

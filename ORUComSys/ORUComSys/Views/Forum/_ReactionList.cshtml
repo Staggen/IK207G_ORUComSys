@@ -1,0 +1,57 @@
+﻿@using Datalayer.Models
+@model List<ReactionModels>
+@{
+    List<ReactionModels> Likes = new List<ReactionModels>();
+    List<ReactionModels> Loves = new List<ReactionModels>();
+    List<ReactionModels> Hates = new List<ReactionModels>();
+    List<ReactionModels> XDs = new List<ReactionModels>();
+
+    foreach (var reaction in Model) {
+        switch (reaction.Reaction) {
+            case ReactionType.Like:
+                Likes.Add(reaction);
+                break;
+            case ReactionType.Love:
+                Loves.Add(reaction);
+                break;
+            case ReactionType.Hate:
+                Hates.Add(reaction);
+                break;
+            case ReactionType.XD:
+                XDs.Add(reaction);
+                break;
+        }
+    }
+    Likes.OrderByDescending((r) => r.User.FirstName);
+    Loves.OrderByDescending((r) => r.User.FirstName);
+    Hates.OrderByDescending((r) => r.User.FirstName);
+    XDs.OrderByDescending((r) => r.User.FirstName);
+}
+
+
+<div class="row p-3 reaction-table">
+    <div class="col-md-3 like-column">
+        <strong>LIKES:</strong><br />
+        @foreach (var like in Likes) {
+        <span>@like.User.FirstName @like.User.LastName</span><br />
+        }
+    </div>
+    <div class="col-md-3 love-column">
+        <strong>LOVES:</strong><br />
+        @foreach (var love in Loves) {
+            <span>@love.User.FirstName @love.User.LastName</span><br />
+        }
+    </div>
+    <div class="col-md-3 hate-column">
+        <strong>HATES:</strong><br />
+        @foreach (var hate in Hates) {
+            <span>@hate.User.FirstName @hate.User.LastName</span><br />
+        }
+    </div>
+    <div class="col-md-3 xd-column">
+        <strong>XD:</strong><br />
+        @foreach (var xd in XDs) {
+            <span>@xd.User.FirstName @xd.User.LastName</span><br />
+        }
+    </div>
+</div>

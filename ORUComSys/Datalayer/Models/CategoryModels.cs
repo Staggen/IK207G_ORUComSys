@@ -7,5 +7,14 @@ namespace Datalayer.Models {
         public int Id { get; set; }
         [Required]
         public string Name { get; set; }
+        public CategoryType Category { get; set; }
+    }
+
+    public enum CategoryType {
+        Notes = 1,
+        Economics,
+        Event,
+        Security,
+        Other
     }
 }

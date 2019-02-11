@@ -12,7 +12,8 @@ namespace ORUComSys.Models {
 
         public ForumType Forum { get; set; }
 
-        public CategoryModels Category { get; set; }
+        [Required]
+        public CategoryType Category { get; set; }
 
         [DataType(DataType.MultilineText)]
         public string Content { get; set; }
@@ -22,6 +23,10 @@ namespace ORUComSys.Models {
         public HttpPostedFileBase AttachedFile { get; set; }
 
         public ProfileModels CurrentUser { get; set; }
+
+        public List<ReactionModels> Reactions { get; set; }
+
+        public List<CategoryModels> Categories { get; set; }
     }
 
     public class PostViewModelsForUsers {

@@ -13,11 +13,15 @@ namespace ORUComSys.Controllers {
     public class ForumController : Controller {
         private PostRepository postRepository;
         private ProfileRepository profileRepository;
+        private ReactionRepository reactionRepository;
+        private CategoryRepository categoryRepository;
 
         public ForumController() {
             ApplicationDbContext context = new ApplicationDbContext();
             postRepository = new PostRepository(context);
             profileRepository = new ProfileRepository(context);
+            reactionRepository = new ReactionRepository(context);
+            categoryRepository = new CategoryRepository(context);
         }
 
         public ActionResult Index() { // Select which forum you wish to enter
@@ -27,17 +31,28 @@ namespace ORUComSys.Controllers {
         [HttpGet]
         public ActionResult Formal() { // Formal forum
             ViewBag.Title = "Formal";
-            return View("FormalForum");
+
+            PostViewModels postViewModel = new PostViewModels {
+                Categories = categoryRepository.GetAll()
+            };
+
+            return View("FormalForum", postViewModel);
         }
 
         [HttpPost]
         public ActionResult Formal(PostViewModels postModel) { // Formal forum
 
-            var requestUrl = Request.RawUrl;
-            var forumType = requestUrl.Split(new string[] { "/Forum/" }, StringSplitOptions.RemoveEmptyEntries);
-            
-            // check modelstate.
-            if (ModelState.IsValid) {
+            //var requestUrl = Request.RawUrl;  ////Probably a relic from when forums shared views.
+            //var forumType = requestUrl.Split(new string[] { "/Forum/" }, StringSplitOptions.RemoveEmptyEntries);
+            var catId = (int)postModel.Category;
+
+            if (catId.Equals(0)) {
+                catId = 5;
+                postModel.Category = CategoryType.Other;
+            }
+
+                // check modelstate. REMOVED TO GET DEAFULT CATEGORY ASSIGNMENT TO WORK FOR NOW.
+
                 // get current user id (the poster's id).
                 string currentUser = User.Identity.GetUserId();
 
@@ -55,7 +70,7 @@ namespace ORUComSys.Controllers {
                 PostModels modelToSave = new PostModels {
                     Id = postModel.Id,
                     PostFromId = currentUser,
-                    CategoryId = 1,
+                    CategoryId = catId,
                     Forum = ForumType.Formal,
                     Content = postModel.Content,
                     PostDateTime = DateTime.Now,
@@ -65,49 +80,63 @@ namespace ORUComSys.Controllers {
                 // add to db and save changes.
                 postRepository.Add(modelToSave);
                 postRepository.Save();
-            }
+            
             return RedirectToAction("Formal");
         }
 
         [HttpGet]
         public ActionResult Informal() { // Informal forum
             ViewBag.Title = "Informal";
-            return View("InformalForum");
+
+            // Create a postViewModel with all the categories so the view has a model to loop through for the category checkboxes
+            PostViewModels postViewModel = new PostViewModels {
+                Categories = categoryRepository.GetAll()
+            };
+            return View("InformalForum", postViewModel);
         }
 
         [HttpPost]
         public ActionResult Informal(PostViewModels postModel) { // Formal forum
 
-            // check modelstate.
-            if (ModelState.IsValid) {
-                // get current user id (the poster's id).
-                string currentUser = User.Identity.GetUserId();
+            //var requestUrl = Request.RawUrl;  ////Probably a relic from when forums shared views.
+            //var forumType = requestUrl.Split(new string[] { "/Forum/" }, StringSplitOptions.RemoveEmptyEntries);
+            var catId = (int)postModel.Category;
 
-                byte[] attachmentData = null;
-                if (Request.Files["AttachedFile"].ContentLength >= 1) { // Check if a file is entered
-                    HttpPostedFileBase attachedFile = Request.Files["AttachedFile"];
-
-                    using (var binary = new BinaryReader(attachedFile.InputStream)) {
-                        //This is the byte-array we set as the ProfileImage property on the profile.
-                        attachmentData = binary.ReadBytes(attachedFile.ContentLength);
-                    }
-                }
-
-                // convert to FormalPostModel.
-                PostModels modelToSave = new PostModels {
-                    Id = postModel.Id,
-                    PostFromId = currentUser,
-                    CategoryId = 1,
-                    Forum = ForumType.Informal,
-                    Content = postModel.Content,
-                    PostDateTime = DateTime.Now,
-                    AttachedFile = attachmentData,
-                };
-
-                // add to db and save changes.
-                postRepository.Add(modelToSave);
-                postRepository.Save();
+            if (catId.Equals(0)) {
+                catId = 5;
+                postModel.Category = CategoryType.Other;
             }
+
+            // check modelstate. REMOVED TO GET DEAFULT CATEGORY ASSIGNMENT TO WORK FOR NOW.
+
+            // get current user id (the poster's id).
+            string currentUser = User.Identity.GetUserId();
+
+            byte[] attachmentData = null;
+            if (Request.Files["AttachedFile"].ContentLength >= 1) { // Check if a file is entered
+                HttpPostedFileBase attachedFile = Request.Files["AttachedFile"];
+
+                using (var binary = new BinaryReader(attachedFile.InputStream)) {
+                    //This is the byte-array we set as the ProfileImage property on the profile.
+                    attachmentData = binary.ReadBytes(attachedFile.ContentLength);
+                }
+            }
+
+            // convert to FormalPostModel.
+            PostModels modelToSave = new PostModels {
+                Id = postModel.Id,
+                PostFromId = currentUser,
+                CategoryId = catId,
+                Forum = ForumType.Informal,
+                Content = postModel.Content,
+                PostDateTime = DateTime.Now,
+                AttachedFile = attachmentData,
+            };
+
+            // add to db and save changes.
+            postRepository.Add(modelToSave);
+            postRepository.Save();
+
             return RedirectToAction("Informal");
         }
 
@@ -117,6 +146,13 @@ namespace ORUComSys.Controllers {
             return PartialView("_ForumPosts", ConvertPostsToViewModels(type));
         }
 
+        public PartialViewResult GetReactionList(int Id) {
+            var postReactions = reactionRepository.GetAllReactionsByPostId(Id);
+            return PartialView("_ReactionList", postReactions);
+        }
+
+
+
         public PostViewModelsForUsers ConvertPostsToViewModels(ForumType type) {
             List<PostModels> allPosts = postRepository.GetAllPostsByForumType(type);
             List<PostViewModels> allPostViewModel = new List<PostViewModels>();
@@ -124,11 +160,13 @@ namespace ORUComSys.Controllers {
                 PostViewModels postViewModel = new PostViewModels {
                     Id = post.Id,
                     PostFrom = post.PostFrom,
-                    Category = post.Category,
+                    Category = post.Category.Category,
                     Forum = post.Forum,
                     Content = post.Content,
                     PostDateTime = post.PostDateTime,
-                    CurrentUser = profileRepository.Get(User.Identity.GetUserId())
+                    CurrentUser = profileRepository.Get(User.Identity.GetUserId()),
+                    Reactions = reactionRepository.GetAllReactionsByPostId(post.Id),
+                    Categories = categoryRepository.GetAll()
                 };
                 allPostViewModel.Add(postViewModel);
             }

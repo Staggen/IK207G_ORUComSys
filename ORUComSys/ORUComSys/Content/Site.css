@@ -69,3 +69,14 @@ select {
     -webkit-box-shadow: 0 10px 20px 0 rgba(0,0,0,0.3);
     box-shadow: 0 10px 20px 0 rgba(0,0,0,0.3);
 }
+
+#reaction-popup,
+#reaction-list-popup{
+    padding: 5px;
+    margin: 5px;
+    top: 0;
+}
+
+.reaction-table {
+    font-size: 0.7em;
+}

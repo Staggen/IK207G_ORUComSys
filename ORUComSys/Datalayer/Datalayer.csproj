@@ -59,6 +59,7 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\MeetingInviteeModels.cs" />
     <Compile Include="Models\MeetingProposalModels.cs" />
+    <Compile Include="Models\ReactionModels.cs" />
     <Compile Include="Models\PostModels.cs" />
     <Compile Include="Models\ProfileModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="Repositories\IIdentifiable.cs" />
     <Compile Include="Repositories\MeetingInviteeRepository.cs" />
     <Compile Include="Repositories\MeetingProposalRepository.cs" />
+    <Compile Include="Repositories\ReactionRepository.cs" />
     <Compile Include="Repositories\PostRepository.cs" />
     <Compile Include="Repositories\ProfileRepository.cs" />
     <Compile Include="Repositories\Repository.cs" />

@@ -160,22 +160,31 @@ namespace Datalayer.Repositories {
 
             // Define Categories
             CategoryModels cat1 = new CategoryModels {
-                Name = "Meeting Notes"
+                Name = "Notes",
+                Category = CategoryType.Notes
             };
 
             CategoryModels cat2 = new CategoryModels {
-                Name = "Event"
+                Name = "Economics",
+                Category = CategoryType.Economics
             };
 
             CategoryModels cat3 = new CategoryModels {
-                Name = "Economy"
+                Name = "Event",
+                Category = CategoryType.Event
             };
 
             CategoryModels cat4 = new CategoryModels {
-                Name = "Other"
+                Name = "Security",
+                Category = CategoryType.Security
             };
 
-            context.Categories.AddRange(new[] { cat1 });
+            CategoryModels cat5 = new CategoryModels {
+                Name = "Other",
+                Category = CategoryType.Other
+            };
+
+            context.Categories.AddRange(new[] { cat1, cat2, cat3, cat4, cat5 });
             context.Profiles.AddRange(new[] { albinP, darioP, eliasP, moazP, nicoP, oskarP, patrikP, pernillaP, salehP });
             context.SaveChanges();
 
