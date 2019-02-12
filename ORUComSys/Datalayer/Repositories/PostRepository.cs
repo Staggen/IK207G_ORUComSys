@@ -15,16 +15,13 @@ namespace Datalayer.Repositories {
             return items.Where((p) => p.Forum == type).OrderByDescending((p) => p.PostDateTime).ToList();
         }
 
-        public List<PostModels> GetAllPostsInCategorySinceLastUserLoginByUserId(string userId, List<FollowingCategoryModels> categories, DateTime lastLogin) {
-            List<PostModels> postsInCategories = null;
-            foreach(FollowingCategoryModels item in categories) {
-                postsInCategories.AddRange(items.Where((p) => p.CategoryId.Equals(item.CategoryId)).ToList());
-            }
-            return postsInCategories.Where((p) => p.PostDateTime > lastLogin).ToList();
-        }
+        // Uncomment the following when a user can subscribe to post categories and need this to recieve notifications about such.
+        //public List<PostModels> GetAllPostsInCategorySinceLastUserLoginByUserId(List<FollowingCategoryModels> categories, DateTime lastLogin) {
+        //    return items.Where((p) => categories.Any((c) => c.Id.Equals(p.CategoryId)) && p.PostDateTime > lastLogin).ToList();
+        //}
 
-        public List<PostModels> GetAllPostsFromFollowedUserByUserId(string userId, DateTime lastLogin) {
-            return items.Where((p) => p.PostFromId.Equals(userId) && p.PostDateTime > lastLogin).ToList();
-        }
+        //public List<PostModels> GetAllPostsFromFollowedUserByUserId(string userId, DateTime lastLogin) {
+        //    return items.Where((p) => p.PostFromId.Equals(userId) && p.PostDateTime > lastLogin).ToList();
+        //}
     }
 }

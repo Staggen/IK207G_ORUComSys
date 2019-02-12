@@ -11,9 +11,7 @@ namespace Datalayer.Repositories {
         }
 
         public bool IfProfileExists(string userId) {
-            List<ProfileModels> profile = items.Where((p) => p.Id.Equals(userId)).ToList(); // Should only ever be 0 or 1
-            if (profile.Count == 1) return true;
-            else return false;
+            return items.Any((p) => p.Id.Equals(userId));
         }
     }
 }

@@ -40,20 +40,23 @@
         <div class="col-md-3 filter-div">
             <br />
             <br />
-            <h4>Filter by category</h4>
+            <h4>Filter by Category</h4>
             @foreach (var cat in Model.Categories) {
                 string checkBoxId = "deletePost" + i;
-                @Html.CheckBox(cat.Name, true, new { @class = "filter-checkbox", id = checkBoxId })
-                @cat.Name <br />
+                <div class="btn-group-toggle mb-1" data-toggle="buttons">
+                    <label class="btn btn-info active filter-checkbox">
+                        <input type="checkbox" id="@checkBoxId" checked autocomplete="off" />@
+                    </label>
+                </div>
                 i++;
             }
         </div>
     </div>
 </div>
 
-
-
 @section Scripts{
     <script src="~/Scripts/custom/forum-posts.js"></script>
     <script src="~/Scripts/custom/forum-comments.js"></script>
+    <script src="~/Scripts/custom/forum-categories.js"></script>
+    <script src="~/Scripts/custom/forum-reactions.js"></script>
 }

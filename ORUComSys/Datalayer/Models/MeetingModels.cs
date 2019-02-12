@@ -13,17 +13,17 @@ namespace Datalayer.Models {
         public virtual ProfileModels Creator { get; set; }
 
         [Required]
-        public string Location { get; set; }
-
-        [Required]
         public string Title { get; set; }
 
         [Required]
         public string Description { get; set; }
 
         [Required]
+        public string Location { get; set; }
+
+        [Required]
         [DataType(DataType.DateTime)]
-        [Display(Name = "Start Time")]
+        [Display(Name = "Time and Date (HH:MM YYYY-MM-DD)")]
         public DateTime MeetingDateTime { get; set; }
 
         [Required]

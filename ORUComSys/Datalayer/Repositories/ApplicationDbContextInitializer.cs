@@ -6,7 +6,7 @@ using System.Data.Entity;
 using System.IO;
 
 namespace Datalayer.Repositories {
-    public class ApplicationDbContextInitializer : DropCreateDatabaseAlways<ApplicationDbContext> { // Re-create database with example data every time you boot the project.
+    public class ApplicationDbContextInitializer : DropCreateDatabaseIfModelChanges<ApplicationDbContext> { // Re-create database with example data every time you boot the project.
         protected override void Seed(ApplicationDbContext context) {
             base.Seed(context);
             SeedUsers(context);
@@ -220,9 +220,56 @@ namespace Datalayer.Repositories {
                 Category = CategoryType.Other
             };
 
+            // Define Meethings
+            MeetingModels meeting1 = new MeetingModels {
+                CreatorId = eliasU.Id,
+                Title = "Sprintplaneringsmöte #3",
+                Description = "Detta är det tredje och sista sprintplaneringsmötet i denna kurs. Varför köpte ingen kakor?!",
+                Location = "P254",
+                MeetingDateTime = new DateTime(2019, 02, 12, 10, 00, 00),
+                Type = MeetingType.Public
+            };
+
+            MeetingModels meeting2 = new MeetingModels {
+                CreatorId = eliasU.Id,
+                Title = "Another One",
+                Description = "- By DJ Khaled",
+                Location = "Where the Sun Don't Shine",
+                MeetingDateTime = new DateTime(2039, 12, 03, 14, 32, 00),
+                Type = MeetingType.Public
+            };
+
+            context.Meetings.AddRange(new[] { meeting1, meeting2 });
             context.Categories.AddRange(new[] { cat1, cat2, cat3, cat4, cat5 });
             context.Profiles.AddRange(new[] { albinP, darioP, eliasP, moazP, nicoP, oskarP, patrikP, pernillaP, salehP });
             context.SaveChanges();
+
+            // Define Meeting Invites
+            MeetingInviteeModels invite1 = new MeetingInviteeModels {
+                ProfileId = eliasU.Id,
+                MeetingId = meeting1.Id,
+                MeetingAccepted = true
+            };
+            MeetingInviteeModels invite2 = new MeetingInviteeModels {
+                ProfileId = eliasU.Id,
+                MeetingId = meeting2.Id,
+                MeetingAccepted = true
+            };
+            MeetingInviteeModels invite3 = new MeetingInviteeModels {
+                ProfileId = oskarU.Id,
+                MeetingId = meeting1.Id,
+                MeetingAccepted = false
+            };
+            MeetingInviteeModels invite4 = new MeetingInviteeModels {
+                ProfileId = patrikU.Id,
+                MeetingId = meeting1.Id,
+                MeetingAccepted = false
+            };
+            MeetingInviteeModels invite5 = new MeetingInviteeModels {
+                ProfileId = oskarU.Id,
+                MeetingId = meeting2.Id,
+                MeetingAccepted = false
+            };
 
             // Define Posts
             PostModels post1 = new PostModels {
@@ -240,6 +287,7 @@ namespace Datalayer.Repositories {
                 PostDateTime = new DateTime(2019, 02, 10, 18, 45, 00)
             };
 
+            context.MeetingInvitees.AddRange(new[] { invite1, invite2, invite3, invite4, invite5 });
             context.Posts.AddRange(new[] { post1, post2 });
             context.SaveChanges();
 
@@ -268,7 +316,6 @@ namespace Datalayer.Repositories {
 
             context.Reactions.AddRange(new[] { reaction1, reaction2, reaction3, reaction4 });
             context.SaveChanges();
-
         }
     }
 }

@@ -2,23 +2,16 @@
     console.log("Script loaded: forum-posts.js");
     var currentUrl = window.location.href;
     var urlArray = currentUrl.split("/Forum/");
-    Id = urlArray[1].split("/")[0];
-    Update_Posts(Id);
+    forumType = urlArray[1].split("/")[0];
+    Update_Posts(forumType);
     $("#SubmitPost").prop("disabled", true);
     ClearBox();
 });
-var Id;
+
+var forumType;
 
 $("#postWall").on("click", ".deleteBtn", DeletePost);
 $("#CreatePostCard").on("keyup", "#Content", AdjustCounter);
-$("#postWall").on("click", "#like-button", addReaction);
-$("#postWall").on("click", "#love-button", addReaction);
-$("#postWall").on("click", "#hate-button", addReaction);
-$("#postWall").on("click", "#xd-button", addReaction);
-$("#postWall").on("click", ".reaction-count", toggleReactionList);
-$("#postWall").on("click", ".react-button", toggleReactions);
-$(".filter-checkbox").change(filterPosts);
-
 
 function AdjustCounter() {
     var number = $("#Content").val().length;
@@ -100,7 +93,7 @@ function DeletePost() {
         url: "/api/AjaxApi/" + PostId,
         contentType: "application/json;charset=UTF-8",
         success: () => {
-            Update_Posts(Id);
+            Update_Posts(forumType);
         },
         error: () => {
             alert("Error: Failure to delete post");
@@ -120,114 +113,4 @@ function Update_Posts(type) {
     }).fail(() => {
         console.log("Error: Failure to update posts");
     });
-}
-
-function toggleReactions() {
-    var btnId = this.getAttribute("Id");
-    console.log(btnId);
-    $("#reaction-popup").toggleClass("d-none");
-    var ref = $("*[id='" + btnId + "']");
-    var pop = $("#reaction-popup");
-    new Popper(ref, pop, {
-        placement: "top",
-        modifiers: {
-            offset: {
-                enabled: true,
-                offset: "0, 10"
-            }
-        }
-    });
-    hideReactionList();
-}
-
-function addReaction() {
-    var postId = this.getAttribute("data-post-id");
-    var reactionType = this.getAttribute("name");
-
-    reaction = { PostId: postId, Reaction: reactionType };
-
-    $.ajax({
-        type: "POST",
-        url: "/api/AjaxApi/",
-        data: JSON.stringify(reaction),
-        contentType: "application/json;charset=UTF-8",
-        success: () => {
-            Update_Posts(Id);
-            console.log("Added reaction!");
-        },
-        error: () => {
-            alert("Error: Failure to add reaction");
-        }
-    });
-    $("#reaction-popup").toggleClass("d-none");
-
-}
-
-function toggleReactionList() {
-    for (var i = 0; i < 2; i++) {
-        var postId = this.getAttribute("data-post-id");
-        var serviceUrl = "/Forum/GetReactionList/" + postId;
-        var request = $.post(serviceUrl);
-        request.done(function (data) {
-            $("#reaction-list-popup").html(data);
-        }).fail(() => {
-            console.log("Error: Failure to display reaction information");
-        });
-        var ref = this;
-        var pop = $("#reaction-list-popup");
-        new Popper(ref, pop, {
-            placement: "top",
-            modifiers: {
-                offset: {
-                    enabled: true,
-                    offset: "0, 10"
-                }
-            }
-        });
-    }
-    $("#reaction-list-popup").toggleClass("d-none");
-    hideReactions();
-}
-
-function filterPosts() {
-    var posts = document.getElementsByClassName("category-label");
-    var postArray = jQuery.makeArray(posts);
-
-    var categoryCheckboxes = document.getElementsByClassName("filter-checkbox");
-    var categoryCheckboxArray = jQuery.makeArray(categoryCheckboxes);
-
-    var checkedCategoryCheckboxArray = [];
-
-    for (var i = 0; i < categoryCheckboxArray.length; i++) {
-        if (categoryCheckboxArray[i].checked) {
-            checkedCategoryCheckboxArray[i] = categoryCheckboxArray[i].getAttribute("name");
-        }
-    }
-
-    // Remove if post doesn't match checked categories
-    for (var i = 0; i < postArray.length; i++) {
-        if (!checkedCategoryCheckboxArray.includes(postArray[i].innerHTML)) {
-            if (!$(postArray[i]).parents().eq(2).hasClass("d-none")) {
-                $(postArray[i]).parents().eq(2).addClass("d-none");
-            };
-        }
-    }
-
-    // Show currently hidden results if they contain search string. Same as a
-    for (var i = 0; i < postArray.length; i++) {
-        if (checkedCategoryCheckboxArray.includes(postArray[i].innerHTML)) { // Convert to uppercase to avoid case sensitivity
-            // Get the card element of the users whose names do not include the search string.
-            if ($(postArray[i]).parents().eq(2).hasClass("d-none")) {
-                $(postArray[i]).parents().eq(2).removeClass("d-none");
-            };
-        }
-    }
-}
-
-function hideReactions() {
-    $("#reaction-popup").addClass("d-none");
-}
-
-function hideReactionList() {
-    $("#reaction-list-popup").addClass("d-none");
 }

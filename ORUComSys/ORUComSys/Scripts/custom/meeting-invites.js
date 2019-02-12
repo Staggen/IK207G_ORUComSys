@@ -4,6 +4,8 @@
 
 $("#SearchField").on("keyup", SearchUsers);
 $(".invite-button").on("click", InviteUser);
+$(".accept-meeting-invite-button").on("click", AcceptInvite);
+$(".decline-meeting-invite-button").on("click", DeclineInvite);
 
 function SearchUsers() {
     var searchString = $("#SearchField").val();
@@ -103,5 +105,52 @@ function SetButtonGroup(UserId) {
         if (!$(SelectedButton).hasClass("btn-success")) {
             $(SelectedButton).addClass("btn-success");
         }
+    }
+}
+
+function AcceptInvite() {
+    var meetingId = $(this).data("meeting-id");
+    var elementId = "#meeting-id-" + meetingId;
+    $.ajax({
+        url: "/Meeting/AcceptMeetingInvite/" + meetingId,
+        type: "POST",
+        dataType: "JSON",
+        success: function (data) {
+            if (data.result) {
+                ButtonGroup(elementId);
+            } else {
+                console.log("Controller Error: Unable to accept invite.");
+            }
+        },
+        error: () => {
+            console.log("Error: Unable to accept invite");
+        }
+    });
+}
+
+function DeclineInvite() {
+    var meetingId = $(this).data("meeting-id");
+    var elementId = "#meeting-id-" + meetingId;
+    $.ajax({
+        url: "/Meeting/DeclineMeetingInvite/" + meetingId,
+        type: "POST",
+        dataType: "JSON",
+        success: function (data) {
+            if (data.result) {
+                ButtonGroup(elementId);
+            } else {
+                console.log("Controller Error: Unable to accept invite.");
+            }
+        },
+        error: () => {
+            console.log("Error: Unable to accept invite");
+        }
+    });
+}
+
+function ButtonGroup(elementId) {
+    console.log(elementId);
+    if (!$(elementId).hasClass("d-none")) {
+        $(elementId).addClass("d-none");
     }
 }

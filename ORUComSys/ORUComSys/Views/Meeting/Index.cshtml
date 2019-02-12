@@ -1,0 +1,52 @@
+﻿@model ORUComSys.Models.MeetingViewModels
+@{
+    ViewBag.Title = "Meeting Planner";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <h2>My Meetings</h2>
+            <br />
+            @foreach (var meeting in Model.MyMeetings) {
+                <div class="card border border-secondary mb-2">
+                    <div class="card-header">
+                        @meeting.Title
+                    </div>
+                    <div class="card-body">
+                        @meeting.Description
+                    </div>
+                    <footer class="card-footer">
+                        <strong>Place: </strong>@meeting.Location<br />
+                        <strong>Time: </strong>@meeting.MeetingDateTime
+                        @if (Model.Invites.Any((i) => i.MeetingId.Equals(meeting.Id) && i.ProfileId.Equals(Model.ProfileId) && !i.MeetingAccepted)) {
+                            <div id="meeting-id-@meeting.Id">
+                                <button type="button" class="btn btn-success accept-meeting-invite-button" data-meeting-id="@meeting.Id">✓</button>
+                                <button type="button" class="btn btn-danger decline-meeting-invite-button" data-meeting-id="@meeting.Id">☓</button>
+                            </div>
+                        }
+                    </footer>
+                </div>
+            }
+        </div>
+        <div class="col-md-6">
+            <h2>Create New Meeting</h2>
+            <br />
+            @Html.ActionLink("Create New Meeting", "CreateMeeting", new { area = "" }, new { @class = "btn btn-primary" })<br /><br />
+            <h2>Edit Meetings I Created</h2>
+            @foreach (var meeting in Model.MyCreatedMeetings) {
+                <div class="card border border-secondary mb-2">
+                    <a class="card-link" href="@Url.Action("EditMeeting", new { id = meeting.Id })">
+                        <div class="card-body">
+                            @meeting.Title
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/Scripts/custom/meeting-invites.js"></script>
+}
