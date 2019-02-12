@@ -42,10 +42,10 @@
             <br />
             <h4>Filter by Category</h4>
             @foreach (var cat in Model.Categories) {
-                string checkBoxId = "deletePost" + i;
+                string checkBoxId = "checkBox-" + i;
                 <div class="btn-group-toggle mb-1" data-toggle="buttons">
                     <label class="btn btn-info active filter-checkbox">
-                        <input type="checkbox" id="@checkBoxId" checked autocomplete="off" />@
+                        <input type="checkbox" id="@checkBoxId" checked autocomplete="off" />@cat.Name
                     </label>
                 </div>
                 i++;
