@@ -10,12 +10,8 @@ namespace Datalayer.Repositories {
             return items.Where((m) => m.CreatorId.Equals(userId)).ToList();
         }
 
-        public List<MeetingModels> GetMeetingsByMeetingIds(List<int> meetingIds) {
-            List<MeetingModels> models = new List<MeetingModels>();
-            foreach(int id in meetingIds) {
-                models.Add(items.First((m) => m.Id.Equals(id)));
-            }
-            return models;
+        public List<MeetingModels> GetListOfMeetingsByListOfMeetingIds(List<int> meetingIds) {
+            return items.Where((m) => meetingIds.Any((i) => i.Equals(m.Id))).ToList();
         }
     }
 }

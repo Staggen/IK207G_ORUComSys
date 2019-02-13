@@ -25,7 +25,7 @@ namespace ORUComSys.Controllers {
             List<MeetingInviteeModels> meetingInvites = meetingInviteeRepository.GetAllMeetingInvitesForUserId(currentUserId);
             List<int> myMeetingIds = meetingInvites.Where((m) => m.ProfileId.Equals(currentUserId)).Select((x) => x.MeetingId).ToList();
             List<MeetingModels> myCreatedMeetings = meetingRepository.GetAllMeetingsByCreatorId(currentUserId);
-            List<MeetingModels> myMeetings = meetingRepository.GetMeetingsByMeetingIds(myMeetingIds);
+            List<MeetingModels> myMeetings = meetingRepository.GetListOfMeetingsByListOfMeetingIds(myMeetingIds);
 
             MeetingViewModels model = new MeetingViewModels {
                 ProfileId = currentUserId,

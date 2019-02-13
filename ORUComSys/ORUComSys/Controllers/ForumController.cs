@@ -45,7 +45,7 @@ namespace ORUComSys.Controllers {
             //var forumType = requestUrl.Split(new string[] { "/Forum/" }, StringSplitOptions.RemoveEmptyEntries);
             var catId = (int)postModel.Category;
 
-            if (catId.Equals(0)) {
+            if(catId.Equals(0)) {
                 catId = 5;
                 postModel.Category = CategoryType.Other;
             }
@@ -56,10 +56,10 @@ namespace ORUComSys.Controllers {
             string currentUser = User.Identity.GetUserId();
 
             byte[] attachmentData = null;
-            if (Request.Files["AttachedFile"].ContentLength >= 1) { // Check if a file is entered
+            if(Request.Files["AttachedFile"].ContentLength >= 1) { // Check if a file is entered
                 HttpPostedFileBase attachedFile = Request.Files["AttachedFile"];
 
-                using (var binary = new BinaryReader(attachedFile.InputStream)) {
+                using(var binary = new BinaryReader(attachedFile.InputStream)) {
                     //This is the byte-array we set as the ProfileImage property on the profile.
                     attachmentData = binary.ReadBytes(attachedFile.ContentLength);
                 }
@@ -101,7 +101,7 @@ namespace ORUComSys.Controllers {
             //var forumType = requestUrl.Split(new string[] { "/Forum/" }, StringSplitOptions.RemoveEmptyEntries);
             var catId = (int)postModel.Category;
 
-            if (catId.Equals(0)) {
+            if(catId.Equals(0)) {
                 catId = 5;
                 postModel.Category = CategoryType.Other;
             }
@@ -111,10 +111,10 @@ namespace ORUComSys.Controllers {
             string currentUser = User.Identity.GetUserId();
 
             byte[] attachmentData = null;
-            if (Request.Files["AttachedFile"].ContentLength >= 1) { // Check if a file is entered
+            if(Request.Files["AttachedFile"].ContentLength >= 1) { // Check if a file is entered
                 HttpPostedFileBase attachedFile = Request.Files["AttachedFile"];
 
-                using (var binary = new BinaryReader(attachedFile.InputStream)) {
+                using(var binary = new BinaryReader(attachedFile.InputStream)) {
                     //This is the byte-array we set as the ProfileImage property on the profile.
                     attachmentData = binary.ReadBytes(attachedFile.ContentLength);
                 }
@@ -152,7 +152,7 @@ namespace ORUComSys.Controllers {
         public PostViewModelsForUsers ConvertPostsToViewModels(ForumType type) {
             List<PostModels> allPosts = postRepository.GetAllPostsByForumType(type);
             List<PostViewModels> allPostViewModel = new List<PostViewModels>();
-            foreach (var post in allPosts) {
+            foreach(var post in allPosts) {
                 PostViewModels postViewModel = new PostViewModels {
                     Id = post.Id,
                     PostFrom = post.PostFrom,
