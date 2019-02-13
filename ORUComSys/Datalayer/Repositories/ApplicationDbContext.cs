@@ -36,6 +36,7 @@ namespace Datalayer.Repositories {
         // Reactions
         public DbSet<ReactionModels> Reactions { get; set; }
 
+        public DbSet<FollowingCategoryModels> FollowingCategories { get; set; }
         // End of DbSet(s)
     }
 }

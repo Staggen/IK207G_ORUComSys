@@ -6,7 +6,7 @@ using System.Data.Entity;
 using System.IO;
 
 namespace Datalayer.Repositories {
-    public class ApplicationDbContextInitializer : DropCreateDatabaseIfModelChanges<ApplicationDbContext> { // Re-create database with example data every time you boot the project.
+    public class ApplicationDbContextInitializer : DropCreateDatabaseIfModelChanges<ApplicationDbContext> { 
         protected override void Seed(ApplicationDbContext context) {
             base.Seed(context);
             SeedUsers(context);

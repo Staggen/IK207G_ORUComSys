@@ -7,9 +7,9 @@ namespace Datalayer.Models {
         [Key]
         public int Id { get; set; }
         
-        [ForeignKey("User")]
-        public string UserId { get; set; }
-        public virtual ApplicationUser User { get; set; }
+        [ForeignKey("Profile")]
+        public string ProfileId { get; set; }
+        public virtual ProfileModels Profile { get; set; }
 
         [ForeignKey("Category")]
         public int CategoryId { get; set; }

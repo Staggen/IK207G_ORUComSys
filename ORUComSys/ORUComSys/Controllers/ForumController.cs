@@ -15,6 +15,7 @@ namespace ORUComSys.Controllers {
         private ProfileRepository profileRepository;
         private ReactionRepository reactionRepository;
         private CategoryRepository categoryRepository;
+        private FollowingCategoryRepository followingCategoryRepository;
 
         public ForumController() {
             ApplicationDbContext context = new ApplicationDbContext();
@@ -22,6 +23,7 @@ namespace ORUComSys.Controllers {
             profileRepository = new ProfileRepository(context);
             reactionRepository = new ReactionRepository(context);
             categoryRepository = new CategoryRepository(context);
+            followingCategoryRepository = new FollowingCategoryRepository(context);
         }
 
         public ActionResult Index() { // Select which forum you wish to enter
@@ -173,6 +175,53 @@ namespace ORUComSys.Controllers {
             };
 
             return postViewModelForUsers;
+        }
+
+        // action result to receive ajax call
+        [HttpPost]
+        public ActionResult SubscribeToCategories(FollowingCategoryViewModels activeCategorySubVessel) {
+            if (ModelState.IsValid) {
+                var userId = User.Identity.GetUserId();
+
+                // prepare a list of string to receive the string array of category names submitted in the view model.
+                List<string> fixedActiveCategories = new List<string>();
+
+                // loop the incoming model's string array and remove any nulled indexes in order to prevent crashing later on.
+                foreach (var category in activeCategorySubVessel.CategoriesToSubscribe) {
+                    if (category != null) {
+                        fixedActiveCategories.Add(category);
+                    }
+                }
+
+                // get all previously subscribed categories by the current user, so we can delete them all, in order to prevent redundant subscriptions.
+                var allCategoriesCurrentlyFollowedByUser = followingCategoryRepository.GetAllFollowedCategoriesByUserId(userId); // this could also possibly be used in order to create a fail-safe operation later on.
+
+                // delete them ALL!
+                foreach (var category in allCategoriesCurrentlyFollowedByUser) {
+                    followingCategoryRepository.Remove(category.Id);
+                }
+               
+                // get a list of all registered categories.
+                var allCategories = categoryRepository.GetAll();
+
+                // loop all categories and match the name from the fixed list, in order to extrapolate the correct category id from the list of all categories for a new subscription. #coherentshitthesequel
+                foreach (var cat in fixedActiveCategories) {
+                    int catId = 0;
+                    foreach (var category in allCategories) {
+                        if (cat.Equals(category.Name)) { // if the categories match, create a model, set the variables...
+                            catId = category.Id;
+                            FollowingCategoryModels modelToSave = new FollowingCategoryModels {
+                                ProfileId = User.Identity.GetUserId(),
+                                CategoryId = catId
+                            };
+                            followingCategoryRepository.Add(modelToSave); // ...and add to the database.
+                        }
+                    }
+                }
+                followingCategoryRepository.Save(); // save all added subscriptions and return success to the ajax call...
+                return Json(new { result = true });
+            }
+            return Json(new { result = false }); // ...or fu if it fails.
         }
     }
 }
