@@ -1,0 +1,17 @@
+﻿@model ORUComSys.Models.NotificationsViewModels
+
+<div class="bg-secondary rounded list-group p-2">
+    @if(!Model.Invites.Count.Equals(0)) {
+        foreach(var invite in Model.Invites) {
+            if(!invite.Accepted) {
+                <a href="@Url.Action("Index", "Meeting")" class="list-group-item list-group-item-action">
+                    <div>
+                        Meeting Invite: @invite.Meeting.Title
+                    </div>
+                </a>
+            }
+        }
+    } else {
+        <h5>No new notifications</h5>
+    }
+</div>

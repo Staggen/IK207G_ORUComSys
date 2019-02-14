@@ -8,12 +8,15 @@ namespace Datalayer.Models {
         [Key]
         public int Id { get; set; }
 
+        [Required]
         [ForeignKey("PostFrom")]
         public string PostFromId { get; set; }
         public virtual ProfileModels PostFrom { get; set; }
 
+        [Required]
         public ForumType Forum { get; set; }
 
+        [Required]
         [ForeignKey("Category")]
         public int CategoryId { get; set; }
         public virtual CategoryModels Category { get; set; }
@@ -23,8 +26,6 @@ namespace Datalayer.Models {
 
         [DataType(DataType.Date)]
         public DateTime PostDateTime { get; set; }
-
-        public byte[] AttachedFile { get; set; }
     }
 
     public enum ForumType {

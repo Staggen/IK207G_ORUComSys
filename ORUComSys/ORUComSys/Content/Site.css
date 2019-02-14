@@ -74,6 +74,7 @@ select {
     padding: 30px;
     width: 90%;
     max-width: 450px;
+    -moz-box-shadow: 0 10px 20px 0 rgba(0,0,0,0.3);
     -webkit-box-shadow: 0 10px 20px 0 rgba(0,0,0,0.3);
     box-shadow: 0 10px 20px 0 rgba(0,0,0,0.3);
 }
@@ -83,8 +84,13 @@ select {
     padding: 5px;
     margin: 5px;
     top: 0;
+    z-index: 1;
 }
 
 .reaction-table{
     font-size: 0.7em;
+}
+
+#reaction-list-popup {
+    width: 100%;
 }

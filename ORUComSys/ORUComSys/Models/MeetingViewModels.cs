@@ -6,6 +6,6 @@ namespace ORUComSys.Models {
         public string ProfileId { get; set; }
         public List<MeetingModels> MyMeetings { get; set; }
         public List<MeetingModels> MyCreatedMeetings { get; set; }
-        public List<MeetingInviteeModels> Invites { get; set; }
+        public List<MeetingInviteModels> Invites { get; set; }
     }
 }

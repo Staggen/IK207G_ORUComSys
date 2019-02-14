@@ -21,6 +21,7 @@ namespace ORUComSys {
                       "~/Scripts/bootstrap.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/popper").Include(
+                "~/Scripts/custom/global-notifications.js",
                 "~/Scripts/umd/popper.js",
                 "~/Scripts/umd/popper-utils.js"
             ));

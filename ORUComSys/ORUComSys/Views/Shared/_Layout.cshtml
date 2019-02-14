@@ -3,15 +3,19 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <title>@ViewBag.Title</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
-
 </head>
 <body>
     <div class="navbar navbar-expand-md fixed-top navbar-dark bg-dark">
         <div class="container">
             @Html.ActionLink("ORUComSys", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+
+            @if(Request.IsAuthenticated) {
+                <!-- Pop up div for notifications -->
+                <div id="NotificationPopUpDiv" class="d-none bg-secondary rounded text-light"></div>
+            }
 
             <button type="button" class="navbar-toggler" data-toggle="collapse" data-target=".navbar-collapse">
                 <span class="navbar-toggler-icon"></span>
@@ -39,7 +43,9 @@
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
-    @Scripts.Render("~/bundles/popper")
+    @if(Request.IsAuthenticated) {
+        @Scripts.Render("~/bundles/popper")
+    }
     @RenderSection("scripts", required: false)
 </body>
 </html>

@@ -5,6 +5,6 @@ namespace ORUComSys.Models {
     public class MeetingInviteViewModels {
         public int MeetingId { get; set; }
         public List<ProfileModels> Profiles { get; set; }
-        public List<MeetingInviteeModels> Invites { get; set; }
+        public List<MeetingInviteModels> Invites { get; set; }
     }
 }

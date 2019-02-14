@@ -19,7 +19,7 @@
                     <footer class="card-footer">
                         <strong>Place: </strong>@meeting.Location<br />
                         <strong>Time: </strong>@meeting.MeetingDateTime
-                        @if (Model.Invites.Any((i) => i.MeetingId.Equals(meeting.Id) && i.ProfileId.Equals(Model.ProfileId) && !i.MeetingAccepted)) {
+                        @if (Model.Invites.Any((i) => i.MeetingId.Equals(meeting.Id) && i.ProfileId.Equals(Model.ProfileId) && !i.Accepted)) {
                             <div id="meeting-id-@meeting.Id">
                                 <button type="button" class="btn btn-success accept-meeting-invite-button" data-meeting-id="@meeting.Id">✓</button>
                                 <button type="button" class="btn btn-danger decline-meeting-invite-button" data-meeting-id="@meeting.Id">☓</button>

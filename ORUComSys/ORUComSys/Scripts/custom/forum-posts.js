@@ -12,6 +12,49 @@ var forumType;
 
 $("#postWall").on("click", ".deleteBtn", DeletePost);
 $("#CreatePostCard").on("keyup", "#Content", AdjustCounter);
+$("#postWall").on("click", ".attachment-label", DownloadAttachmentStepOne);
+$("#AttachedFile").bind("change", ResetFileUpload);
+
+function ResetFileUpload() {
+    for (var i = 0; i < this.files.length; i++) {
+        var fileSize = this.files[i].size;
+        if (fileSize > 4096000) {
+            alert("The maximum allowed file size is 4MB.");
+            $("#AttachedFile").wrap('<form>').closest('form').get(0).reset();
+            $("#AttachedFile").unwrap();
+        }
+    }
+}
+
+function DownloadAttachmentStepOne() {
+    var attachmentName = $(this).text();
+    var attachmentId = this.getAttribute("data-attachment-id");
+    var filetype = this.getAttribute("data-file-type").substring(1);
+
+    var serviceUrl = "/api/AjaxApi/GetAttachment/" + attachmentId;
+    var request = $.get(serviceUrl);
+    request.done(function (data) {
+        var binaryString = window.atob(data);
+        var binaryLen = binaryString.length;
+        var bytes = new Uint8Array(binaryLen);
+        for (var i = 0; i < binaryLen; i++) {
+            var ascii = binaryString.charCodeAt(i);
+            bytes[i] = ascii;
+        }
+        DownloadAttachmentStepTwo(attachmentName, filetype, bytes);
+    }).fail(() => {
+        console.log("Error: Failure to download file.");
+    });
+}
+
+function DownloadAttachmentStepTwo(attachmentName, filetype, bytes) {
+    var blob = new Blob([bytes], { type: "application/" + filetype });
+    var link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    var fileName = attachmentName;
+    link.download = fileName;
+    link.click();
+}
 
 function AdjustCounter() {
     var number = $("#Content").val().length;

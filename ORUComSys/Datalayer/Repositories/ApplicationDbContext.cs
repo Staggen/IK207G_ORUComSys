@@ -26,10 +26,11 @@ namespace Datalayer.Repositories {
         public DbSet<ProfileModels> Profiles { get; set; }
         // Posts
         public DbSet<PostModels> Posts { get; set; }
+        public DbSet<AttachmentModels> Attachments { get; set; }
         public DbSet<CategoryModels> Categories { get; set; }
         // Meetings
         public DbSet<MeetingModels> Meetings { get; set; }
-        public DbSet<MeetingInviteeModels> MeetingInvitees { get; set; }
+        public DbSet<MeetingInviteModels> MeetingInvites { get; set; }
         // Meeting Proposals (not done)
         //public DbSet<MeetingProposalModels> Proposals { get; set; }
         //public DbSet<MeetingInviteeModels> ProposalInvitees { get; set; }

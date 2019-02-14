@@ -3,6 +3,6 @@ using System.Collections.Generic;
 
 namespace ORUComSys.Models {
     public class NotificationsViewModels {
-        public List<MeetingInviteeModels> Invites { get; set; }
+        public List<MeetingInviteModels> Invites { get; set; }
     }
 }

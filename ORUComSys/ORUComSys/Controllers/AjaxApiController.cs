@@ -6,15 +6,13 @@ using System.Web.Http;
 
 namespace ORUComSys.Controllers {
     public class AjaxApiController : ApiController {
-        private ProfileRepository profileRepository;
-        private UserRepository userRepository;
+        private AttachmentRepository attachmentRepository;
         private PostRepository postRepository;
         private ReactionRepository reactionRepository;
 
         public AjaxApiController() {
             ApplicationDbContext context = new ApplicationDbContext();
-            profileRepository = new ProfileRepository(context);
-            userRepository = new UserRepository(context);
+            attachmentRepository = new AttachmentRepository(context);
             postRepository = new PostRepository(context);
             reactionRepository = new ReactionRepository(context);
         }
@@ -49,7 +47,7 @@ namespace ORUComSys.Controllers {
                         break;
                 }
 
-                // If user already has a reaction on this post, edit it. else add a new one.
+                // If user already has a reaction on this post, edit it. Else add a new one.
                 if (existingReactionBool) {
                     var existingReaction = reactionRepository.GetReactionByPostAndUserId(reaction.PostId, currentUser);
                     existingReaction.Reaction = reactionType;
@@ -65,6 +63,11 @@ namespace ORUComSys.Controllers {
                     reactionRepository.Save();
                 }
             }
+        }
+
+        [HttpGet]
+        public byte[] GetAttachment(int id) {
+            return attachmentRepository.GetAttachmentByteArrayById(id);
         }
     }
 }

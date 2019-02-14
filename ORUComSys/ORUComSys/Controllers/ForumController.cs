@@ -11,6 +11,7 @@ using System.Web.Mvc;
 namespace ORUComSys.Controllers {
     [Authorize]
     public class ForumController : Controller {
+        private AttachmentRepository attachmentRepository;
         private PostRepository postRepository;
         private ProfileRepository profileRepository;
         private ReactionRepository reactionRepository;
@@ -18,6 +19,7 @@ namespace ORUComSys.Controllers {
 
         public ForumController() {
             ApplicationDbContext context = new ApplicationDbContext();
+            attachmentRepository = new AttachmentRepository(context);
             postRepository = new PostRepository(context);
             profileRepository = new ProfileRepository(context);
             reactionRepository = new ReactionRepository(context);
@@ -56,24 +58,33 @@ namespace ORUComSys.Controllers {
             string currentUser = User.Identity.GetUserId();
 
             byte[] attachmentData = null;
+            string filename = null;
             if(Request.Files["AttachedFile"].ContentLength >= 1) { // Check if a file is entered
                 HttpPostedFileBase attachedFile = Request.Files["AttachedFile"];
+                filename = attachedFile.FileName;
 
                 using(var binary = new BinaryReader(attachedFile.InputStream)) {
                     //This is the byte-array we set as the ProfileImage property on the profile.
                     attachmentData = binary.ReadBytes(attachedFile.ContentLength);
                 }
+                // make AttachmentModel
+                AttachmentModels attachmentModel = new AttachmentModels {
+                    AttachedFile = attachmentData,
+                    FileName = filename,
+                    FileExtension = filename.Substring(filename.LastIndexOf(".")),
+                    PostId = postModel.Id
+                };
+                attachmentRepository.Add(attachmentModel);
             }
 
-            // convert to FormalPostModel.
+            // convert to PostModels.
             PostModels modelToSave = new PostModels {
                 Id = postModel.Id,
                 PostFromId = currentUser,
                 CategoryId = catId,
                 Forum = ForumType.Formal,
                 Content = postModel.Content,
-                PostDateTime = DateTime.Now,
-                AttachedFile = attachmentData,
+                PostDateTime = DateTime.Now
             };
 
             // add to db and save changes.
@@ -111,12 +122,24 @@ namespace ORUComSys.Controllers {
             string currentUser = User.Identity.GetUserId();
 
             byte[] attachmentData = null;
+            string filename = null;
             if(Request.Files["AttachedFile"].ContentLength >= 1) { // Check if a file is entered
-                HttpPostedFileBase attachedFile = Request.Files["AttachedFile"];
+                for(int i = 0; i < Request.Files.Count; i++) {
+                    HttpPostedFileBase attachedFile = Request.Files[i];
+                    filename = attachedFile.FileName;
 
-                using(var binary = new BinaryReader(attachedFile.InputStream)) {
-                    //This is the byte-array we set as the ProfileImage property on the profile.
-                    attachmentData = binary.ReadBytes(attachedFile.ContentLength);
+                    using(var binary = new BinaryReader(attachedFile.InputStream)) {
+                        //This is the byte-array we set as the ProfileImage property on the profile.
+                        attachmentData = binary.ReadBytes(attachedFile.ContentLength);
+                    }
+                    // make AttachmentModel
+                    AttachmentModels attachmentModel = new AttachmentModels {
+                        AttachedFile = attachmentData,
+                        FileName = filename,
+                        FileExtension = filename.Substring(filename.LastIndexOf(".")),
+                        PostId = postModel.Id
+                    };
+                    attachmentRepository.Add(attachmentModel);
                 }
             }
 
@@ -127,8 +150,7 @@ namespace ORUComSys.Controllers {
                 CategoryId = catId,
                 Forum = ForumType.Informal,
                 Content = postModel.Content,
-                PostDateTime = DateTime.Now,
-                AttachedFile = attachmentData,
+                PostDateTime = DateTime.Now
             };
 
             // add to db and save changes.
@@ -162,7 +184,8 @@ namespace ORUComSys.Controllers {
                     PostDateTime = post.PostDateTime,
                     CurrentUser = profileRepository.Get(User.Identity.GetUserId()),
                     Reactions = reactionRepository.GetAllReactionsByPostId(post.Id),
-                    Categories = categoryRepository.GetAll()
+                    Categories = categoryRepository.GetAll(),
+                    Attachments = attachmentRepository.GetAttachmentsByPostId(post.Id)
                 };
                 allPostViewModel.Add(postViewModel);
             }

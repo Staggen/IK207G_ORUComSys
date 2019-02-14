@@ -2,18 +2,20 @@
     console.log("Script loaded: forum-reactions.js");
 });
 
-$("#postWall").on("click", "#like-button", addReaction);
-$("#postWall").on("click", "#love-button", addReaction);
-$("#postWall").on("click", "#hate-button", addReaction);
-$("#postWall").on("click", "#xd-button", addReaction);
-$("#postWall").on("click", ".reaction-count", toggleReactionList);
+$("#postWall").on("click", ".like-button", addReaction);
+$("#postWall").on("click", ".love-button", addReaction);
+$("#postWall").on("click", ".hate-button", addReaction);
+$("#postWall").on("click", ".xd-button", addReaction);
+$("#postWall").on("click", ".reaction-count", toggleReactionListStepOne);
 $("#postWall").on("click", ".react-button", toggleReactions);
 
+var interactingWithPostId;
+
 function toggleReactions() {
-    var btnId = this.getAttribute("Id");
-    console.log(btnId);
+    var postId = this.getAttribute("data-post-id");
+    interactingWithPostId = postId;
     $("#reaction-popup").toggleClass("d-none");
-    var ref = $("*[id='" + btnId + "']");
+    var ref = this;
     var pop = $("#reaction-popup");
     new Popper(ref, pop, {
         placement: "top",
@@ -28,10 +30,10 @@ function toggleReactions() {
 }
 
 function addReaction() {
-    var postId = this.getAttribute("data-post-id");
     var reactionType = this.getAttribute("name");
+    console.log("Reaction type: " + reactionType)
 
-    reaction = { PostId: postId, Reaction: reactionType };
+    reaction = { PostId: interactingWithPostId, Reaction: reactionType };
 
     $.ajax({
         type: "POST",
@@ -47,21 +49,23 @@ function addReaction() {
         }
     });
     $("#reaction-popup").toggleClass("d-none");
-
 }
 
-function toggleReactionList() {
-    for (var i = 0; i < 2; i++) {
-        var postId = this.getAttribute("data-post-id");
-        var serviceUrl = "/Forum/GetReactionList/" + postId;
-        var request = $.post(serviceUrl);
-        request.done(function (data) {
-            $("#reaction-list-popup").html(data);
-        }).fail(() => {
-            console.log("Error: Failure to display reaction information");
-        });
-        var ref = this;
+function toggleReactionListStepOne() { // Inexplicably extremely important to split this process into two steps
+    var postId = this.getAttribute("data-post-id");
+    toggleReactionList(postId, this);
+}
+
+function toggleReactionList(postId, reference) {
+    var serviceUrl = "/Forum/GetReactionList/" + postId;
+    var request = $.post(serviceUrl);
+    request.done(function (data) {
+        $("#reaction-list-popup").html(data);
+
+        var ref = reference;
         var pop = $("#reaction-list-popup");
+        // Popper creation in the request.done block, in combination with the two-step process, is necessary for
+        // popper to appear in the correct position on the first click.
         new Popper(ref, pop, {
             placement: "top",
             modifiers: {
@@ -71,9 +75,12 @@ function toggleReactionList() {
                 }
             }
         });
-    }
-    $("#reaction-list-popup").toggleClass("d-none");
-    hideReactions();
+        $("#reaction-list-popup").toggleClass("d-none");
+        hideReactions();
+    }).fail(() => {
+        console.log("Error: Failure to display reaction information");
+    });
+
 }
 
 function hideReactions() {

@@ -1,9 +1,14 @@
 ﻿@using Microsoft.AspNet.Identity
-@if (Request.IsAuthenticated) {
-    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" })) {
+@if(Request.IsAuthenticated) {
+    using(Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" })) {
         @Html.AntiForgeryToken()
 
         <ul class="nav navbar-nav navbar-right">
+            <li class="nav-item">
+                <button type="button" class="btn btn-secondary" id="GlobalNotificationButton">
+                    Notifications <span class="badge badge-light" id="NotificationNumberSpan"></span>
+                </button>
+            </li>
             <li class="nav-item">
                 <a href="@Url.Action("Index", "Profile", new { Id = User.Identity.GetUserId() })" class="nav-link">@User.Identity.Name</a>
             </li>

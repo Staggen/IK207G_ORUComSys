@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Web;
 
 namespace ORUComSys.Models {
     public class PostViewModels {
@@ -20,7 +19,7 @@ namespace ORUComSys.Models {
 
         public DateTime PostDateTime { get; set; }
 
-        public HttpPostedFileBase AttachedFile { get; set; }
+        public List<AttachmentModels> Attachments { get; set; }
 
         public ProfileModels CurrentUser { get; set; }
 

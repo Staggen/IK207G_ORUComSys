@@ -245,30 +245,35 @@ namespace Datalayer.Repositories {
             context.SaveChanges();
 
             // Define Meeting Invites
-            MeetingInviteeModels invite1 = new MeetingInviteeModels {
+            MeetingInviteModels invite1 = new MeetingInviteModels {
                 ProfileId = eliasU.Id,
                 MeetingId = meeting1.Id,
-                MeetingAccepted = true
+                InviteDateTime = new DateTime(2019, 02, 12, 13, 37, 00),
+                Accepted = true
             };
-            MeetingInviteeModels invite2 = new MeetingInviteeModels {
+            MeetingInviteModels invite2 = new MeetingInviteModels {
                 ProfileId = eliasU.Id,
                 MeetingId = meeting2.Id,
-                MeetingAccepted = true
+                InviteDateTime = new DateTime(2019, 02, 12, 13, 38, 00),
+                Accepted = true
             };
-            MeetingInviteeModels invite3 = new MeetingInviteeModels {
+            MeetingInviteModels invite3 = new MeetingInviteModels {
                 ProfileId = oskarU.Id,
                 MeetingId = meeting1.Id,
-                MeetingAccepted = false
+                InviteDateTime = new DateTime(2019, 02, 12, 13, 39, 00),
+                Accepted = false
             };
-            MeetingInviteeModels invite4 = new MeetingInviteeModels {
+            MeetingInviteModels invite4 = new MeetingInviteModels {
                 ProfileId = patrikU.Id,
                 MeetingId = meeting1.Id,
-                MeetingAccepted = false
+                InviteDateTime = new DateTime(2019, 02, 12, 13, 40, 00),
+                Accepted = false
             };
-            MeetingInviteeModels invite5 = new MeetingInviteeModels {
+            MeetingInviteModels invite5 = new MeetingInviteModels {
                 ProfileId = oskarU.Id,
                 MeetingId = meeting2.Id,
-                MeetingAccepted = false
+                InviteDateTime = new DateTime(2019, 02, 12, 13, 41, 00),
+                Accepted = false
             };
 
             // Define Posts
@@ -287,7 +292,7 @@ namespace Datalayer.Repositories {
                 PostDateTime = new DateTime(2019, 02, 10, 18, 45, 00)
             };
 
-            context.MeetingInvitees.AddRange(new[] { invite1, invite2, invite3, invite4, invite5 });
+            context.MeetingInvites.AddRange(new[] { invite1, invite2, invite3, invite4, invite5 });
             context.Posts.AddRange(new[] { post1, post2 });
             context.SaveChanges();
 
