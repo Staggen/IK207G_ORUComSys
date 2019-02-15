@@ -185,6 +185,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AjaxApiController.cs" />
     <Compile Include="Controllers\CalendarController.cs" />
+    <Compile Include="Controllers\EmailController.cs" />
     <Compile Include="Controllers\ForumController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -196,7 +197,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\InviteViewModel.cs" />
+    <Compile Include="Models\EmailViewModels.cs" />
+    <Compile Include="Models\InviteViewModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\MeetingInviteViewModels.cs" />
     <Compile Include="Models\MeetingViewModels.cs" />
@@ -426,6 +428,7 @@
     <Content Include="Views\Meeting\Index.cshtml" />
     <Content Include="Views\Meeting\EditMeeting.cshtml" />
     <Content Include="Views\Notifications\_Notifications.cshtml" />
+    <Content Include="Views\Email\EmailView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

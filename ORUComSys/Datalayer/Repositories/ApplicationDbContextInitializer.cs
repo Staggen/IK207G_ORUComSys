@@ -41,8 +41,8 @@ namespace Datalayer.Repositories {
             manager.Create(darioU, "password"); // manager.Create(ApplicationUser user, string password);
 
             ApplicationUser eliasU = new ApplicationUser {
-                Email = "elias@orucomsys.com",
-                UserName = "elias@orucomsys.com"
+                Email = "elias.stagg@gmail.com",
+                UserName = "elias.stagg@gmail.com"
             };
             manager.Create(eliasU, "password"); // manager.Create(ApplicationUser user, string password);
 
@@ -115,7 +115,7 @@ namespace Datalayer.Repositories {
                 IsActivated = true,
                 IsAdmin = true,
                 PhoneNumber = 12345678,
-                Title = "Lord of the Universe",
+                Title = "Bugs'R'Us Manager",
                 Description = "Why do we get to set our own titles?",
                 ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png"),
                 LastLogin = DateTime.Now

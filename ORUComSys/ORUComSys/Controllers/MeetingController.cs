@@ -13,12 +13,18 @@ namespace ORUComSys.Controllers {
         private MeetingRepository meetingRepository;
         private MeetingInviteRepository meetingInviteRepository;
         private ProfileRepository profileRepository;
+        private UserRepository userRepository;
+
+        private EmailController emailController;
 
         public MeetingController() {
             ApplicationDbContext context = new ApplicationDbContext();
             meetingRepository = new MeetingRepository(context);
             meetingInviteRepository = new MeetingInviteRepository(context);
             profileRepository = new ProfileRepository(context);
+            userRepository = new UserRepository(context);
+
+            emailController = new EmailController();
         }
 
         public ActionResult Index() {
@@ -44,7 +50,7 @@ namespace ORUComSys.Controllers {
 
         [HttpPost]
         public ActionResult CreateMeeting(MeetingModels meeting) {
-            if (ModelState.IsValid) {
+            if(ModelState.IsValid) {
                 MeetingModels model = new MeetingModels {
                     CreatorId = User.Identity.GetUserId(),
                     Title = meeting.Title,
@@ -77,7 +83,7 @@ namespace ORUComSys.Controllers {
 
         [HttpPost]
         public ActionResult EditMeeting(MeetingModels meeting) {
-            if(ModelState.IsValid){
+            if(ModelState.IsValid) {
                 meeting.CreatorId = User.Identity.GetUserId();
                 meetingRepository.Edit(meeting);
                 meetingRepository.Save();
@@ -94,28 +100,38 @@ namespace ORUComSys.Controllers {
                 Profiles = allProfiles.OrderBy((p) => p.FirstName).ToList(),
                 Invites = allInvites
             };
+
             return View(inviteViewModel);
         }
 
         [HttpPost]
-        public ActionResult AddMeetingInvite(InviteViewModel invite) {
-            if (ModelState.IsValid) {
-                MeetingInviteModels model = new MeetingInviteModels {
+        public ActionResult AddMeetingInvite(InviteViewModels invite) {
+            if(ModelState.IsValid) {
+                MeetingInviteModels inviteModel = new MeetingInviteModels {
                     MeetingId = invite.MeetingId,
                     ProfileId = invite.ProfileId,
                     InviteDateTime = DateTime.Now,
                     Accepted = false
                 };
-                meetingInviteRepository.Add(model);
+                meetingInviteRepository.Add(inviteModel);
                 meetingInviteRepository.Save();
+
+                EmailViewModels emailView = new EmailViewModels {
+                    profile = profileRepository.Get(invite.ProfileId),
+                    meetingInvite = inviteModel
+                };
+
+                emailController.SendEmail(userRepository.GetEmailByUserId(invite.ProfileId), "New Notification - ORUComSys", View("EmailView", emailView).ToString());
+
                 return Json(new { result = true });
             }
+
             return Json(new { result = false });
         }
 
         [HttpPost]
-        public ActionResult RemoveMeetingInvite(InviteViewModel invite) {
-            if (ModelState.IsValid) {
+        public ActionResult RemoveMeetingInvite(InviteViewModels invite) {
+            if(ModelState.IsValid) {
                 MeetingInviteModels meetingInvite = meetingInviteRepository.GetMeetingInvite(invite.ProfileId, invite.MeetingId);
                 meetingInviteRepository.Remove(meetingInvite.Id);
                 meetingInviteRepository.Save();
@@ -126,7 +142,7 @@ namespace ORUComSys.Controllers {
 
         [HttpPost]
         public ActionResult AcceptMeetingInvite(int id) {
-            if (ModelState.IsValid) {
+            if(ModelState.IsValid) {
                 MeetingInviteModels meetingInvite = meetingInviteRepository.GetMeetingInvite(User.Identity.GetUserId(), id);
                 meetingInvite.Accepted = true;
                 meetingInviteRepository.Edit(meetingInvite);
@@ -138,7 +154,7 @@ namespace ORUComSys.Controllers {
 
         [HttpPost]
         public ActionResult DeclineMeetingInvite(int id) {
-            if (ModelState.IsValid) {
+            if(ModelState.IsValid) {
                 MeetingInviteModels meetingInvite = meetingInviteRepository.GetMeetingInvite(User.Identity.GetUserId(), id);
                 meetingInviteRepository.Remove(meetingInvite.Id);
                 meetingInviteRepository.Save();
