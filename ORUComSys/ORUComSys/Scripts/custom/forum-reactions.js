@@ -31,7 +31,6 @@ function toggleReactions() {
 
 function addReaction() {
     var reactionType = this.getAttribute("name");
-    console.log("Reaction type: " + reactionType)
 
     reaction = { PostId: interactingWithPostId, Reaction: reactionType };
 
@@ -42,10 +41,9 @@ function addReaction() {
         contentType: "application/json;charset=UTF-8",
         success: () => {
             Update_Posts(forumType);
-            console.log("Added reaction!");
         },
         error: () => {
-            alert("Error: Failure to add reaction");
+            console.log("Error: Failure to add reaction");
         }
     });
     $("#reaction-popup").toggleClass("d-none");
