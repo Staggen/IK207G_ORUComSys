@@ -198,6 +198,7 @@
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\EmailViewModels.cs" />
+    <Compile Include="Models\FollowingCategoryViewModels.cs" />
     <Compile Include="Models\InviteViewModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\MeetingInviteViewModels.cs" />
@@ -234,6 +235,7 @@
     <Content Include="Scripts\custom\forum-reactions.js" />
     <Content Include="Scripts\custom\global-notifications.js" />
     <Content Include="Scripts\custom\meeting-invites.js" />
+    <Content Include="Scripts\custom\forum-post-subscriptions.js" />
     <Content Include="Scripts\custom\profile.js" />
     <Content Include="Scripts\custom\search.js" />
     <Content Include="Scripts\esm\popper-utils.js" />

@@ -57,7 +57,6 @@
   <ItemGroup>
     <Compile Include="Models\CategoryModels.cs" />
     <Compile Include="Models\FollowingCategoryModels.cs" />
-    <Compile Include="Models\FollowingUserModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\MeetingInviteModels.cs" />
     <Compile Include="Models\MeetingModels.cs" />

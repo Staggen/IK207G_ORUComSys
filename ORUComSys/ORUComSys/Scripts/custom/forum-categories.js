@@ -6,6 +6,9 @@ $(".filter-checkbox").mouseup(filterPosts);
 
 function filterPosts() {
     $(this).button("toggle"); // Because the buttons don't behave, we have to fire it once the first thing we do, and once more the last thing we do.
+    if ($(this).hasClass("focus")) {
+        $(this).removeClass("focus");
+    }
     var posts = document.getElementsByClassName("category-label");
     var postArray = jQuery.makeArray(posts);
 

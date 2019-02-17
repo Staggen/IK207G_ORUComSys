@@ -1,7 +1,6 @@
 ﻿using Datalayer.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Diagnostics;
 
 namespace Datalayer.Repositories {
@@ -15,14 +14,9 @@ namespace Datalayer.Repositories {
             return new ApplicationDbContext();
         }
 
-        protected override void OnModelCreating(DbModelBuilder modelBuilder) {
-            //modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>(); // Enable cascade delete when you remove something that requires it.
-            base.OnModelCreating(modelBuilder);
-        }
-
         // Start of DbSet(s)
 
-        // Users
+        // Profiles
         public DbSet<ProfileModels> Profiles { get; set; }
         // Posts
         public DbSet<PostModels> Posts { get; set; }
@@ -36,6 +30,8 @@ namespace Datalayer.Repositories {
         //public DbSet<MeetingInviteeModels> ProposalInvitees { get; set; }
         // Reactions
         public DbSet<ReactionModels> Reactions { get; set; }
+        // Following
+        public DbSet<FollowingCategoryModels> FollowingCategories { get; set; }
 
         // End of DbSet(s)
     }

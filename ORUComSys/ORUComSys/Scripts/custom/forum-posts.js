@@ -53,7 +53,11 @@ function DownloadAttachmentStepTwo(attachmentName, filetype, bytes) {
     link.href = window.URL.createObjectURL(blob);
     var fileName = attachmentName;
     link.download = fileName;
+    document.body.appendChild(link);
     link.click();
+    setTimeout(function () {
+        document.body.removeChild(link);
+    }, 100);
 }
 
 function AdjustCounter() {

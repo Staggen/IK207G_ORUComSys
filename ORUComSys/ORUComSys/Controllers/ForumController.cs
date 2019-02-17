@@ -5,6 +5,7 @@ using ORUComSys.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
@@ -16,6 +17,7 @@ namespace ORUComSys.Controllers {
         private ProfileRepository profileRepository;
         private ReactionRepository reactionRepository;
         private CategoryRepository categoryRepository;
+        private FollowingCategoryRepository followingCategoryRepository;
 
         public ForumController() {
             ApplicationDbContext context = new ApplicationDbContext();
@@ -24,6 +26,7 @@ namespace ORUComSys.Controllers {
             profileRepository = new ProfileRepository(context);
             reactionRepository = new ReactionRepository(context);
             categoryRepository = new CategoryRepository(context);
+            followingCategoryRepository = new FollowingCategoryRepository(context);
         }
 
         public ActionResult Index() { // Select which forum you wish to enter
@@ -33,62 +36,49 @@ namespace ORUComSys.Controllers {
         [HttpGet]
         public ActionResult Formal() { // Formal forum
             ViewBag.Title = "Formal";
-
+            // Create a postViewModel with all the categories so the view has a model to loop through for the category checkboxes
             PostViewModels postViewModel = new PostViewModels {
                 Categories = categoryRepository.GetAll()
             };
-
             return View("FormalForum", postViewModel);
         }
         [HttpPost]
-        public ActionResult Formal(PostViewModels postModel) { // Formal forum
-
-            //var requestUrl = Request.RawUrl;  ////Probably a relic from when forums shared views.
-            //var forumType = requestUrl.Split(new string[] { "/Forum/" }, StringSplitOptions.RemoveEmptyEntries);
-            var catId = (int)postModel.Category;
-
-            if(catId.Equals(0)) {
-                catId = 5;
-                postModel.Category = CategoryType.Other;
+        public ActionResult Formal(PostViewModels postViewModel) { // Formal forum
+            int categoryId = (int)postViewModel.Category;
+            if(categoryId.Equals(0)) {
+                categoryId = 5;
             }
-
-            // check modelstate. REMOVED TO GET DEAFULT CATEGORY ASSIGNMENT TO WORK FOR NOW.
-
-            // get current user id (the poster's id).
             string currentUser = User.Identity.GetUserId();
-
             byte[] attachmentData = null;
             string filename = null;
             if(Request.Files["AttachedFile"].ContentLength >= 1) { // Check if a file is entered
                 HttpPostedFileBase attachedFile = Request.Files["AttachedFile"];
-                filename = attachedFile.FileName;
+                filename = attachedFile.FileName.Substring(attachedFile.FileName.LastIndexOf(@"\") + 1);
 
                 using(var binary = new BinaryReader(attachedFile.InputStream)) {
-                    //This is the byte-array we set as the ProfileImage property on the profile.
+                    // This is the byte-array we set as the ProfileImage property on the profile.
                     attachmentData = binary.ReadBytes(attachedFile.ContentLength);
                 }
-                // make AttachmentModel
+                // Make AttachmentModel
                 AttachmentModels attachmentModel = new AttachmentModels {
                     AttachedFile = attachmentData,
                     FileName = filename,
                     FileExtension = filename.Substring(filename.LastIndexOf(".")),
-                    PostId = postModel.Id
+                    PostId = postViewModel.Id
                 };
                 attachmentRepository.Add(attachmentModel);
             }
-
-            // convert to PostModels.
-            PostModels modelToSave = new PostModels {
-                Id = postModel.Id,
+            // Convert to PostModels.
+            PostModels postModel = new PostModels {
+                Id = postViewModel.Id,
                 PostFromId = currentUser,
-                CategoryId = catId,
+                CategoryId = categoryId,
                 Forum = ForumType.Formal,
-                Content = postModel.Content,
+                Content = postViewModel.Content,
                 PostDateTime = DateTime.Now
             };
-
-            // add to db and save changes.
-            postRepository.Add(modelToSave);
+            // Add to database and save changes.
+            postRepository.Add(postModel);
             postRepository.Save();
 
             return RedirectToAction("Formal");
@@ -97,7 +87,6 @@ namespace ORUComSys.Controllers {
         [HttpGet]
         public ActionResult Informal() { // Informal forum
             ViewBag.Title = "Informal";
-
             // Create a postViewModel with all the categories so the view has a model to loop through for the category checkboxes
             PostViewModels postViewModel = new PostViewModels {
                 Categories = categoryRepository.GetAll()
@@ -106,55 +95,46 @@ namespace ORUComSys.Controllers {
         }
 
         [HttpPost]
-        public ActionResult Informal(PostViewModels postModel) { // Formal forum
-
-            //var requestUrl = Request.RawUrl;  ////Probably a relic from when forums shared views.
-            //var forumType = requestUrl.Split(new string[] { "/Forum/" }, StringSplitOptions.RemoveEmptyEntries);
-            var catId = (int)postModel.Category;
-
-            if(catId.Equals(0)) {
-                catId = 5;
-                postModel.Category = CategoryType.Other;
+        public ActionResult Informal(PostViewModels postViewModel) { // Informal forum
+            var categoryId = (int)postViewModel.Category;
+            if(categoryId.Equals(0)) {
+                categoryId = 5;
             }
-            // check modelstate. REMOVED TO GET DEAFULT CATEGORY ASSIGNMENT TO WORK FOR NOW.
-
-            // get current user id (the poster's id).
             string currentUser = User.Identity.GetUserId();
-
             byte[] attachmentData = null;
             string filename = null;
             if(Request.Files["AttachedFile"].ContentLength >= 1) { // Check if a file is entered
                 for(int i = 0; i < Request.Files.Count; i++) {
                     HttpPostedFileBase attachedFile = Request.Files[i];
-                    filename = attachedFile.FileName;
+                    filename = attachedFile.FileName.Substring(attachedFile.FileName.LastIndexOf(@"\") + 1);
 
                     using(var binary = new BinaryReader(attachedFile.InputStream)) {
-                        //This is the byte-array we set as the ProfileImage property on the profile.
+                        // This is the byte-array we set as the ProfileImage property on the profile.
                         attachmentData = binary.ReadBytes(attachedFile.ContentLength);
                     }
-                    // make AttachmentModel
+                    // Make AttachmentModel
                     AttachmentModels attachmentModel = new AttachmentModels {
                         AttachedFile = attachmentData,
                         FileName = filename,
                         FileExtension = filename.Substring(filename.LastIndexOf(".")),
-                        PostId = postModel.Id
+                        PostId = postViewModel.Id
                     };
                     attachmentRepository.Add(attachmentModel);
                 }
             }
 
-            // convert to FormalPostModel.
-            PostModels modelToSave = new PostModels {
-                Id = postModel.Id,
+            // Convert to FormalPostModel.
+            PostModels postModel = new PostModels {
+                Id = postViewModel.Id,
                 PostFromId = currentUser,
-                CategoryId = catId,
+                CategoryId = categoryId,
                 Forum = ForumType.Informal,
-                Content = postModel.Content,
+                Content = postViewModel.Content,
                 PostDateTime = DateTime.Now
             };
 
-            // add to db and save changes.
-            postRepository.Add(modelToSave);
+            // Add to database and save changes.
+            postRepository.Add(postModel);
             postRepository.Save();
 
             return RedirectToAction("Informal");
@@ -162,12 +142,12 @@ namespace ORUComSys.Controllers {
 
         public PartialViewResult UpdatePosts(string Id) {
             // Check if the string argument is formal. If it is, set type to Formal, else set it to Informal.
-            ForumType type = string.Equals(Id, "Formal", System.StringComparison.OrdinalIgnoreCase) ? ForumType.Formal : ForumType.Informal;
+            ForumType type = string.Equals(Id, "Formal", StringComparison.OrdinalIgnoreCase) ? ForumType.Formal : ForumType.Informal;
             return PartialView("_ForumPosts", ConvertPostsToViewModels(type));
         }
 
         public PartialViewResult GetReactionList(int Id) {
-            var postReactions = reactionRepository.GetAllReactionsByPostId(Id);
+            List<ReactionModels> postReactions = reactionRepository.GetAllReactionsByPostId(Id);
             return PartialView("_ReactionList", postReactions);
         }
 
@@ -189,13 +169,65 @@ namespace ORUComSys.Controllers {
                 };
                 allPostViewModel.Add(postViewModel);
             }
-
             PostViewModelsForUsers postViewModelForUsers = new PostViewModelsForUsers {
                 PostList = allPostViewModel,
                 CurrentUser = profileRepository.Get(User.Identity.GetUserId())
             };
-
             return postViewModelForUsers;
+        }
+
+        [HttpPost]
+        public void SubscribeToPostCategories(FollowingCategoryViewModels vessel) {
+            string currentUserId = User.Identity.GetUserId();
+            // Get all post categories the user is currently subscribed to.
+            List<FollowingCategoryModels> FollowedCategories = followingCategoryRepository.GetAllFollowedCategoriesByUserId(currentUserId);
+            // Get all categories
+            List<CategoryModels> AllCategories = categoryRepository.GetAll();
+            if(vessel.CategoriesToFollow != null) {
+                // Take the input array and make it into a list, as they are easier to work with.
+                List<string> ActiveCategories = vessel.CategoriesToFollow.ToList();
+                // Unsubscribe from the categories which are not in the active selection
+                foreach(FollowingCategoryModels fc in FollowedCategories) {
+                    bool RemoveSubscription = true;
+                    foreach(string ac in ActiveCategories) {
+                        // Check if the currently followed category name equals the actively selected category name.
+                        if(AllCategories.Single((a) => a.Id.Equals(fc.CategoryId)).Name.Equals(ac)) {
+                            RemoveSubscription = false;
+                        }
+                    }
+                    // If a followed category does not match the active categories, remove it.
+                    if(RemoveSubscription) {
+                        followingCategoryRepository.Remove(fc.Id);
+                    }
+                }
+                // Subscribe to new active categories which do not match the current subscriptions
+                foreach(string ac in ActiveCategories) {
+                    bool AddSubscription = true;
+                    foreach(FollowingCategoryModels fc in FollowedCategories) {
+                        if(ac.Equals(AllCategories.Single((a) => a.Id.Equals(fc.CategoryId)).Name)) {
+                            AddSubscription = false;
+                        }
+                    }
+                    if(AddSubscription) {
+                        foreach(CategoryModels category in AllCategories) {
+                            if(ac.Equals(category.Name)) {
+                                FollowingCategoryModels model = new FollowingCategoryModels {
+                                    ProfileId = currentUserId,
+                                    CategoryId = category.Id
+                                };
+                                followingCategoryRepository.Add(model);
+                            }
+                        }
+                    }
+                }
+            } else {
+                // Unsubscribe from all post categories
+                foreach(FollowingCategoryModels fc in FollowedCategories) {
+                    followingCategoryRepository.Remove(fc.Id);
+                }
+            }
+            // Save changes in the database
+            followingCategoryRepository.Save();
         }
     }
 }

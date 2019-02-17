@@ -41,7 +41,7 @@
             <br />
             <br />
             <h4>Filter by Category</h4>
-            @foreach (var cat in Model.Categories) {
+            @foreach(var cat in Model.Categories) {
                 string checkBoxId = "checkBox-" + i;
                 <div class="btn-group-toggle mb-1" data-toggle="buttons">
                     <label class="btn btn-info active filter-checkbox">
@@ -50,6 +50,9 @@
                 </div>
                 i++;
             }
+            <div class="follow-wrapper">
+                <button class="btn btn-outline-primary" id="subscribe-btn">Subscribe</button>
+            </div>
         </div>
     </div>
 </div>
@@ -59,4 +62,5 @@
     <script src="~/Scripts/custom/forum-comments.js"></script>
     <script src="~/Scripts/custom/forum-categories.js"></script>
     <script src="~/Scripts/custom/forum-reactions.js"></script>
+    <script src="~/Scripts/custom/forum-post-subscriptions.js"></script>
 }
