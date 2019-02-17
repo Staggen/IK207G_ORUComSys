@@ -185,7 +185,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AjaxApiController.cs" />
     <Compile Include="Controllers\CalendarController.cs" />
-    <Compile Include="Controllers\EmailController.cs" />
+    <Compile Include="Controllers\EmailSupport.cs" />
     <Compile Include="Controllers\ForumController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -428,7 +428,8 @@
     <Content Include="Views\Meeting\Index.cshtml" />
     <Content Include="Views\Meeting\EditMeeting.cshtml" />
     <Content Include="Views\Notifications\_Notifications.cshtml" />
-    <Content Include="Views\Email\EmailView.cshtml" />
+    <Content Include="Views\Meeting\NotificationEmail.cshtml" />
+    <Content Include="Views\Meeting\InlineNotificationEmail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

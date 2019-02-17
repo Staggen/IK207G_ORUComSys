@@ -2,7 +2,8 @@
 
 namespace ORUComSys.Models {
     public class EmailViewModels {
-        public ProfileModels profile { get; set; }
-        public MeetingInviteModels meetingInvite { get; set; }
+        public ProfileModels Sender { get; set; }
+        public ProfileModels Recipient { get; set; }
+        public MeetingModels Meeting { get; set; }
     }
 }

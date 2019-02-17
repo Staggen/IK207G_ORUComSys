@@ -15,16 +15,12 @@ namespace ORUComSys.Controllers {
         private ProfileRepository profileRepository;
         private UserRepository userRepository;
 
-        private EmailController emailController;
-
         public MeetingController() {
             ApplicationDbContext context = new ApplicationDbContext();
             meetingRepository = new MeetingRepository(context);
             meetingInviteRepository = new MeetingInviteRepository(context);
             profileRepository = new ProfileRepository(context);
             userRepository = new UserRepository(context);
-
-            emailController = new EmailController();
         }
 
         public ActionResult Index() {
@@ -40,7 +36,6 @@ namespace ORUComSys.Controllers {
                 MyCreatedMeetings = myCreatedMeetings,
                 MyMeetings = myMeetings
             };
-
             return View(model);
         }
 
@@ -116,12 +111,18 @@ namespace ORUComSys.Controllers {
                 meetingInviteRepository.Add(inviteModel);
                 meetingInviteRepository.Save();
 
-                EmailViewModels emailView = new EmailViewModels {
-                    profile = profileRepository.Get(invite.ProfileId),
-                    meetingInvite = inviteModel
+                // Send notification email
+                EmailViewModels emailModel = new EmailViewModels {
+                    Sender = profileRepository.Get(User.Identity.GetUserId()),
+                    Recipient = profileRepository.Get(invite.ProfileId),
+                    Meeting = meetingRepository.Get(invite.MeetingId)
                 };
 
-                emailController.SendEmail(userRepository.GetEmailByUserId(invite.ProfileId), "New Notification - ORUComSys", View("EmailView", emailView).ToString());
+                string viewPath = "~/Views/Meeting/InlineNotificationEmail.cshtml";
+                string recipient = userRepository.GetEmailByUserId(invite.ProfileId);
+                string subject = "New Meeting Invite - ORUComSys";
+
+                EmailSupport.SendNotificationEmail(ControllerContext, viewPath, emailModel, recipient, subject);
 
                 return Json(new { result = true });
             }
@@ -161,6 +162,32 @@ namespace ORUComSys.Controllers {
                 return Json(new { result = true });
             }
             return Json(new { result = false });
+        }
+
+        public ActionResult NotificationEmail() { // JUST FOR TESTING PURPOSES
+            ProfileModels sender = profileRepository.Get(User.Identity.GetUserId());
+            ProfileModels recipient = profileRepository.Get("b83ed736-7ea9-43be-bc41-fd4f1851b7c3"); // = Elias Stagg's profile
+            MeetingModels meeting = meetingRepository.Get(3);
+
+            EmailViewModels emailModel = new EmailViewModels {
+                Sender = sender,
+                Recipient = recipient,
+                Meeting = meeting
+            };
+            return View(emailModel);
+        }
+
+        public ActionResult InlineNotificationEmail() { // JUST FOR TESTING PURPOSES
+            ProfileModels sender = profileRepository.Get(User.Identity.GetUserId());
+            ProfileModels recipient = profileRepository.Get("b83ed736-7ea9-43be-bc41-fd4f1851b7c3"); // = Elias Stagg's profile
+            MeetingModels meeting = meetingRepository.Get(3);
+
+            EmailViewModels emailModel = new EmailViewModels {
+                Sender = sender,
+                Recipient = recipient,
+                Meeting = meeting
+            };
+            return View(emailModel);
         }
     }
 }
