@@ -21,7 +21,9 @@
                     </div>
                     <div style="box-sizing: border-box;background-color: #f8f9fa!important;padding: .5rem!important;color: #343a40!important;">
                         Content: @Model.Post.Content<br style="box-sizing: border-box;"><br style="box-sizing: border-box;">
-                        Attachment List:<br style="box-sizing: border-box;">
+                        @if(Model.Attachments.Count > 0) {
+                            <span>Attachment List:</span><br style = "box-sizing: border-box;">
+                        }
                         @foreach(var attachment in Model.Attachments) {
                             @attachment.FileName<br style="box-sizing: border-box;">
                         }

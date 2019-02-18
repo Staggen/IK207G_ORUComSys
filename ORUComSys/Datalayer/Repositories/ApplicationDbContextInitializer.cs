@@ -93,7 +93,7 @@ namespace Datalayer.Repositories {
                 Title = "Lord of the Universe",
                 Description = "Why do we get to set our own titles?",
                 ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png"),
-                LastLogin = DateTime.Now
+                LastLogout = DateTime.Now
             };
 
             ProfileModels darioP = new ProfileModels {
@@ -105,7 +105,7 @@ namespace Datalayer.Repositories {
                 Title = "Lord of the Universe",
                 Description = "Why do we get to set our own titles?",
                 ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png"),
-                LastLogin = DateTime.Now
+                LastLogout = DateTime.Now
             };
 
             ProfileModels eliasP = new ProfileModels {
@@ -118,7 +118,7 @@ namespace Datalayer.Repositories {
                 Title = "Bugs'R'Us Manager",
                 Description = "Why do we get to set our own titles?",
                 ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png"),
-                LastLogin = DateTime.Now
+                LastLogout = DateTime.Now
             };
 
             ProfileModels moazP = new ProfileModels {
@@ -130,7 +130,7 @@ namespace Datalayer.Repositories {
                 Title = "Lord of the Universe",
                 Description = "Why do we get to set our own titles?",
                 ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png"),
-                LastLogin = DateTime.Now
+                LastLogout = DateTime.Now
             };
 
             ProfileModels nicoP = new ProfileModels {
@@ -142,7 +142,7 @@ namespace Datalayer.Repositories {
                 Title = "Lord of the Universe",
                 Description = "Why do we get to set our own titles?",
                 ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png"),
-                LastLogin = DateTime.Now
+                LastLogout = DateTime.Now
             };
 
             ProfileModels oskarP = new ProfileModels {
@@ -155,7 +155,7 @@ namespace Datalayer.Repositories {
                 Title = "Lord of the Universe",
                 Description = "Why do we get to set our own titles?",
                 ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png"),
-                LastLogin = DateTime.Now
+                LastLogout = DateTime.Now
             };
 
             ProfileModels patrikP = new ProfileModels {
@@ -167,7 +167,7 @@ namespace Datalayer.Repositories {
                 Title = "Lord of the Universe",
                 Description = "Why do we get to set our own titles?",
                 ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png"),
-                LastLogin = DateTime.Now
+                LastLogout = DateTime.Now
             };
 
             ProfileModels pernillaP = new ProfileModels {
@@ -179,7 +179,7 @@ namespace Datalayer.Repositories {
                 Title = "Lord of the Universe",
                 Description = "Why do we get to set our own titles?",
                 ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png"),
-                LastLogin = DateTime.Now
+                LastLogout = DateTime.Now
             };
 
             ProfileModels salehP = new ProfileModels {
@@ -191,7 +191,7 @@ namespace Datalayer.Repositories {
                 Title = "Lord of the Universe",
                 Description = "Why do we get to set our own titles?",
                 ProfileImage = SetInitializerProfilePicture("/Content/Images/defaultAvatar.png"),
-                LastLogin = DateTime.Now
+                LastLogout = DateTime.Now
             };
 
             // Define Categories

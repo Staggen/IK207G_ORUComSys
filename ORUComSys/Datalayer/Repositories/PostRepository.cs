@@ -19,9 +19,8 @@ namespace Datalayer.Repositories {
             return items.Where((x) => x.PostFromId.Equals(userId)).OrderByDescending((p) => p.PostDateTime).First();
         }
         
-        public List<PostModels> GetAllPostsInCategorySinceLastUserLoginByUserId(List<FollowingCategoryModels> followedCategories, DateTime lastLogin) {
-            // ERROR - ShitInProgress.
-            return items.Where((p) => followedCategories.Any((c) => c.CategoryId.Equals(p.CategoryId)) && p.PostDateTime > lastLogin).ToList();
+        public List<PostModels> GetAllPostsInCategorySinceLastUserLoginByUserId(List<int> followedCategories, DateTime lastLogout, string userId) {
+            return items.Where((p) => followedCategories.Any((c) => c.Equals(p.CategoryId)) && p.PostDateTime > lastLogout && !p.PostFromId.Equals(userId)).ToList();
         }
     }
 }

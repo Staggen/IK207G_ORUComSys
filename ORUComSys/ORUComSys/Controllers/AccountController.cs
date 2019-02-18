@@ -72,11 +72,9 @@ namespace ORUComSys.Controllers {
             switch (result) {
                 case SignInStatus.Success:
                     string currentUserId = userRepository.GetUserIdByEmail(model.Email);
-                    ProfileModels profile = profileRepository.Get(currentUserId);
                     if (!profileRepository.IfProfileExists(currentUserId)) {
                         return RedirectToAction("Create", "Profile"); // If user has no profile, they get to create one
                     }
-                    profile.LastLogin = DateTime.Now;
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
@@ -351,6 +349,10 @@ namespace ORUComSys.Controllers {
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult LogOff() {
+            ProfileModels profile = profileRepository.Get(User.Identity.GetUserId());
+            profile.LastLogout = DateTime.Now;
+            profileRepository.Edit(profile);
+            profileRepository.Save();
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("Index", "Home");
         }

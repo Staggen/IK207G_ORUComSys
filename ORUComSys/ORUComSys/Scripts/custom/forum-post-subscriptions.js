@@ -1,5 +1,5 @@
 ﻿$(document).ready(() => {
-    console.log("Script loaded: post-category-subscriptions.js");
+    console.log("Script loaded: forum-post-subscriptions.js");
 });
 
 $(".follow-wrapper").on("click", "#subscribe-btn", SubscribeToPostCategories);

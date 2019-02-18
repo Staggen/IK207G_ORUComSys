@@ -28,8 +28,8 @@ namespace ORUComSys.Controllers {
             ProfileModels profile = profileRepository.Get(currentUserId);
             // Get all meeting invites for the profile id, then select only the ones which have not been accepted.
             List<MeetingInviteModels> meetingInvites = meetingInviteRepository.GetAllMeetingInvitesForProfileId(currentUserId).Where((i) => !i.Accepted).ToList();
-            List<FollowingCategoryModels> fc = followingCategoryRepository.GetAllFollowedCategoriesByUserId(currentUserId);
-            List<PostModels> newPosts = postRepository.GetAllPostsInCategorySinceLastUserLoginByUserId(fc, profile.LastLogin);
+            List<int> fcIds = followingCategoryRepository.GetAllFollowedCategoriesByUserId(currentUserId).Select((fc) => fc.CategoryId).ToList();
+            List<PostModels> newPosts = postRepository.GetAllPostsInCategorySinceLastUserLoginByUserId(fcIds, profile.LastLogout, currentUserId);
 
             return Json(new { Number = meetingInvites.Count + newPosts.Count });
         }
@@ -41,8 +41,8 @@ namespace ORUComSys.Controllers {
             ProfileModels profile = profileRepository.Get(currentUserId);
             // Get all meeting invites for the profile id, then select only the ones which have not been accepted.
             List<MeetingInviteModels> meetingInvites = meetingInviteRepository.GetAllMeetingInvitesForProfileId(currentUserId).Where((i) => !i.Accepted).ToList();
-            List<FollowingCategoryModels> fc = followingCategoryRepository.GetAllFollowedCategoriesByUserId(currentUserId);
-            List<PostModels> newPosts = postRepository.GetAllPostsInCategorySinceLastUserLoginByUserId(fc, profile.LastLogin).OrderByDescending((p) => p.PostDateTime).ToList();
+            List<int> fcIds = followingCategoryRepository.GetAllFollowedCategoriesByUserId(currentUserId).Select((fc) => fc.CategoryId).ToList();
+            List<PostModels> newPosts = postRepository.GetAllPostsInCategorySinceLastUserLoginByUserId(fcIds, profile.LastLogout, currentUserId).OrderByDescending((p) => p.PostDateTime).ToList();
             List<ProfileModels> profiles = new List<ProfileModels>();
             foreach(var post in newPosts) {
                 profiles.Add(profileRepository.Get(post.PostFromId));
@@ -51,7 +51,7 @@ namespace ORUComSys.Controllers {
             NotificationsViewModels notifications = new NotificationsViewModels {
                 Invites = meetingInvites.OrderByDescending((i) => i.InviteDateTime).ToList(),
                 Posts = newPosts,
-                PostFrom = profiles
+                PostFrom = profiles.Distinct().ToList()
             };
 
             return PartialView("_Notifications", notifications);

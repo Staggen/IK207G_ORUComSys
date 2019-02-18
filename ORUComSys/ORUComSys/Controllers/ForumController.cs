@@ -50,7 +50,7 @@ namespace ORUComSys.Controllers {
             if(categoryId.Equals(0)) {
                 categoryId = 5;
             }
-            string currentUser = User.Identity.GetUserId();
+            string currentUserId = User.Identity.GetUserId();
             byte[] attachmentData = null;
             string filename = null;
             if(Request.Files["AttachedFile"].ContentLength >= 1) { // Check if a file is entered
@@ -73,7 +73,7 @@ namespace ORUComSys.Controllers {
             // Convert to PostModels.
             PostModels postModel = new PostModels {
                 Id = postViewModel.Id,
-                PostFromId = currentUser,
+                PostFromId = currentUserId,
                 CategoryId = categoryId,
                 Forum = ForumType.Formal,
                 Content = postViewModel.Content,
@@ -90,6 +90,9 @@ namespace ORUComSys.Controllers {
             List<AttachmentModels> attachments = attachmentRepository.GetAttachmentsByPostId(emailPost.Id);
             CategoryModels category = categoryRepository.Get(emailPost.CategoryId);
             foreach(string followerId in FollowerIds) {
+                if(followerId.Equals(currentUserId)) {
+                    continue; // Don't send emails to yourself about your own posts...
+                }
                 EmailViewModels emailModel = new EmailViewModels {
                     Sender = sender,
                     Recipient = profileRepository.Get(followerId),
@@ -122,7 +125,7 @@ namespace ORUComSys.Controllers {
             if(categoryId.Equals(0)) {
                 categoryId = 5;
             }
-            string currentUser = User.Identity.GetUserId();
+            string currentUserId = User.Identity.GetUserId();
             byte[] attachmentData = null;
             string filename = null;
             if(Request.Files["AttachedFile"].ContentLength >= 1) { // Check if a file is entered
@@ -148,7 +151,7 @@ namespace ORUComSys.Controllers {
             // Convert to FormalPostModel.
             PostModels postModel = new PostModels {
                 Id = postViewModel.Id,
-                PostFromId = currentUser,
+                PostFromId = currentUserId,
                 CategoryId = categoryId,
                 Forum = ForumType.Informal,
                 Content = postViewModel.Content,
@@ -166,6 +169,9 @@ namespace ORUComSys.Controllers {
             List<AttachmentModels> attachments = attachmentRepository.GetAttachmentsByPostId(emailPost.Id);
             CategoryModels category = categoryRepository.Get(emailPost.CategoryId);
             foreach(string followerId in FollowerIds) {
+                if(followerId.Equals(currentUserId)) {
+                    continue; // Don't send emails to yourself about your own posts...
+                }
                 EmailViewModels emailModel = new EmailViewModels {
                     Sender = sender,
                     Recipient = profileRepository.Get(followerId),

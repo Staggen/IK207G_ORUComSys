@@ -33,7 +33,7 @@ namespace Datalayer.Models {
 
         public bool IsActivated { get; set; } = true; // Maybe not set to default here?
 
-        public DateTime LastLogin { get; set; }
+        public DateTime LastLogout { get; set; }
 
         [Display(Name = "Admin")]
         public bool IsAdmin { get; set; }
