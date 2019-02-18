@@ -430,8 +430,9 @@
     <Content Include="Views\Meeting\Index.cshtml" />
     <Content Include="Views\Meeting\EditMeeting.cshtml" />
     <Content Include="Views\Notifications\_Notifications.cshtml" />
-    <Content Include="Views\Meeting\NotificationEmail.cshtml" />
-    <Content Include="Views\Meeting\InlineNotificationEmail.cshtml" />
+    <Content Include="Views\Forum\NotificationEmailTemplate.cshtml" />
+    <Content Include="Views\Meeting\NewMeetingNotificationEmail.cshtml" />
+    <Content Include="Views\Forum\NewPostNotificationEmail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -59,8 +59,8 @@ namespace Datalayer.Repositories {
             manager.Create(nicoU, "password"); // manager.Create(ApplicationUser user, string password);
 
             ApplicationUser oskarU = new ApplicationUser {
-                Email = "oskar@orucomsys.com",
-                UserName = "oskar@orucomsys.com"
+                Email = "orre.b3000@gmail.com",
+                UserName = "orre.b3000@gmail.com"
             };
             manager.Create(oskarU, "password"); // manager.Create(ApplicationUser user, string password);
 

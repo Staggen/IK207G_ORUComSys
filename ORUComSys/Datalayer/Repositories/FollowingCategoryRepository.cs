@@ -7,7 +7,11 @@ namespace Datalayer.Repositories {
         public FollowingCategoryRepository(ApplicationDbContext context) : base(context) { }
 
         public List<FollowingCategoryModels> GetAllFollowedCategoriesByUserId(string profileId) {
-            return items.Where((f) => f.ProfileId.Equals(profileId)).ToList();
+            return items.Where((fc) => fc.ProfileId.Equals(profileId)).ToList();
+        }
+
+        public List<string> GetAllUsersByCategory(int categoryId) {
+            return items.Where((fc) => fc.CategoryId.Equals(categoryId)).Select((p) => p.ProfileId).ToList();
         }
     }
 }

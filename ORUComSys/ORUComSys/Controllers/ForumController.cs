@@ -18,6 +18,7 @@ namespace ORUComSys.Controllers {
         private ReactionRepository reactionRepository;
         private CategoryRepository categoryRepository;
         private FollowingCategoryRepository followingCategoryRepository;
+        private UserRepository userRepository;
 
         public ForumController() {
             ApplicationDbContext context = new ApplicationDbContext();
@@ -27,6 +28,7 @@ namespace ORUComSys.Controllers {
             reactionRepository = new ReactionRepository(context);
             categoryRepository = new CategoryRepository(context);
             followingCategoryRepository = new FollowingCategoryRepository(context);
+            userRepository = new UserRepository(context);
         }
 
         public ActionResult Index() { // Select which forum you wish to enter
@@ -80,6 +82,26 @@ namespace ORUComSys.Controllers {
             // Add to database and save changes.
             postRepository.Add(postModel);
             postRepository.Save();
+
+            // Send notification email
+            List<string> FollowerIds = followingCategoryRepository.GetAllUsersByCategory(categoryId);
+            ProfileModels sender = profileRepository.Get(User.Identity.GetUserId());
+            PostModels emailPost = postRepository.GetLastPostCreatedByUserId(User.Identity.GetUserId());
+            List<AttachmentModels> attachments = attachmentRepository.GetAttachmentsByPostId(emailPost.Id);
+            CategoryModels category = categoryRepository.Get(emailPost.CategoryId);
+            foreach(string followerId in FollowerIds) {
+                EmailViewModels emailModel = new EmailViewModels {
+                    Sender = sender,
+                    Recipient = profileRepository.Get(followerId),
+                    Post = emailPost,
+                    Attachments = attachments,
+                    CategoryName = category.Name
+                };
+                string viewPath = "~/Views/Forum/NewPostNotificationEmail.cshtml";
+                string recipient = userRepository.GetEmailByUserId(followerId);
+                string subject = "New Post In Category You Follow - ORUComSys";
+                EmailSupport.SendNotificationEmail(ControllerContext, viewPath, emailModel, recipient, subject);
+            }
 
             return RedirectToAction("Formal");
         }
@@ -136,6 +158,26 @@ namespace ORUComSys.Controllers {
             // Add to database and save changes.
             postRepository.Add(postModel);
             postRepository.Save();
+
+            // Send notification email
+            List<string> FollowerIds = followingCategoryRepository.GetAllUsersByCategory(categoryId);
+            ProfileModels sender = profileRepository.Get(User.Identity.GetUserId());
+            PostModels emailPost = postRepository.GetLastPostCreatedByUserId(User.Identity.GetUserId());
+            List<AttachmentModels> attachments = attachmentRepository.GetAttachmentsByPostId(emailPost.Id);
+            CategoryModels category = categoryRepository.Get(emailPost.CategoryId);
+            foreach(string followerId in FollowerIds) {
+                EmailViewModels emailModel = new EmailViewModels {
+                    Sender = sender,
+                    Recipient = profileRepository.Get(followerId),
+                    Post = emailPost,
+                    Attachments = attachments,
+                    CategoryName = category.Name
+                };
+                string viewPath = "~/Views/Forum/NewPostNotificationEmail.cshtml";
+                string recipient = userRepository.GetEmailByUserId(followerId);
+                string subject = "New Post In Category You Follow - ORUComSys";
+                EmailSupport.SendNotificationEmail(ControllerContext, viewPath, emailModel, recipient, subject);
+            }
 
             return RedirectToAction("Informal");
         }

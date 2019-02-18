@@ -1,14 +1,40 @@
 ﻿@model ORUComSys.Models.NotificationsViewModels
 
 <div class="bg-secondary rounded list-group p-2">
-    @if(!Model.Invites.Count.Equals(0)) {
-        foreach(var invite in Model.Invites) {
-            if(!invite.Accepted) {
-                <a href="@Url.Action("Index", "Meeting")" class="list-group-item list-group-item-action">
-                    <div>
-                        Meeting Invite: @invite.Meeting.Title
-                    </div>
-                </a>
+    @if(!Model.Invites.Count.Equals(0) && !Model.Posts.Count.Equals(0)) {
+        if(!Model.Invites.Count.Equals(0)) {
+            <span class="bg-light text-dark">Pending Meeting Invites:</span><br />
+            foreach(var invite in Model.Invites) {
+                if(!invite.Accepted) {
+                    <a href="@Url.Action("Index", "Meeting")" class="list-group-item list-group-item-action">
+                        <div>
+                            Meeting Invite: @invite.Meeting.Title
+                        </div>
+                    </a>
+                }
+            }
+        }
+        if(!Model.Posts.Count.Equals(0)) {
+            <span class="bg-light text-dark">Post Notifications:</span><br />
+            foreach(var post in Model.Posts) {
+                switch(post.Forum) {
+                    case Datalayer.Models.ForumType.Formal:
+                        <a href="@Url.Action("Formal", "Forum")" class="list-group-item list-group-item-action">
+                            <div>
+                                New Post By: @Model.PostFrom.Single((pf) => pf.Id.Equals(post.PostFromId)).FirstName @Model.PostFrom.Single((pf) => pf.Id.Equals(post.PostFromId)).FirstName
+                                Forum: @post.Forum
+                            </div>
+                        </a>
+                        break;
+                    case Datalayer.Models.ForumType.Informal:
+                        <a href="@Url.Action("Informal", "Forum")" class="list-group-item list-group-item-action">
+                            <div>
+                                New Post By: @Model.PostFrom.Single((pf) => pf.Id.Equals(post.PostFromId)).FirstName @Model.PostFrom.Single((pf) => pf.Id.Equals(post.PostFromId)).FirstName
+                                Forum: @post.Forum
+                            </div>
+                        </a>
+                        break;
+                }
             }
         }
     } else {

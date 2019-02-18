@@ -95,7 +95,6 @@ namespace ORUComSys.Controllers {
                 Profiles = allProfiles.OrderBy((p) => p.FirstName).ToList(),
                 Invites = allInvites
             };
-
             return View(inviteViewModel);
         }
 
@@ -110,18 +109,15 @@ namespace ORUComSys.Controllers {
                 };
                 meetingInviteRepository.Add(inviteModel);
                 meetingInviteRepository.Save();
-
                 // Send notification email
                 EmailViewModels emailModel = new EmailViewModels {
                     Sender = profileRepository.Get(User.Identity.GetUserId()),
                     Recipient = profileRepository.Get(invite.ProfileId),
                     Meeting = meetingRepository.Get(invite.MeetingId)
                 };
-
-                string viewPath = "~/Views/Meeting/InlineNotificationEmail.cshtml";
+                string viewPath = "~/Views/Meeting/NewMeetingNotificationEmail.cshtml";
                 string recipient = userRepository.GetEmailByUserId(invite.ProfileId);
                 string subject = "New Meeting Invite - ORUComSys";
-
                 EmailSupport.SendNotificationEmail(ControllerContext, viewPath, emailModel, recipient, subject);
 
                 return Json(new { result = true });
@@ -162,32 +158,6 @@ namespace ORUComSys.Controllers {
                 return Json(new { result = true });
             }
             return Json(new { result = false });
-        }
-
-        public ActionResult NotificationEmail() { // JUST FOR TESTING PURPOSES
-            ProfileModels sender = profileRepository.Get(User.Identity.GetUserId());
-            ProfileModels recipient = profileRepository.Get("b83ed736-7ea9-43be-bc41-fd4f1851b7c3"); // = Elias Stagg's profile
-            MeetingModels meeting = meetingRepository.Get(3);
-
-            EmailViewModels emailModel = new EmailViewModels {
-                Sender = sender,
-                Recipient = recipient,
-                Meeting = meeting
-            };
-            return View(emailModel);
-        }
-
-        public ActionResult InlineNotificationEmail() { // JUST FOR TESTING PURPOSES
-            ProfileModels sender = profileRepository.Get(User.Identity.GetUserId());
-            ProfileModels recipient = profileRepository.Get("b83ed736-7ea9-43be-bc41-fd4f1851b7c3"); // = Elias Stagg's profile
-            MeetingModels meeting = meetingRepository.Get(3);
-
-            EmailViewModels emailModel = new EmailViewModels {
-                Sender = sender,
-                Recipient = recipient,
-                Meeting = meeting
-            };
-            return View(emailModel);
         }
     }
 }

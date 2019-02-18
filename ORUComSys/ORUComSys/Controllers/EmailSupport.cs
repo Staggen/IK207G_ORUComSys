@@ -33,7 +33,6 @@ namespace ORUComSys.Controllers {
         public static void SendNotificationEmail(ControllerContext controllerContext, string viewPath, object model, string recipient, string subject) {
             MailAddress senderAddress = new MailAddress("do-not-reply@staggentreprises.com");
             MailAddress fromAddress = new MailAddress("do-not-reply@orucomsys.com");
-            SmtpClient smtpClient = new SmtpClient();
             // Rendering the view to a string
             string requestBody = RazorViewToString.Render(controllerContext, viewPath, model);
             // Create the email
@@ -47,12 +46,13 @@ namespace ORUComSys.Controllers {
             // Add recipient
             email.To.Add(new MailAddress(recipient));
             // Send the email
-            smtpClient.Send(email);
+            using(SmtpClient smtpClient = new SmtpClient()) {
+                smtpClient.Send(email);
+            }
         }
         public static void SendNotificationEmail(ControllerContext controllerContext, string viewPath, object model, List<string> recipients, string subject) {
             MailAddress senderAddress = new MailAddress("do-not-reply@staggentreprises.com");
             MailAddress fromAddress = new MailAddress("do-not-reply@orucomsys.com");
-            SmtpClient smtpClient = new SmtpClient();
             // Rendering the view to a string
             string requestBody = RazorViewToString.Render(controllerContext, viewPath, model);
             // Create the email
@@ -68,7 +68,9 @@ namespace ORUComSys.Controllers {
                 email.To.Add(new MailAddress(recipient));
             }
             // Send the email
-            smtpClient.Send(email);
+            using(SmtpClient smtpClient = new SmtpClient()) {
+                smtpClient.Send(email);
+            }
         }
     }
 }
