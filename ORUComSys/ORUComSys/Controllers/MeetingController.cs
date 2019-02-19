@@ -21,20 +21,27 @@ namespace ORUComSys.Controllers {
             meetingInviteRepository = new MeetingInviteRepository(context);
             profileRepository = new ProfileRepository(context);
             userRepository = new UserRepository(context);
+            // ERROR: User.Identity is only set ONE request after login, and this controller is instanciated before the request to Controller/Index is completed, thus you can not access User.Identity.GetUserId() in here this early...
+            // Stop user doesn't have a profile, make them create one!
+            //if(!profileRepository.IfProfileExists(User.Identity.GetUserId())) {
+            //    RedirectToAction("Create", "Profile");
+            //}
         }
 
         public ActionResult Index() {
             string currentUserId = User.Identity.GetUserId();
-            List<MeetingInviteModels> meetingInvites = meetingInviteRepository.GetAllMeetingInvitesForProfileId(currentUserId);
-            List<int> myMeetingIds = meetingInvites.Where(meetingInvite => meetingInvite.ProfileId.Equals(currentUserId)).Select(meetingInvite => meetingInvite.MeetingId).ToList();
-            List<MeetingModels> myCreatedMeetings = meetingRepository.GetAllMeetingsByCreatorId(currentUserId);
+            List<MeetingInviteModels> myMeetingInvites = meetingInviteRepository.GetAllMeetingInvitesForProfileId(currentUserId);
+            List<int> myMeetingIds = myMeetingInvites.Where(meetingInvite => meetingInvite.ProfileId.Equals(currentUserId)).Select(meetingInvite => meetingInvite.MeetingId).ToList();
             List<MeetingModels> myMeetings = meetingRepository.GetListOfMeetingsByMeetingIds(myMeetingIds);
+            List<MeetingModels> myCreatedMeetings = meetingRepository.GetAllMeetingsByCreatorId(currentUserId);
+            List<MeetingInviteModels> meetingInvites = meetingInviteRepository.GetAllInvitesByMeetingIds(myMeetingIds).Where(invite => invite.Accepted).ToList();
 
             MeetingViewModels model = new MeetingViewModels {
                 ProfileId = currentUserId,
-                Invites = meetingInvites,
+                MyMeetings = myMeetings,
                 MyCreatedMeetings = myCreatedMeetings,
-                MyMeetings = myMeetings
+                MeetingInvites = meetingInvites,
+                MyMeetingInvites = myMeetingInvites
             };
             return View(model);
         }
@@ -140,25 +147,25 @@ namespace ORUComSys.Controllers {
 
         [HttpPost]
         public ActionResult AcceptMeetingInvite(int id) {
-            if(ModelState.IsValid) {
-                MeetingInviteModels meetingInvite = meetingInviteRepository.GetMeetingInvite(User.Identity.GetUserId(), id);
-                meetingInvite.Accepted = true;
-                meetingInviteRepository.Edit(meetingInvite);
-                meetingInviteRepository.Save();
-                return Json(new { result = true });
-            }
-            return Json(new { result = false });
+            MeetingInviteModels meetingInvite = meetingInviteRepository.GetMeetingInvite(User.Identity.GetUserId(), id);
+            meetingInvite.Accepted = true;
+            meetingInviteRepository.Edit(meetingInvite);
+            meetingInviteRepository.Save();
+            return Json(new { result = true });
         }
 
         [HttpPost]
         public ActionResult DeclineMeetingInvite(int id) {
-            if(ModelState.IsValid) {
-                MeetingInviteModels meetingInvite = meetingInviteRepository.GetMeetingInvite(User.Identity.GetUserId(), id);
-                meetingInviteRepository.Remove(meetingInvite.Id);
-                meetingInviteRepository.Save();
-                return Json(new { result = true });
-            }
-            return Json(new { result = false });
+            MeetingInviteModels meetingInvite = meetingInviteRepository.GetMeetingInvite(User.Identity.GetUserId(), id);
+            meetingInviteRepository.Remove(meetingInvite.Id);
+            meetingInviteRepository.Save();
+            return Json(new { result = true });
+        }
+
+        [HttpPost]
+        public PartialViewResult GetParticipantsContent(int id) {
+            List<MeetingInviteModels> meetingInvites = meetingInviteRepository.GetAllInvitesByMeetingId(id).Where(invite => invite.Accepted).ToList();
+            return PartialView("_ParticipantsList", meetingInvites);
         }
     }
 }

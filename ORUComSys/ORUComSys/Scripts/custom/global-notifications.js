@@ -1,9 +1,6 @@
 ﻿$(document).ready(() => {
     console.log("Script loaded: global-notifications.js");
     SetNumberOfNotifications();
-    // The div needs to be toggled twice to adjust its position so that it appears correctly when pressed.
-    ToggleNotificationsDiv();
-    ToggleNotificationsDiv();
 });
 
 $("#GlobalNotificationButton").on("click", ToggleNotificationsDiv);
@@ -11,8 +8,6 @@ $("#GlobalNotificationButton").on("click", ToggleNotificationsDiv);
 function ToggleNotificationsDiv() {
     if ($("#NotificationPopUpDiv").hasClass("d-none")) {
         GetNotificationsContent();
-        CreateNotificationsPopper();
-        ToggleNotificationsDisplay();
     } else {
         ToggleNotificationsDisplay();
     }
@@ -26,6 +21,7 @@ function GetNotificationsContent() {
         dataType: "html",
         success: function (data) {
             $("#NotificationPopUpDiv").html(data);
+            CreateNotificationsPopper();
         },
         error: () => {
             console.log("Error: Failure to load notifications content.");
@@ -45,6 +41,7 @@ function CreateNotificationsPopper() {
             }
         }
     });
+    ToggleNotificationsDisplay();
 }
 
 function ToggleNotificationsDisplay() {

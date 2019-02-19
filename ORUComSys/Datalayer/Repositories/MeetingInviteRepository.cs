@@ -13,5 +13,13 @@ namespace Datalayer.Repositories {
         public MeetingInviteModels GetMeetingInvite(string profileId, int meetingId) {
             return items.First(meetingInvite => meetingInvite.ProfileId.Equals(profileId) && meetingInvite.MeetingId.Equals(meetingId));
         }
+
+        public List<MeetingInviteModels> GetAllInvitesByMeetingId(int meetingId) {
+            return items.Where(meetingInvite => meetingInvite.MeetingId.Equals(meetingId)).ToList();
+        }
+
+        public List<MeetingInviteModels> GetAllInvitesByMeetingIds(List<int> meetingIds) {
+            return items.Where(meetingInvite => meetingIds.Any(meetingId => meetingId.Equals(meetingInvite.MeetingId))).ToList();
+        }
     }
 }

@@ -20,24 +20,28 @@ namespace ORUComSys.Controllers {
             profileRepository = new ProfileRepository(context);
             postRepository = new PostRepository(context);
         }
-        
+
         [HttpPost]
         public ActionResult GetNumberOfNotifications() {
             string currentUserId = User.Identity.GetUserId();
-
+            if(!profileRepository.IfProfileExists(currentUserId)) {
+                return Json(new { Number = 0 });
+            }
             ProfileModels profile = profileRepository.Get(currentUserId);
             // Get all meeting invites for the profile id, then select only the ones which have not been accepted.
             List<MeetingInviteModels> meetingInvites = meetingInviteRepository.GetAllMeetingInvitesForProfileId(currentUserId).Where(meetingInvite => !meetingInvite.Accepted).ToList();
             List<int> followedCategoryIds = followingCategoryRepository.GetAllFollowedCategoriesByUserId(currentUserId).Select(followedCategory => followedCategory.CategoryId).ToList();
             List<PostModels> newPosts = postRepository.GetAllPostsInFollowedCategoriesSinceLastLogout(followedCategoryIds, profile.LastLogout, currentUserId);
-
             return Json(new { Number = meetingInvites.Count + newPosts.Count });
+
         }
 
         [HttpGet]
         public PartialViewResult GetNotificationsContent() {
             string currentUserId = User.Identity.GetUserId();
-
+            if(!profileRepository.IfProfileExists(currentUserId)) {
+                return PartialView("_NoProfile_Notifications");
+            }
             ProfileModels profile = profileRepository.Get(currentUserId);
             // Get all meeting invites for the profile id, then select only the ones which have not been accepted.
             List<MeetingInviteModels> meetingInvites = meetingInviteRepository.GetAllMeetingInvitesForProfileId(currentUserId).Where(meetingInvite => !meetingInvite.Accepted).ToList();

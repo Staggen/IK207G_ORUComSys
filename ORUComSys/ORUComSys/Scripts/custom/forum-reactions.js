@@ -6,16 +6,25 @@ $("#postWall").on("click", ".like-button", addReaction);
 $("#postWall").on("click", ".love-button", addReaction);
 $("#postWall").on("click", ".hate-button", addReaction);
 $("#postWall").on("click", ".xd-button", addReaction);
-$("#postWall").on("click", ".reaction-count", toggleReactionListStepOne);
-$("#postWall").on("click", ".react-button", toggleReactions);
+$("#postWall").on("click", ".reaction-count", ToggleReactionListDiv);
+$("#postWall").on("click", ".react-button", ToggleReactionDiv);
 
 var interactingWithPostId;
 
-function toggleReactions() {
-    var postId = this.getAttribute("data-post-id");
-    interactingWithPostId = postId;
-    $("#reaction-popup").toggleClass("d-none");
-    var ref = this;
+function ToggleReactionDiv() {
+    if ($(this).hasClass("focus")) {
+        $(this).removeClass("focus");
+    }
+    interactingWithPostId = this.getAttribute("data-post-id");
+    if ($("#reaction-popup").hasClass("d-none")) {
+        CreateReactionPopper(this);
+    } else {
+        ToggleReactionDisplay();
+    }
+}
+
+function CreateReactionPopper(passedThis) {
+    var ref = passedThis;
     var pop = $("#reaction-popup");
     new Popper(ref, pop, {
         placement: "top",
@@ -26,14 +35,15 @@ function toggleReactions() {
             }
         }
     });
-    hideReactionList();
+    if (!$("#reaction-list-popup").hasClass("d-none")) {
+        $("#reaction-list-popup").addClass("d-none");
+    }
+    ToggleReactionDisplay();
 }
 
 function addReaction() {
     var reactionType = this.getAttribute("name");
-
     reaction = { PostId: interactingWithPostId, Reaction: reactionType };
-
     $.ajax({
         type: "POST",
         url: "/api/AjaxApi/",
@@ -46,49 +56,54 @@ function addReaction() {
             console.log("Error: Failure to add reaction");
         }
     });
-    $("#reaction-popup").toggleClass("d-none");
+    ToggleReactionDisplay();
 }
 
-function toggleReactionListStepOne() { // Inexplicably extremely important to split this process into two steps
-    var postId = this.getAttribute("data-post-id");
-    toggleReactionList(postId, this);
+function ToggleReactionListDiv() {
+    if ($(this).hasClass("focus")) {
+        $(this).removeClass("focus");
+    }
+    if ($("#reaction-list-popup").hasClass("d-none")) {
+        var postId = this.getAttribute("data-post-id");
+        GetReactionListContent(postId);
+    } else {
+        ToggleReactionListDisplay();
+    }
 }
 
-function toggleReactionList(postId, reference) {
+function GetReactionListContent(postId, passedThis) {
     var serviceUrl = "/Forum/GetReactionList/" + postId;
     var request = $.post(serviceUrl);
     request.done(function (data) {
         $("#reaction-list-popup").html(data);
-
-        var ref = reference;
-        var pop = $("#reaction-list-popup");
-        // Popper creation in the request.done block, in combination with the two-step process, is necessary for
-        // popper to appear in the correct position on the first click.
-        new Popper(ref, pop, {
-            placement: "top",
-            modifiers: {
-                offset: {
-                    enabled: true,
-                    offset: "0, 10"
-                }
-            }
-        });
-        $("#reaction-list-popup").toggleClass("d-none");
-        hideReactions();
+        CreateReactionListPopper(passedThis);
     }).fail(() => {
         console.log("Error: Failure to display reaction information");
     });
-
 }
 
-function hideReactions() {
+function CreateReactionListPopper(passedThis) {
+    var ref = passedThis;
+    var pop = $("#reaction-list-popup");
+    new Popper(ref, pop, {
+        placement: "top",
+        modifiers: {
+            offset: {
+                enabled: true,
+                offset: "0, 10"
+            }
+        }
+    });
     if (!$("#reaction-popup").hasClass("d-none")) {
         $("#reaction-popup").addClass("d-none");
     }
+    ToggleReactionListDisplay();
 }
 
-function hideReactionList() {
-    if (!$("#reaction-list-popup").hasClass("d-none")) {
-        $("#reaction-list-popup").addClass("d-none");
-    }
+function ToggleReactionDisplay() {
+    $("#reaction-popup").toggleClass("d-none");
+}
+
+function ToggleReactionListDisplay() {
+    $("#reaction-list-popup").toggleClass("d-none");
 }

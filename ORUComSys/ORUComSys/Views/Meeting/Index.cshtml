@@ -3,26 +3,32 @@
     ViewBag.Title = "Meeting Planner";
 }
 
+<div id="ParticipantsDiv" class="d-none">
+    <!-- Participants content gets injected here -->
+</div>
+
 <div class="container">
     <div class="row">
         <div class="col-md-6">
             <h2>My Meetings</h2>
             <br />
-            @foreach (var meeting in Model.MyMeetings) {
-                <div class="card border border-secondary mb-2">
-                    <div class="card-header">
+            @foreach(var meeting in Model.MyMeetings) {
+                int numberOfInvites = Model.MeetingInvites.Where(invite => invite.MeetingId.Equals(meeting.Id)).ToList().Count;
+                <div class="@Html.Raw((Model.MyMeetingInvites.Any(invite => invite.MeetingId.Equals(meeting.Id) && invite.Accepted)) ? "border-success " : "border-warning ")card border mb-2 border-thicc">
+                    <div class="@Html.Raw((Model.MyMeetingInvites.Any(invite => invite.MeetingId.Equals(meeting.Id) && invite.Accepted)) ? "border-bottom border-success " : "")card-header">
                         @meeting.Title
                     </div>
                     <div class="card-body">
                         @meeting.Description
                     </div>
-                    <footer class="card-footer">
-                        <strong>Place: </strong>@meeting.Location<br />
+                    <footer class="@Html.Raw((Model.MyMeetingInvites.Any(invite => invite.MeetingId.Equals(meeting.Id) && invite.Accepted)) ? "border-top border-success " : "")card-footer">
+                        <strong>Place: </strong>@meeting.Location
+                        <button type="button" data-meeting-id="@meeting.Id" class="btn btn-secondary float-right btn-participant-list">@numberOfInvites</button><br />
                         <strong>Time: </strong>@meeting.MeetingDateTime
-                        @if (Model.Invites.Any((i) => i.MeetingId.Equals(meeting.Id) && i.ProfileId.Equals(Model.ProfileId) && !i.Accepted)) {
+                        @if(Model.MyMeetingInvites.Any((i) => i.MeetingId.Equals(meeting.Id) && i.ProfileId.Equals(Model.ProfileId) && !i.Accepted)) {
                             <div id="meeting-id-@meeting.Id">
-                                <button type="button" class="btn btn-success accept-meeting-invite-button" data-meeting-id="@meeting.Id">✓</button>
-                                <button type="button" class="btn btn-danger decline-meeting-invite-button" data-meeting-id="@meeting.Id">☓</button>
+                                <button type="button" class="btn btn-success accept-meeting-invite-button" data-meeting-id="@meeting.Id">Accept</button>
+                                <button type="button" class="btn btn-danger decline-meeting-invite-button" data-meeting-id="@meeting.Id">Decline</button>
                             </div>
                         }
                     </footer>
@@ -34,7 +40,7 @@
             <br />
             @Html.ActionLink("Create New Meeting", "CreateMeeting", new { area = "" }, new { @class = "btn btn-primary" })<br /><br />
             <h2>Edit Meetings I Created</h2>
-            @foreach (var meeting in Model.MyCreatedMeetings) {
+            @foreach(var meeting in Model.MyCreatedMeetings) {
                 <div class="card border border-secondary mb-2">
                     <a class="card-link" href="@Url.Action("EditMeeting", new { id = meeting.Id })">
                         <div class="card-body">
@@ -48,5 +54,5 @@
 </div>
 
 @section Scripts{
-    <script src="~/Scripts/custom/meeting-invites.js"></script>
+    <script src="~/Scripts/custom/meeting.js"></script>
 }

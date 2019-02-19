@@ -236,6 +236,7 @@
     <Content Include="Scripts\custom\global-notifications.js" />
     <Content Include="Scripts\custom\meeting-invites.js" />
     <Content Include="Scripts\custom\forum-post-subscriptions.js" />
+    <Content Include="Scripts\custom\meeting.js" />
     <Content Include="Scripts\custom\profile.js" />
     <Content Include="Scripts\custom\search.js" />
     <Content Include="Scripts\esm\popper-utils.js" />
@@ -433,6 +434,8 @@
     <Content Include="Views\Forum\NotificationEmailTemplate.cshtml" />
     <Content Include="Views\Meeting\NewMeetingNotificationEmail.cshtml" />
     <Content Include="Views\Forum\NewPostNotificationEmail.cshtml" />
+    <Content Include="Views\Meeting\_ParticipantsList.cshtml" />
+    <Content Include="Views\Notifications\_NoProfile_Notifications.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

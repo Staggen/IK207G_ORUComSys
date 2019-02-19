@@ -349,10 +349,12 @@ namespace ORUComSys.Controllers {
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult LogOff() {
-            ProfileModels profile = profileRepository.Get(User.Identity.GetUserId());
-            profile.LastLogout = DateTime.Now;
-            profileRepository.Edit(profile);
-            profileRepository.Save();
+            if(profileRepository.IfProfileExists(User.Identity.GetUserId())) {
+                ProfileModels profile = profileRepository.Get(User.Identity.GetUserId());
+                profile.LastLogout = DateTime.Now;
+                profileRepository.Edit(profile);
+                profileRepository.Save();
+            }
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("Index", "Home");
         }

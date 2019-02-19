@@ -28,7 +28,5 @@ namespace Datalayer.Models {
 
         [Required]
         public MeetingType Type { get; set; }
-
-        public int NumberOfAcceptedInvites { get; set; }
     }
 }
