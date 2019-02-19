@@ -7,7 +7,7 @@ namespace Datalayer.Repositories {
         public ProposalInviteRepository(ApplicationDbContext context) : base(context) { }
 
         public List<ProposalInviteModels> GetAllProposalInvitesForUserId(string profileId) {
-            return items.Where((x) => x.ProfileId.Equals(profileId)).ToList();
+            return items.Where(proposalInvite => proposalInvite.ProfileId.Equals(profileId)).ToList();
         }
     }
 }

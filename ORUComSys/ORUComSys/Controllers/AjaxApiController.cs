@@ -27,8 +27,8 @@ namespace ORUComSys.Controllers {
         public void AddReaction(ReactionViewModels reaction) {
             if (ModelState.IsValid) {
                 ReactionType reactionType = ReactionType.Like;
-                var currentUser = User.Identity.GetUserId();
-                var existingReactionBool = reactionRepository.GetReactionByPostAndUserIdBool(reaction.PostId, currentUser);
+                string currentUserId = User.Identity.GetUserId();
+                bool ReactionExists = reactionRepository.ReactionExists(reaction.PostId, currentUserId);
 
                 switch (reaction.Reaction) {
                     case "like":
@@ -46,16 +46,15 @@ namespace ORUComSys.Controllers {
                     default:
                         break;
                 }
-
                 // If user already has a reaction on this post, edit it. Else add a new one.
-                if (existingReactionBool) {
-                    var existingReaction = reactionRepository.GetReactionByPostAndUserId(reaction.PostId, currentUser);
+                if (ReactionExists) {
+                    ReactionModels existingReaction = reactionRepository.GetReactionByPostAndProfileId(reaction.PostId, currentUserId);
                     existingReaction.Reaction = reactionType;
                     reactionRepository.Edit(existingReaction);
                     reactionRepository.Save();
                 } else {
                     ReactionModels reactionModel = new ReactionModels() {
-                        ProfileId = currentUser,
+                        ProfileId = currentUserId,
                         Reaction = reactionType,
                         PostId = reaction.PostId
                     };

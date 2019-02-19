@@ -18,7 +18,7 @@ namespace ORUComSys.Controllers {
         public ActionResult Index() {
             List<ProfileModels> allProfiles = profileRepository.GetAllProfilesExceptCurrent(User.Identity.GetUserId());
             
-            return View(allProfiles.OrderBy((p) => p.FirstName)); // Sort list to have users appear in the search window by match percentage by default
+            return View(allProfiles.OrderBy(profile => profile.FirstName));
         }
     }
 }

@@ -26,9 +26,9 @@ namespace ORUComSys.Controllers {
         public ActionResult Index() {
             string currentUserId = User.Identity.GetUserId();
             List<MeetingInviteModels> meetingInvites = meetingInviteRepository.GetAllMeetingInvitesForProfileId(currentUserId);
-            List<int> myMeetingIds = meetingInvites.Where((m) => m.ProfileId.Equals(currentUserId)).Select((x) => x.MeetingId).ToList();
+            List<int> myMeetingIds = meetingInvites.Where(meetingInvite => meetingInvite.ProfileId.Equals(currentUserId)).Select(meetingInvite => meetingInvite.MeetingId).ToList();
             List<MeetingModels> myCreatedMeetings = meetingRepository.GetAllMeetingsByCreatorId(currentUserId);
-            List<MeetingModels> myMeetings = meetingRepository.GetListOfMeetingsByListOfMeetingIds(myMeetingIds);
+            List<MeetingModels> myMeetings = meetingRepository.GetListOfMeetingsByMeetingIds(myMeetingIds);
 
             MeetingViewModels model = new MeetingViewModels {
                 ProfileId = currentUserId,
@@ -46,8 +46,9 @@ namespace ORUComSys.Controllers {
         [HttpPost]
         public ActionResult CreateMeeting(MeetingModels meeting) {
             if(ModelState.IsValid) {
+                string currentUserId = User.Identity.GetUserId();
                 MeetingModels model = new MeetingModels {
-                    CreatorId = User.Identity.GetUserId(),
+                    CreatorId = currentUserId,
                     Title = meeting.Title,
                     Description = meeting.Description,
                     MeetingDateTime = meeting.MeetingDateTime,
@@ -59,7 +60,7 @@ namespace ORUComSys.Controllers {
 
                 MeetingInviteModels inviteModel = new MeetingInviteModels {
                     MeetingId = model.Id,
-                    ProfileId = User.Identity.GetUserId(),
+                    ProfileId = currentUserId,
                     InviteDateTime = DateTime.Now,
                     Accepted = true
                 };
@@ -92,7 +93,7 @@ namespace ORUComSys.Controllers {
             List<MeetingInviteModels> allInvites = meetingInviteRepository.GetAll();
             MeetingInviteViewModels inviteViewModel = new MeetingInviteViewModels {
                 MeetingId = Id,
-                Profiles = allProfiles.OrderBy((p) => p.FirstName).ToList(),
+                Profiles = allProfiles.OrderBy(profile => profile.FirstName).ToList(),
                 Invites = allInvites
             };
             return View(inviteViewModel);

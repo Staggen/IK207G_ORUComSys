@@ -27,9 +27,9 @@ namespace ORUComSys.Controllers {
 
             ProfileModels profile = profileRepository.Get(currentUserId);
             // Get all meeting invites for the profile id, then select only the ones which have not been accepted.
-            List<MeetingInviteModels> meetingInvites = meetingInviteRepository.GetAllMeetingInvitesForProfileId(currentUserId).Where((i) => !i.Accepted).ToList();
-            List<int> fcIds = followingCategoryRepository.GetAllFollowedCategoriesByUserId(currentUserId).Select((fc) => fc.CategoryId).ToList();
-            List<PostModels> newPosts = postRepository.GetAllPostsInCategorySinceLastUserLoginByUserId(fcIds, profile.LastLogout, currentUserId);
+            List<MeetingInviteModels> meetingInvites = meetingInviteRepository.GetAllMeetingInvitesForProfileId(currentUserId).Where(meetingInvite => !meetingInvite.Accepted).ToList();
+            List<int> followedCategoryIds = followingCategoryRepository.GetAllFollowedCategoriesByUserId(currentUserId).Select(followedCategory => followedCategory.CategoryId).ToList();
+            List<PostModels> newPosts = postRepository.GetAllPostsInFollowedCategoriesSinceLastLogout(followedCategoryIds, profile.LastLogout, currentUserId);
 
             return Json(new { Number = meetingInvites.Count + newPosts.Count });
         }
@@ -40,16 +40,16 @@ namespace ORUComSys.Controllers {
 
             ProfileModels profile = profileRepository.Get(currentUserId);
             // Get all meeting invites for the profile id, then select only the ones which have not been accepted.
-            List<MeetingInviteModels> meetingInvites = meetingInviteRepository.GetAllMeetingInvitesForProfileId(currentUserId).Where((i) => !i.Accepted).ToList();
-            List<int> fcIds = followingCategoryRepository.GetAllFollowedCategoriesByUserId(currentUserId).Select((fc) => fc.CategoryId).ToList();
-            List<PostModels> newPosts = postRepository.GetAllPostsInCategorySinceLastUserLoginByUserId(fcIds, profile.LastLogout, currentUserId).OrderByDescending((p) => p.PostDateTime).ToList();
+            List<MeetingInviteModels> meetingInvites = meetingInviteRepository.GetAllMeetingInvitesForProfileId(currentUserId).Where(meetingInvite => !meetingInvite.Accepted).ToList();
+            List<int> followedCategoryIds = followingCategoryRepository.GetAllFollowedCategoriesByUserId(currentUserId).Select(followedCategory => followedCategory.CategoryId).ToList();
+            List<PostModels> newPosts = postRepository.GetAllPostsInFollowedCategoriesSinceLastLogout(followedCategoryIds, profile.LastLogout, currentUserId).OrderByDescending(post => post.PostDateTime).ToList();
             List<ProfileModels> profiles = new List<ProfileModels>();
             foreach(var post in newPosts) {
                 profiles.Add(profileRepository.Get(post.PostFromId));
             }
 
             NotificationsViewModels notifications = new NotificationsViewModels {
-                Invites = meetingInvites.OrderByDescending((i) => i.InviteDateTime).ToList(),
+                Invites = meetingInvites.OrderByDescending(meetingInvite => meetingInvite.InviteDateTime).ToList(),
                 Posts = newPosts,
                 PostFrom = profiles.Distinct().ToList()
             };

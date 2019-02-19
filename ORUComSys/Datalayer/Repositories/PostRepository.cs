@@ -7,20 +7,21 @@ namespace Datalayer.Repositories {
     public class PostRepository : Repository<PostModels, int> {
         public PostRepository(ApplicationDbContext context) : base(context) { }
 
-        public List<PostModels> GetAllPostsForUserById(string userId) {
-            return items.Where((p) => p.PostFromId.Equals(userId)).OrderByDescending((p) => p.PostDateTime).ToList();
-        }
+        // Does not seem to be used anywhere?
+        //public List<PostModels> GetAllPostsFromProfileById(string profileId) {
+        //    return items.Where(post => post.PostFromId.Equals(profileId)).OrderByDescending(post => post.PostDateTime).ToList();
+        //}
 
         public List<PostModels> GetAllPostsByForumType(ForumType type) {
-            return items.Where((p) => p.Forum == type).OrderByDescending((p) => p.PostDateTime).ToList();
+            return items.Where(post => post.Forum == type).OrderByDescending(post => post.PostDateTime).ToList();
         }
 
-        public PostModels GetLastPostCreatedByUserId(string userId) {
-            return items.Where((x) => x.PostFromId.Equals(userId)).OrderByDescending((p) => p.PostDateTime).First();
+        public PostModels GetLastPostCreatedByProfileId(string profileId) {
+            return items.Where(post => post.PostFromId.Equals(profileId)).OrderByDescending(post => post.PostDateTime).First();
         }
         
-        public List<PostModels> GetAllPostsInCategorySinceLastUserLoginByUserId(List<int> followedCategories, DateTime lastLogout, string userId) {
-            return items.Where((p) => followedCategories.Any((c) => c.Equals(p.CategoryId)) && p.PostDateTime > lastLogout && !p.PostFromId.Equals(userId)).ToList();
+        public List<PostModels> GetAllPostsInFollowedCategoriesSinceLastLogout(List<int> followedCategoryIds, DateTime lastLogout, string profileId) {
+            return items.Where(post => followedCategoryIds.Any(followedCategoryId => followedCategoryId.Equals(post.CategoryId)) && post.PostDateTime > lastLogout && !post.PostFromId.Equals(profileId)).ToList();
         }
     }
 }

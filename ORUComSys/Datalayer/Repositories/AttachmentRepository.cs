@@ -7,11 +7,11 @@ namespace Datalayer.Repositories {
         public AttachmentRepository(ApplicationDbContext context) : base(context) { }
 
         public List<AttachmentModels> GetAttachmentsByPostId(int postId) {
-            return items.Where((a) => a.PostId.Equals(postId)).ToList();
+            return items.Where(attachment => attachment.PostId.Equals(postId)).ToList();
         }
 
         public byte[] GetAttachmentByteArrayById(int attachmentId) {
-            return items.Single((a) => a.Id.Equals(attachmentId)).AttachedFile;
+            return items.Single(attachment => attachment.Id.Equals(attachmentId)).AttachedFile;
         }
     }
 }

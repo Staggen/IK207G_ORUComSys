@@ -6,12 +6,12 @@ namespace Datalayer.Repositories {
     public class MeetingRepository : Repository<MeetingModels, int> {
         public MeetingRepository(ApplicationDbContext context) : base(context) { }
 
-        public List<MeetingModels> GetAllMeetingsByCreatorId(string userId) {
-            return items.Where((m) => m.CreatorId.Equals(userId)).ToList();
+        public List<MeetingModels> GetAllMeetingsByCreatorId(string profileId) {
+            return items.Where(meeting => meeting.CreatorId.Equals(profileId)).ToList();
         }
 
-        public List<MeetingModels> GetListOfMeetingsByListOfMeetingIds(List<int> meetingIds) {
-            return items.Where((m) => meetingIds.Any((i) => i.Equals(m.Id))).ToList();
+        public List<MeetingModels> GetListOfMeetingsByMeetingIds(List<int> meetingIds) {
+            return items.Where(meeting => meetingIds.Any((i) => i.Equals(meeting.Id))).ToList();
         }
     }
 }

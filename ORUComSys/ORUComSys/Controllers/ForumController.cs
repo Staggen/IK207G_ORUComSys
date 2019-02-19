@@ -51,28 +51,8 @@ namespace ORUComSys.Controllers {
                 categoryId = 5;
             }
             string currentUserId = User.Identity.GetUserId();
-            byte[] attachmentData = null;
-            string filename = null;
-            if(Request.Files["AttachedFile"].ContentLength >= 1) { // Check if a file is entered
-                HttpPostedFileBase attachedFile = Request.Files["AttachedFile"];
-                filename = attachedFile.FileName.Substring(attachedFile.FileName.LastIndexOf(@"\") + 1);
-
-                using(var binary = new BinaryReader(attachedFile.InputStream)) {
-                    // This is the byte-array we set as the ProfileImage property on the profile.
-                    attachmentData = binary.ReadBytes(attachedFile.ContentLength);
-                }
-                // Make AttachmentModel
-                AttachmentModels attachmentModel = new AttachmentModels {
-                    AttachedFile = attachmentData,
-                    FileName = filename,
-                    FileExtension = filename.Substring(filename.LastIndexOf(".")),
-                    PostId = postViewModel.Id
-                };
-                attachmentRepository.Add(attachmentModel);
-            }
             // Convert to PostModels.
             PostModels postModel = new PostModels {
-                Id = postViewModel.Id,
                 PostFromId = currentUserId,
                 CategoryId = categoryId,
                 Forum = ForumType.Formal,
@@ -82,13 +62,35 @@ namespace ORUComSys.Controllers {
             // Add to database and save changes.
             postRepository.Add(postModel);
             postRepository.Save();
+            // Get post so you can access it's ID.
+            PostModels addedPost = postRepository.GetLastPostCreatedByProfileId(currentUserId);
+            byte[] attachmentData = null;
+            string filename = null;
+            if(Request.Files["AttachedFile"].ContentLength >= 1) { // Check if a file is entered
+                for(int i = 0; i < Request.Files.Count; i++) {
+                    HttpPostedFileBase attachedFile = Request.Files["AttachedFile"];
+                    filename = attachedFile.FileName.Substring(attachedFile.FileName.LastIndexOf(@"\") + 1);
 
+                    using(var binary = new BinaryReader(attachedFile.InputStream)) {
+                        // This is the byte-array we set as the ProfileImage property on the profile.
+                        attachmentData = binary.ReadBytes(attachedFile.ContentLength);
+                    }
+                    // Make AttachmentModel
+                    AttachmentModels attachmentModel = new AttachmentModels {
+                        AttachedFile = attachmentData,
+                        FileName = filename,
+                        FileExtension = filename.Substring(filename.LastIndexOf(".")),
+                        PostId = addedPost.Id
+                    };
+                    attachmentRepository.Add(attachmentModel);
+                }
+                attachmentRepository.Save();
+            }
             // Send notification email
-            List<string> FollowerIds = followingCategoryRepository.GetAllUsersByCategory(categoryId);
-            ProfileModels sender = profileRepository.Get(User.Identity.GetUserId());
-            PostModels emailPost = postRepository.GetLastPostCreatedByUserId(User.Identity.GetUserId());
-            List<AttachmentModels> attachments = attachmentRepository.GetAttachmentsByPostId(emailPost.Id);
-            CategoryModels category = categoryRepository.Get(emailPost.CategoryId);
+            List<string> FollowerIds = followingCategoryRepository.GetAllUserIdsByFollowedCategoryId(categoryId);
+            ProfileModels sender = profileRepository.Get(currentUserId);
+            List<AttachmentModels> attachments = attachmentRepository.GetAttachmentsByPostId(addedPost.Id);
+            CategoryModels category = categoryRepository.Get(addedPost.CategoryId);
             foreach(string followerId in FollowerIds) {
                 if(followerId.Equals(currentUserId)) {
                     continue; // Don't send emails to yourself about your own posts...
@@ -96,7 +98,7 @@ namespace ORUComSys.Controllers {
                 EmailViewModels emailModel = new EmailViewModels {
                     Sender = sender,
                     Recipient = profileRepository.Get(followerId),
-                    Post = emailPost,
+                    Post = addedPost,
                     Attachments = attachments,
                     CategoryName = category.Name
                 };
@@ -126,6 +128,19 @@ namespace ORUComSys.Controllers {
                 categoryId = 5;
             }
             string currentUserId = User.Identity.GetUserId();
+            // Convert to PostModels.
+            PostModels postModel = new PostModels {
+                PostFromId = currentUserId,
+                CategoryId = categoryId,
+                Forum = ForumType.Informal,
+                Content = postViewModel.Content,
+                PostDateTime = DateTime.Now
+            };
+            // Add to database and save changes.
+            postRepository.Add(postModel);
+            postRepository.Save();
+            // Get post so you can access it's ID.
+            PostModels addedPost = postRepository.GetLastPostCreatedByProfileId(currentUserId);
             byte[] attachmentData = null;
             string filename = null;
             if(Request.Files["AttachedFile"].ContentLength >= 1) { // Check if a file is entered
@@ -142,32 +157,17 @@ namespace ORUComSys.Controllers {
                         AttachedFile = attachmentData,
                         FileName = filename,
                         FileExtension = filename.Substring(filename.LastIndexOf(".")),
-                        PostId = postViewModel.Id
+                        PostId = addedPost.Id
                     };
                     attachmentRepository.Add(attachmentModel);
                 }
+                attachmentRepository.Save();
             }
-
-            // Convert to FormalPostModel.
-            PostModels postModel = new PostModels {
-                Id = postViewModel.Id,
-                PostFromId = currentUserId,
-                CategoryId = categoryId,
-                Forum = ForumType.Informal,
-                Content = postViewModel.Content,
-                PostDateTime = DateTime.Now
-            };
-
-            // Add to database and save changes.
-            postRepository.Add(postModel);
-            postRepository.Save();
-
             // Send notification email
-            List<string> FollowerIds = followingCategoryRepository.GetAllUsersByCategory(categoryId);
+            List<string> FollowerIds = followingCategoryRepository.GetAllUserIdsByFollowedCategoryId(categoryId);
             ProfileModels sender = profileRepository.Get(User.Identity.GetUserId());
-            PostModels emailPost = postRepository.GetLastPostCreatedByUserId(User.Identity.GetUserId());
-            List<AttachmentModels> attachments = attachmentRepository.GetAttachmentsByPostId(emailPost.Id);
-            CategoryModels category = categoryRepository.Get(emailPost.CategoryId);
+            List<AttachmentModels> attachments = attachmentRepository.GetAttachmentsByPostId(addedPost.Id);
+            CategoryModels category = categoryRepository.Get(addedPost.CategoryId);
             foreach(string followerId in FollowerIds) {
                 if(followerId.Equals(currentUserId)) {
                     continue; // Don't send emails to yourself about your own posts...
@@ -175,7 +175,7 @@ namespace ORUComSys.Controllers {
                 EmailViewModels emailModel = new EmailViewModels {
                     Sender = sender,
                     Recipient = profileRepository.Get(followerId),
-                    Post = emailPost,
+                    Post = addedPost,
                     Attachments = attachments,
                     CategoryName = category.Name
                 };
@@ -200,6 +200,7 @@ namespace ORUComSys.Controllers {
         }
 
         public PostViewModelsForUsers ConvertPostsToViewModels(ForumType type) {
+            string currentUserId = User.Identity.GetUserId();
             List<PostModels> allPosts = postRepository.GetAllPostsByForumType(type);
             List<PostViewModels> allPostViewModel = new List<PostViewModels>();
             foreach(var post in allPosts) {
@@ -210,7 +211,7 @@ namespace ORUComSys.Controllers {
                     Forum = post.Forum,
                     Content = post.Content,
                     PostDateTime = post.PostDateTime,
-                    CurrentUser = profileRepository.Get(User.Identity.GetUserId()),
+                    CurrentUser = profileRepository.Get(currentUserId),
                     Reactions = reactionRepository.GetAllReactionsByPostId(post.Id),
                     Categories = categoryRepository.GetAll(),
                     Attachments = attachmentRepository.GetAttachmentsByPostId(post.Id)
@@ -219,7 +220,7 @@ namespace ORUComSys.Controllers {
             }
             PostViewModelsForUsers postViewModelForUsers = new PostViewModelsForUsers {
                 PostList = allPostViewModel,
-                CurrentUser = profileRepository.Get(User.Identity.GetUserId())
+                CurrentUser = profileRepository.Get(currentUserId)
             };
             return postViewModelForUsers;
         }
@@ -235,30 +236,30 @@ namespace ORUComSys.Controllers {
                 // Take the input array and make it into a list, as they are easier to work with.
                 List<string> ActiveCategories = vessel.CategoriesToFollow.ToList();
                 // Unsubscribe from the categories which are not in the active selection
-                foreach(FollowingCategoryModels fc in FollowedCategories) {
+                foreach(FollowingCategoryModels followedCategory in FollowedCategories) {
                     bool RemoveSubscription = true;
-                    foreach(string ac in ActiveCategories) {
+                    foreach(string activeCategory in ActiveCategories) {
                         // Check if the currently followed category name equals the actively selected category name.
-                        if(AllCategories.Single((a) => a.Id.Equals(fc.CategoryId)).Name.Equals(ac)) {
+                        if(AllCategories.Single(category => category.Id.Equals(followedCategory.CategoryId)).Name.Equals(activeCategory)) {
                             RemoveSubscription = false;
                         }
                     }
                     // If a followed category does not match the active categories, remove it.
                     if(RemoveSubscription) {
-                        followingCategoryRepository.Remove(fc.Id);
+                        followingCategoryRepository.Remove(followedCategory.Id);
                     }
                 }
                 // Subscribe to new active categories which do not match the current subscriptions
-                foreach(string ac in ActiveCategories) {
+                foreach(string activeCategory in ActiveCategories) {
                     bool AddSubscription = true;
-                    foreach(FollowingCategoryModels fc in FollowedCategories) {
-                        if(ac.Equals(AllCategories.Single((a) => a.Id.Equals(fc.CategoryId)).Name)) {
+                    foreach(FollowingCategoryModels followedCategory in FollowedCategories) {
+                        if(activeCategory.Equals(AllCategories.Single(category => category.Id.Equals(followedCategory.CategoryId)).Name)) {
                             AddSubscription = false;
                         }
                     }
                     if(AddSubscription) {
                         foreach(CategoryModels category in AllCategories) {
-                            if(ac.Equals(category.Name)) {
+                            if(activeCategory.Equals(category.Name)) {
                                 FollowingCategoryModels model = new FollowingCategoryModels {
                                     ProfileId = currentUserId,
                                     CategoryId = category.Id
@@ -270,8 +271,8 @@ namespace ORUComSys.Controllers {
                 }
             } else {
                 // Unsubscribe from all post categories
-                foreach(FollowingCategoryModels fc in FollowedCategories) {
-                    followingCategoryRepository.Remove(fc.Id);
+                foreach(FollowingCategoryModels followedCategory in FollowedCategories) {
+                    followingCategoryRepository.Remove(followedCategory.Id);
                 }
             }
             // Save changes in the database

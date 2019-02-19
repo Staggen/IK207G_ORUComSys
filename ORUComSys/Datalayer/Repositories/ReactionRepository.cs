@@ -7,15 +7,15 @@ namespace Datalayer.Repositories {
         public ReactionRepository(ApplicationDbContext context) : base(context) { }
 
         public List<ReactionModels> GetAllReactionsByPostId(int postId) {
-            return items.Where((r) => r.PostId.Equals(postId)).OrderByDescending((p) => p.Reaction).ToList();
+            return items.Where(reaction => reaction.PostId.Equals(postId)).OrderByDescending(reactionType => reactionType.Reaction).ToList();
         }
 
-        public bool GetReactionByPostAndUserIdBool(int postId, string userId) {
-            return items.Any((r) => r.PostId.Equals(postId) && r.ProfileId.Equals(userId));
+        public bool ReactionExists(int postId, string profileId) {
+            return items.Any(reaction => reaction.PostId.Equals(postId) && reaction.ProfileId.Equals(profileId));
         }
 
-        public ReactionModels GetReactionByPostAndUserId(int postId, string userId) {
-            return items.First((r) => r.PostId.Equals(postId) && r.ProfileId.Equals(userId));
+        public ReactionModels GetReactionByPostAndProfileId(int postId, string profileId) {
+            return items.First(reaction => reaction.PostId.Equals(postId) && reaction.ProfileId.Equals(profileId));
         }
     }
 }

@@ -6,12 +6,12 @@ namespace Datalayer.Repositories {
     public class ProfileRepository : Repository<ProfileModels, string> {
         public ProfileRepository(ApplicationDbContext context) : base(context) { }
 
-        public List<ProfileModels> GetAllProfilesExceptCurrent(string userId) {
-            return items.Where((p) => !p.Id.Equals(userId)).ToList();
+        public List<ProfileModels> GetAllProfilesExceptCurrent(string profileId) {
+            return items.Where(profile => !profile.Id.Equals(profileId)).ToList();
         }
 
-        public bool IfProfileExists(string userId) {
-            return items.Any((p) => p.Id.Equals(userId));
+        public bool IfProfileExists(string profileId) {
+            return items.Any(profile => profile.Id.Equals(profileId));
         }
     }
 }
