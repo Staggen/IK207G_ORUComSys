@@ -1,7 +1,7 @@
 ﻿using System.Web.Mvc;
 
 namespace ORUComSys.Controllers {
-    [Authorize]
+    [Authorize(Roles = "Profiled")]
     public class CalendarController : Controller {
         public ActionResult Index() {
             return View();

@@ -52,6 +52,12 @@ namespace ORUComSys.Controllers {
         // GET: /Account/Login
         [AllowAnonymous]
         public ActionResult Login(string returnUrl) {
+            // If user is a ApplicationUser but does not have a Profile => redirect to Create, Profile.
+            if(!string.IsNullOrWhiteSpace(User.Identity.GetUserId())) {
+                if(!UserManager.IsInRole(User.Identity.GetUserId(), "Profiled")) {
+                    return RedirectToAction("Create", "Profile");
+                }
+            }
             ViewBag.ReturnUrl = returnUrl;
             return View();
         }
@@ -65,7 +71,7 @@ namespace ORUComSys.Controllers {
             if (!ModelState.IsValid) {
                 return View(model);
             }
-
+            
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
             var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);

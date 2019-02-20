@@ -25,62 +25,80 @@ namespace Datalayer.Repositories {
 
         public static void SeedUsers(ApplicationDbContext context) {
             // Seed users into database
-            UserStore<ApplicationUser> store = new UserStore<ApplicationUser>(context);
-            UserManager<ApplicationUser> manager = new UserManager<ApplicationUser>(store);
+            UserStore<ApplicationUser> userStore = new UserStore<ApplicationUser>(context);
+            UserManager<ApplicationUser> userManager = new UserManager<ApplicationUser>(userStore);
+            RoleStore<IdentityRole> roleStore = new RoleStore<IdentityRole>(context);
+            RoleManager<IdentityRole> roleManager = new RoleManager<IdentityRole>(roleStore);
 
+            // Define Role(s)
+            IdentityRole Profiled = new IdentityRole {
+                Name = "Profiled",
+            };
+            roleManager.Create(Profiled); // Create Role
+
+            // Define User(s)
             ApplicationUser albinU = new ApplicationUser {
                 Email = "albin@orucomsys.com",
                 UserName = "albin@orucomsys.com"
             };
-            manager.Create(albinU, "password"); // manager.Create(ApplicationUser user, string password);
+            userManager.Create(albinU, "password"); // manager.Create(ApplicationUser user, string password);
+            userManager.AddToRole(albinU.Id, "Profiled"); // Add user to role
 
             ApplicationUser darioU = new ApplicationUser {
                 Email = "dario@orucomsys.com",
                 UserName = "dario@orucomsys.com"
             };
-            manager.Create(darioU, "password"); // manager.Create(ApplicationUser user, string password);
+            userManager.Create(darioU, "password"); // manager.Create(ApplicationUser user, string password);
+            userManager.AddToRole(darioU.Id, "Profiled"); // Add user to role
 
             ApplicationUser eliasU = new ApplicationUser {
                 Email = "elias.stagg@gmail.com",
                 UserName = "elias.stagg@gmail.com"
             };
-            manager.Create(eliasU, "password"); // manager.Create(ApplicationUser user, string password);
+            userManager.Create(eliasU, "password"); // manager.Create(ApplicationUser user, string password);
+            userManager.AddToRole(eliasU.Id, "Profiled"); // Add user to role
 
             ApplicationUser moazU = new ApplicationUser {
                 Email = "moaz@orucomsys.com",
                 UserName = "moaz@orucomsys.com"
             };
-            manager.Create(moazU, "password"); // manager.Create(ApplicationUser user, string password);
+            userManager.Create(moazU, "password"); // manager.Create(ApplicationUser user, string password);
+            userManager.AddToRole(moazU.Id, "Profiled"); // Add user to role
 
             ApplicationUser nicoU = new ApplicationUser {
                 Email = "nico@orucomsys.com",
                 UserName = "nico@orucomsys.com"
             };
-            manager.Create(nicoU, "password"); // manager.Create(ApplicationUser user, string password);
+            userManager.Create(nicoU, "password"); // manager.Create(ApplicationUser user, string password);
+            userManager.AddToRole(nicoU.Id, "Profiled"); // Add user to role
 
             ApplicationUser oskarU = new ApplicationUser {
                 Email = "orre.b3000@gmail.com",
                 UserName = "orre.b3000@gmail.com"
             };
-            manager.Create(oskarU, "password"); // manager.Create(ApplicationUser user, string password);
+            userManager.Create(oskarU, "password"); // manager.Create(ApplicationUser user, string password);
+            userManager.AddToRole(oskarU.Id, "Profiled"); // Add user to role
 
             ApplicationUser patrikU = new ApplicationUser {
                 Email = "patrik@orucomsys.com",
                 UserName = "patrik@orucomsys.com"
             };
-            manager.Create(patrikU, "password"); // manager.Create(ApplicationUser user, string password);
+            userManager.Create(patrikU, "password"); // manager.Create(ApplicationUser user, string password);
+            userManager.AddToRole(patrikU.Id, "Profiled"); // Add user to role
 
             ApplicationUser pernillaU = new ApplicationUser {
                 Email = "pernilla@orucomsys.com",
                 UserName = "pernilla@orucomsys.com"
             };
-            manager.Create(pernillaU, "password"); // manager.Create(ApplicationUser user, string password);
+            userManager.Create(pernillaU, "password"); // manager.Create(ApplicationUser user, string password);
+            userManager.AddToRole(pernillaU.Id, "Profiled"); // Add user to role
 
             ApplicationUser salehU = new ApplicationUser {
                 Email = "saleh@orucomsys.com",
                 UserName = "saleh@orucomsys.com"
             };
-            manager.Create(salehU, "password"); // manager.Create(ApplicationUser user, string password);
+            userManager.Create(salehU, "password"); // manager.Create(ApplicationUser user, string password);
+            userManager.AddToRole(salehU.Id, "Profiled"); // Add user to role
 
             // Create more example data as you create more DbSets as the database flushes and resets every time you boot the project. (Current initializer setting: DropCreateDatabaseAlways<{context}>)
 

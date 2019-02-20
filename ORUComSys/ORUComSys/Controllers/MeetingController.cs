@@ -8,7 +8,7 @@ using System.Linq;
 using System.Web.Mvc;
 
 namespace ORUComSys.Controllers {
-    [Authorize]
+    [Authorize(Roles = "Profiled")]
     public class MeetingController : Controller {
         private MeetingRepository meetingRepository;
         private MeetingInviteRepository meetingInviteRepository;
@@ -21,11 +21,6 @@ namespace ORUComSys.Controllers {
             meetingInviteRepository = new MeetingInviteRepository(context);
             profileRepository = new ProfileRepository(context);
             userRepository = new UserRepository(context);
-            // ERROR: User.Identity is only set ONE request after login, and this controller is instanciated before the request to Controller/Index is completed, thus you can not access User.Identity.GetUserId() in here this early...
-            // Stop user doesn't have a profile, make them create one!
-            //if(!profileRepository.IfProfileExists(User.Identity.GetUserId())) {
-            //    RedirectToAction("Create", "Profile");
-            //}
         }
 
         public ActionResult Index() {

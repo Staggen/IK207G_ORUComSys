@@ -6,7 +6,7 @@ using System.Linq;
 using System.Web.Mvc;
 
 namespace ORUComSys.Controllers {
-    [Authorize]
+    [Authorize(Roles = "Profiled")]
     public class SearchController : Controller {
         private ProfileRepository profileRepository;
 

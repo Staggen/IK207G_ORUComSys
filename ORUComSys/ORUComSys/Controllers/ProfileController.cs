@@ -10,17 +10,20 @@ namespace ORUComSys.Controllers {
     [Authorize]
     public class ProfileController : Controller {
         private ProfileRepository profileRepository;
+        private UserRepository userRepository;
 
         public ProfileController() {
             ApplicationDbContext context = new ApplicationDbContext();
             profileRepository = new ProfileRepository(context);
+            userRepository = new UserRepository(context);
         }
 
+        [Authorize(Roles = "Profiled")]
         public ActionResult Index() {
             string currentUserId = User.Identity.GetUserId();
             object profileId = Request.RequestContext.RouteData.Values["id"];
             ProfileModels profile = null;
-            if (!string.IsNullOrWhiteSpace((string)profileId)) {
+            if(!string.IsNullOrWhiteSpace((string)profileId)) {
                 profile = profileRepository.Get((string)profileId);
                 ViewBag.ProfileId = (string)profileId;
                 ViewBag.CurrentUserId = currentUserId;
@@ -33,7 +36,7 @@ namespace ORUComSys.Controllers {
             }
             return View(profile);
         }
-
+        
         public ActionResult Create() {
             return View();
         }
@@ -42,49 +45,54 @@ namespace ORUComSys.Controllers {
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Exclude = "ProfileImage")] ProfileModels profile) {
             // Excludes ProfileImage from controller call so the program does not crash.
-            if (ModelState.IsValid) { // If model is correct
-                byte[] imageData = null;
-                if (Request.Files["ProfileImage"].ContentLength >= 1) { // If a file was submitted
-                    HttpPostedFileBase profileImgFile = Request.Files["ProfileImage"];
-                    using (BinaryReader binary = new BinaryReader(profileImgFile.InputStream)) {
-                        imageData = binary.ReadBytes(profileImgFile.ContentLength); // Set the profile image to the variable imageData
-                    }
-                } else { // If no file was submitted, set default avatar
-                    string path = AppDomain.CurrentDomain.BaseDirectory + "/Content/Images/defaultAvatar.png";
-                    FileStream file = new FileStream(path, FileMode.Open);
-                    using (BinaryReader binary = new BinaryReader(file)) {
-                        imageData = binary.ReadBytes((int)file.Length);
-                    }
-                }
-                // Set profile data
-                profile.Id = User.Identity.GetUserId();
-                profile.ProfileImage = imageData;
-                profile.IsActivated = false;
-                // Add profile to database
-                profileRepository.Add(profile);
-                profileRepository.Save();
-                // Send user to their profile page
-                return RedirectToAction("Index");
-            } else {
+            if(!ModelState.IsValid) { // If model is invalid
                 return RedirectToAction("Create");
             }
+            byte[] imageData = null;
+            if(Request.Files["ProfileImage"].ContentLength >= 1) { // If a file was submitted
+                HttpPostedFileBase profileImgFile = Request.Files["ProfileImage"];
+                using(BinaryReader binary = new BinaryReader(profileImgFile.InputStream)) {
+                    imageData = binary.ReadBytes(profileImgFile.ContentLength); // Set the profile image to the variable imageData
+                }
+            } else { // If no file was submitted, set default avatar
+                string path = AppDomain.CurrentDomain.BaseDirectory + "/Content/Images/defaultAvatar.png";
+                FileStream file = new FileStream(path, FileMode.Open);
+                using(BinaryReader binary = new BinaryReader(file)) {
+                    imageData = binary.ReadBytes((int)file.Length);
+                }
+            }
+            // Set profile data
+            profile.Id = User.Identity.GetUserId();
+            profile.ProfileImage = imageData;
+            profile.IsActivated = false;
+            profile.LastLogout = DateTime.Now;
+            // Add profile to database
+            profileRepository.Add(profile);
+            profileRepository.Save();
+            // Add user to role "Profiled", meaning that they have a profile.
+            userRepository.AddUserToProfiledRole(User.Identity.GetUserId());
+            userRepository.Save();
+            // Send user to their profile page
+            return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "Profiled")]
         public ActionResult Manage() {
             return View(profileRepository.Get(User.Identity.GetUserId())); // Manage Account for current user.
         }
 
+        [Authorize(Roles = "Profiled")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Manage([Bind(Exclude = "ProfileImage")] ProfileModels profile) {
             // Excludes ProfileImage from controller call so the program does not crash.
-            if (ModelState.IsValid) { // If model is correct
+            if(ModelState.IsValid) { // If model is correct
                 string currentUserId = User.Identity.GetUserId();
                 byte[] profileImageBackup = profileRepository.Get(currentUserId).ProfileImage; // Create backup of current profile image, in case they don't add a new one
                 byte[] imageData = null; // Holds possible new image
-                if (Request.Files["ProfileImage"].ContentLength >= 1) { // If a file was submitted
+                if(Request.Files["ProfileImage"].ContentLength >= 1) { // If a file was submitted
                     HttpPostedFileBase profileImgFile = Request.Files["ProfileImage"];
-                    using (BinaryReader binary = new BinaryReader(profileImgFile.InputStream)) {
+                    using(BinaryReader binary = new BinaryReader(profileImgFile.InputStream)) {
                         imageData = binary.ReadBytes(profileImgFile.ContentLength); // Set the profile image to the variable imageData
                     }
                     profile.ProfileImage = imageData; // Set new profile image
@@ -107,7 +115,7 @@ namespace ORUComSys.Controllers {
             // Converts the stored byte-array to an image. This action is called with razor in views to be used in img tags.
             object profileId = Request.RequestContext.RouteData.Values["id"];
             ProfileModels profile = null;
-            if (!string.IsNullOrWhiteSpace(userId)) {
+            if(!string.IsNullOrWhiteSpace(userId)) {
                 profile = profileRepository.Get(userId);
             } else {
                 profile = profileRepository.Get((string)profileId);
@@ -115,6 +123,7 @@ namespace ORUComSys.Controllers {
             return new FileContentResult(profile.ProfileImage, "image/jpeg");
         }
 
+        [Authorize(Roles = "Profiled")]
         [HttpPost]
         public void MakeAdmin(string Id) {
             ProfileModels profile = profileRepository.Get(Id);

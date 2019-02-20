@@ -16,9 +16,9 @@
         @Html.DisplayFor((m) => m.Description)
         @if (Request.IsAuthenticated && !ViewBag.CurrentUserId.Equals(ViewBag.ProfileId) && ViewBag.IsAdmin && !Model.IsAdmin) {
             <button type="button" class="btn btn-success" id="MakeAdmin">Make Admin</button>
-            <br />
         }
         @if (Request.IsAuthenticated && ViewBag.ProfileId.Equals(ViewBag.CurrentUserId)) {
+            <br />
             @Html.ActionLink("Edit Profile Information", "Manage", "Profile", new { area = "" }, new { id = "EditProfileInfoBtn", @class = "btn btn-info" })
             <br />
             @Html.ActionLink("Manage Account Details", "Index", "Manage", new { area = "" }, new { id = "ManageAccountBtn", @class = "btn btn-info" })

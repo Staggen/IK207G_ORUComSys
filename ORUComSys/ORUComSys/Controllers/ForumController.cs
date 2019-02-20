@@ -10,7 +10,7 @@ using System.Web;
 using System.Web.Mvc;
 
 namespace ORUComSys.Controllers {
-    [Authorize]
+    [Authorize(Roles = "Profiled")]
     public class ForumController : Controller {
         private AttachmentRepository attachmentRepository;
         private PostRepository postRepository;
