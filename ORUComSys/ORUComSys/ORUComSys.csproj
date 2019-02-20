@@ -436,6 +436,7 @@
     <Content Include="Views\Forum\NewPostNotificationEmail.cshtml" />
     <Content Include="Views\Meeting\_ParticipantsList.cshtml" />
     <Content Include="Views\Notifications\_NoProfile_Notifications.cshtml" />
+    <Content Include="Views\Forum\_ForumPostComments.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

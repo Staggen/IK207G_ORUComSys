@@ -13,21 +13,23 @@ namespace ORUComSys.Controllers {
     [Authorize(Roles = "Profiled")]
     public class ForumController : Controller {
         private AttachmentRepository attachmentRepository;
+        private CategoryRepository categoryRepository;
+        private CommentRepository commentRepository;
+        private FollowingCategoryRepository followingCategoryRepository;
         private PostRepository postRepository;
         private ProfileRepository profileRepository;
         private ReactionRepository reactionRepository;
-        private CategoryRepository categoryRepository;
-        private FollowingCategoryRepository followingCategoryRepository;
         private UserRepository userRepository;
 
         public ForumController() {
             ApplicationDbContext context = new ApplicationDbContext();
             attachmentRepository = new AttachmentRepository(context);
+            categoryRepository = new CategoryRepository(context);
+            commentRepository = new CommentRepository(context);
+            followingCategoryRepository = new FollowingCategoryRepository(context);
             postRepository = new PostRepository(context);
             profileRepository = new ProfileRepository(context);
             reactionRepository = new ReactionRepository(context);
-            categoryRepository = new CategoryRepository(context);
-            followingCategoryRepository = new FollowingCategoryRepository(context);
             userRepository = new UserRepository(context);
         }
 
@@ -39,13 +41,14 @@ namespace ORUComSys.Controllers {
         public ActionResult Formal() { // Formal forum
             ViewBag.Title = "Formal";
             // Create a postViewModel with all the categories so the view has a model to loop through for the category checkboxes
-            PostViewModels postViewModel = new PostViewModels {
-                Categories = categoryRepository.GetAll()
+            ForumViewModel forumViewModel = new ForumViewModel {
+                Categories = categoryRepository.GetAll(),
+                PartialViewModel = ConvertPostsToViewModels(ForumType.Formal)
             };
-            return View("FormalForum", postViewModel);
+            return View("FormalForum", forumViewModel);
         }
         [HttpPost]
-        public ActionResult Formal(PostViewModels postViewModel) { // Formal forum
+        public ActionResult Formal(ForumViewModel postViewModel) { // Formal forum
             int categoryId = (int)postViewModel.Category;
             if(categoryId.Equals(0)) {
                 categoryId = 5;
@@ -68,7 +71,7 @@ namespace ORUComSys.Controllers {
             string filename = null;
             if(Request.Files["AttachedFile"].ContentLength >= 1) { // Check if a file is entered
                 for(int i = 0; i < Request.Files.Count; i++) {
-                    HttpPostedFileBase attachedFile = Request.Files["AttachedFile"];
+                    HttpPostedFileBase attachedFile = Request.Files[i];
                     filename = attachedFile.FileName.Substring(attachedFile.FileName.LastIndexOf(@"\") + 1);
 
                     using(var binary = new BinaryReader(attachedFile.InputStream)) {
@@ -115,14 +118,15 @@ namespace ORUComSys.Controllers {
         public ActionResult Informal() { // Informal forum
             ViewBag.Title = "Informal";
             // Create a postViewModel with all the categories so the view has a model to loop through for the category checkboxes
-            PostViewModels postViewModel = new PostViewModels {
-                Categories = categoryRepository.GetAll()
+            ForumViewModel forumViewModel = new ForumViewModel {
+                Categories = categoryRepository.GetAll(),
+                PartialViewModel = ConvertPostsToViewModels(ForumType.Informal)
             };
-            return View("InformalForum", postViewModel);
+            return View("InformalForum", forumViewModel);
         }
 
         [HttpPost]
-        public ActionResult Informal(PostViewModels postViewModel) { // Informal forum
+        public ActionResult Informal(ForumViewModel postViewModel) { // Informal forum
             var categoryId = (int)postViewModel.Category;
             if(categoryId.Equals(0)) {
                 categoryId = 5;
@@ -214,12 +218,13 @@ namespace ORUComSys.Controllers {
                     CurrentUser = profileRepository.Get(currentUserId),
                     Reactions = reactionRepository.GetAllReactionsByPostId(post.Id),
                     Categories = categoryRepository.GetAll(),
-                    Attachments = attachmentRepository.GetAttachmentsByPostId(post.Id)
+                    Attachments = attachmentRepository.GetAttachmentsByPostId(post.Id),
+                    Comments = commentRepository.GetAllCommentsByPostId(post.Id)
                 };
                 allPostViewModel.Add(postViewModel);
             }
             PostViewModelsForUsers postViewModelForUsers = new PostViewModelsForUsers {
-                PostList = allPostViewModel,
+                Posts = allPostViewModel,
                 CurrentUser = profileRepository.Get(currentUserId)
             };
             return postViewModelForUsers;
@@ -277,6 +282,28 @@ namespace ORUComSys.Controllers {
             }
             // Save changes in the database
             followingCategoryRepository.Save();
+        }
+
+        public PartialViewResult GetAllCommentsByPostId(int id) {
+            List<CommentModels> comments = commentRepository.GetAllCommentsByPostId(id);
+            return PartialView("_ForumPostComments", comments);
+        }
+
+        [HttpPost]
+        public ActionResult AddComment(CommentModels vessel) {
+            if(!ModelState.IsValid) {
+                return Json(new { result = false });
+            }
+            string currentUserId = User.Identity.GetUserId();
+            CommentModels comment = new CommentModels {
+                ProfileId = currentUserId,
+                Content = vessel.Content,
+                PostId = vessel.PostId,
+                CommentDateTime = DateTime.Now
+            };
+            commentRepository.Add(comment);
+            commentRepository.Save();
+            return Json(new { result = true });
         }
     }
 }

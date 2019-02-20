@@ -22,6 +22,7 @@ namespace Datalayer.Repositories {
         public DbSet<PostModels> Posts { get; set; }
         public DbSet<AttachmentModels> Attachments { get; set; }
         public DbSet<CategoryModels> Categories { get; set; }
+        public DbSet<CommentModels> Comments { get; set; }
         // Meetings
         public DbSet<MeetingModels> Meetings { get; set; }
         public DbSet<MeetingInviteModels> MeetingInvites { get; set; }

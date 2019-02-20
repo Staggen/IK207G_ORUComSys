@@ -3,7 +3,8 @@
 @{
     int i = 1;
 }
-@model PostViewModels
+@model ForumViewModel
+
 <div class="container">
     <div class="row">
         <div class="col-md-9">
@@ -34,7 +35,7 @@
                 </div>
             }
             <div id="postWall">
-
+                @Html.Partial("_ForumPosts", Model.PartialViewModel)
             </div>
         </div>
         <div class="col-md-3 filter-div">

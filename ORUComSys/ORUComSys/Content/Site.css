@@ -42,7 +42,6 @@ select {
 .commentTextArea{
     overflow: hidden;
     height: 34px;
-    width: 80%;
     box-shadow: none;
     padding: 5px 10px 5px 10px;
 }

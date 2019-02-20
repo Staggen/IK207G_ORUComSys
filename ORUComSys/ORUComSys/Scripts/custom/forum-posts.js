@@ -3,7 +3,6 @@
     var currentUrl = window.location.href;
     var urlArray = currentUrl.split("/Forum/");
     forumType = urlArray[1].split("/")[0];
-    Update_Posts(forumType);
     $("#SubmitPost").prop("disabled", true);
     ClearBox();
 });
@@ -134,7 +133,6 @@ function ClearBox() {
 
 function DeletePost() {
     var PostId = this.getAttribute("data-post-id");
-
     $.ajax({
         type: "DELETE",
         url: "/api/AjaxApi/" + PostId,

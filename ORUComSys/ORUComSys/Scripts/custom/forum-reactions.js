@@ -65,7 +65,7 @@ function ToggleReactionListDiv() {
     }
     if ($("#reaction-list-popup").hasClass("d-none")) {
         var postId = this.getAttribute("data-post-id");
-        GetReactionListContent(postId);
+        GetReactionListContent(postId, this);
     } else {
         ToggleReactionListDisplay();
     }

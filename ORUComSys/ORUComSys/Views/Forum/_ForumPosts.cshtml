@@ -17,7 +17,7 @@
 
 @if(Model.CurrentUser.IsAdmin) {
     <div>
-        @foreach(var post in Model.PostList) {
+        @foreach(var post in Model.Posts) {
             string TargetId = "deletePost" + post.Id;
             string HashTargetId = "#deletePost" + post.Id;
             string ReactButtonId = "react-button" + post.Id;
@@ -67,18 +67,14 @@
                 </footer>
                 <!-- Here goes the second card footer, used for the comments section. Yes, you can have two footers. -->
                 <footer class="card-footer">
-                    <textarea class="rounded border border-primary card-text commentTextArea" placeholder="Write a comment..."></textarea>
-                    <button type="button" class="btn btn-primary comment-button">Comment</button>
                     <!-- Add partial view for Comment here! -->
-                    @*
-
-
-
-                        Here!
-
-
-
-                    *@
+                    <div class="comment-wall" id="comment-section-@post.Id">
+                        @Html.Partial("_ForumPostComments", post.Comments)
+                    </div>
+                    <div class="d-flex flex-row">
+                        <textarea class="rounded border border-primary card-text flex-fill mr-2 commentTextArea" id="comment-area-@post.Id" placeholder="Write a comment..."></textarea>
+                        <button type="button" class="btn btn-primary justify-content-end comment-button" data-post-id="@post.Id">Comment</button>
+                    </div>
                 </footer>
             </div>
             <!-- Modal for deleting posts -->
@@ -105,7 +101,7 @@
     </div>
 } else {
     <div>
-        @foreach(var post in Model.PostList) {
+        @foreach(var post in Model.Posts) {
             string TargetId = "deletePost" + post.Id;
             string HashTargetId = "#deletePost" + post.Id;
             string ReactButtonId = "react-button" + post.Id;
@@ -156,18 +152,14 @@
 
                 <!-- Here goes the second card footer, used for the comments section. Yes, you can have two footers. -->
                 <footer class="card-footer">
-                    <textarea class="rounded border border-primary card-text commentTextArea" placeholder="Write a comment..."></textarea>
-                    <button type="button" class="btn btn-primary comment-button">Comment</button>
                     <!-- Add partial view for Comment here! -->
-                    @*
-
-
-
-                        Here!
-
-
-
-                    *@
+                    <div class="comment-wall" id="comment-section-@post.Id">
+                        @Html.Partial("_ForumPostComments", post.Comments)
+                    </div>
+                    <div class="d-flex flex-row">
+                        <textarea class="rounded border border-primary card-text flex-fill mr-2 commentTextArea" id="comment-area-@post.Id" placeholder="Write a comment..."></textarea>
+                        <button type="button" class="btn btn-primary justify-content-end comment-button" data-post-id="@post.Id">Comment</button>
+                    </div>
                 </footer>
             </div>
             <!-- Modal for deleting posts -->
