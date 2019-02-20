@@ -1,0 +1,11 @@
+﻿@model IEnumerable<Datalayer.Models.ProposalInviteModels>
+
+<div class="container rounded-lg bg-secondary text-light">
+    <div class="row p-2 participants-table">
+        <div class="col-md-12">
+            @foreach(var invite in Model) {
+                <span>@invite.Profile.FirstName @invite.Profile.LastName</span><br />
+            }
+        </div>
+    </div>
+</div>

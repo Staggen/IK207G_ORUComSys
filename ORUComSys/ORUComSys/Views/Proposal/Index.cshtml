@@ -1,0 +1,67 @@
+﻿@model ORUComSys.Models.ProposedMeetingViewModels
+@{
+    ViewBag.Title = "Proposal Planner";
+}
+
+<div id="ParticipantsDiv" class="d-none">
+    <!-- Participants content gets injected here -->
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <h2>My Proposals</h2>
+            <br />
+            @foreach(var proposal in Model.MyProposals) {
+                int numberOfInvites = Model.ProposalInvites.Where(invite => invite.ProposalId.Equals(proposal.Id) && invite.Accepted).Distinct().ToList().Count;
+                int counter = 1;
+                <div class="@Html.Raw((Model.MyProposalInvites.Any(invite => invite.ProposalId.Equals(proposal.Id) && invite.Accepted)) ? "border-success " : "border-warning ")card border mb-2 border-thicc">
+                    <div class="@Html.Raw((Model.MyProposalInvites.Any(invite => invite.ProposalId.Equals(proposal.Id) && invite.Accepted)) ? "border-bottom border-success " : "")card-header">
+                        @proposal.Title
+                    </div>
+                    <div class="card-body">
+                        @proposal.Description
+                    </div>
+                    <footer class="@Html.Raw((Model.MyProposalInvites.Any(invite => invite.ProposalId.Equals(proposal.Id) && invite.Accepted)) ? "border-top border-success " : "")card-footer">
+                        <span><strong>Location: </strong>@proposal.Location</span><br />
+                        <button type="button" data-proposal-id="@proposal.Id" class="btn btn-secondary float-right btn-participant-list">@numberOfInvites</button><br />
+                        @foreach(var proposalInvite in Model.MyProposalInvites) {
+                            if(proposalInvite.ProposalId.Equals(proposal.Id)) {
+                                <span><strong>Proposed Time @counter: </strong>@proposalInvite.ProposedDateTime</span><br />
+                                if(Model.MyProposalInvites.Any(invite => invite.ProposalId.Equals(proposal.Id) && invite.ProfileId.Equals(Model.ProfileId) && !invite.Accepted)) {
+                                    if(counter > 1) {
+                                        <br />
+                                    }
+                                    <div>
+                                        <button type="button" class="btn btn-success accept-proposal-invite-button" data-proposal-id="@proposal.Id">Accept</button>
+                                        <button type="button" class="btn btn-danger decline-proposal-invite-button" data-proposal-id="@proposal.Id">Decline</button>
+                                    </div>
+                                }
+                                counter++;
+                            }
+                        }
+                    </footer>
+                </div>
+            }
+        </div>
+        <div class="col-md-6">
+            <h2>Create New Meeting Proposal</h2>
+            <br />
+            @Html.ActionLink("Propose New Meeting", "CreateProposal", "Proposal", new { area = "" }, new { @class = "btn btn-primary" })<br /><br />
+            <h2>Edit Meetings I Proposed</h2>
+            @foreach(var myProposal in Model.MyCreatedProposals) {
+                <div class="card border-border-secondary mb-2">
+                    <a class="card-link" href="@Url.Action("EditProposal", new { id = myProposal.Id })">
+                        <div class="card-body">
+                            @myProposal.Title
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/Scripts/custom/proposal.js"></script>
+}

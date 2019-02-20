@@ -25,9 +25,9 @@ namespace ORUComSys.Controllers {
 
         public ActionResult Index() {
             string currentUserId = User.Identity.GetUserId();
-            List<MeetingInviteModels> myMeetingInvites = meetingInviteRepository.GetAllMeetingInvitesForProfileId(currentUserId);
+            List<MeetingInviteModels> myMeetingInvites = meetingInviteRepository.GetAllInvitesForProfileId(currentUserId);
             List<int> myMeetingIds = myMeetingInvites.Where(meetingInvite => meetingInvite.ProfileId.Equals(currentUserId)).Select(meetingInvite => meetingInvite.MeetingId).ToList();
-            List<MeetingModels> myMeetings = meetingRepository.GetListOfMeetingsByMeetingIds(myMeetingIds);
+            List<MeetingModels> myMeetings = meetingRepository.GetMeetingsByMeetingIds(myMeetingIds);
             List<MeetingModels> myCreatedMeetings = meetingRepository.GetAllMeetingsByCreatorId(currentUserId);
             List<MeetingInviteModels> meetingInvites = meetingInviteRepository.GetAllInvitesByMeetingIds(myMeetingIds).Where(invite => invite.Accepted).ToList();
 
@@ -81,13 +81,13 @@ namespace ORUComSys.Controllers {
 
         [HttpPost]
         public ActionResult EditMeeting(MeetingModels meeting) {
-            if(ModelState.IsValid) {
-                meeting.CreatorId = User.Identity.GetUserId();
-                meetingRepository.Edit(meeting);
-                meetingRepository.Save();
-                return RedirectToAction("Index");
+            if(!ModelState.IsValid) {
+                return RedirectToAction("EditMeeting");
             }
-            return RedirectToAction("EditMeeting");
+            meeting.CreatorId = User.Identity.GetUserId();
+            meetingRepository.Edit(meeting);
+            meetingRepository.Save();
+            return RedirectToAction("Index");
         }
 
         public ActionResult MeetingInvitePeople(int Id) {
@@ -132,7 +132,7 @@ namespace ORUComSys.Controllers {
         [HttpPost]
         public ActionResult RemoveMeetingInvite(InviteViewModels invite) {
             if(ModelState.IsValid) {
-                MeetingInviteModels meetingInvite = meetingInviteRepository.GetMeetingInvite(invite.ProfileId, invite.MeetingId);
+                MeetingInviteModels meetingInvite = meetingInviteRepository.GetInvite(invite.ProfileId, invite.MeetingId);
                 meetingInviteRepository.Remove(meetingInvite.Id);
                 meetingInviteRepository.Save();
                 return Json(new { result = true });
@@ -142,7 +142,7 @@ namespace ORUComSys.Controllers {
 
         [HttpPost]
         public ActionResult AcceptMeetingInvite(int id) {
-            MeetingInviteModels meetingInvite = meetingInviteRepository.GetMeetingInvite(User.Identity.GetUserId(), id);
+            MeetingInviteModels meetingInvite = meetingInviteRepository.GetInvite(User.Identity.GetUserId(), id);
             meetingInvite.Accepted = true;
             meetingInviteRepository.Edit(meetingInvite);
             meetingInviteRepository.Save();
@@ -151,7 +151,7 @@ namespace ORUComSys.Controllers {
 
         [HttpPost]
         public ActionResult DeclineMeetingInvite(int id) {
-            MeetingInviteModels meetingInvite = meetingInviteRepository.GetMeetingInvite(User.Identity.GetUserId(), id);
+            MeetingInviteModels meetingInvite = meetingInviteRepository.GetInvite(User.Identity.GetUserId(), id);
             meetingInviteRepository.Remove(meetingInvite.Id);
             meetingInviteRepository.Save();
             return Json(new { result = true });

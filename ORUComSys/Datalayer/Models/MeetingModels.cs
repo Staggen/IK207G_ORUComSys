@@ -29,4 +29,9 @@ namespace Datalayer.Models {
         [Required]
         public MeetingType Type { get; set; }
     }
+    public enum MeetingType {
+        Public,
+        Private,
+        Secret
+    }
 }

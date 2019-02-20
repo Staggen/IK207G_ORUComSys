@@ -22,7 +22,7 @@
                                 <span class="badge badge-primary personal-info">@profile.FirstName @profile.LastName</span>
                             </a>
                             @try {
-                                var inviteModels = Model.Invites.Where((i) => i.ProfileId.Equals(profile.Id) && i.MeetingId.Equals(Model.MeetingId)).ToList();
+                                var inviteModels = Model.Invites.Where(invite => invite.ProfileId.Equals(profile.Id) && invite.MeetingId.Equals(Model.MeetingId)).ToList();
                                 if (inviteModels.Count > 0) {
                                     <button type="button" class="btn btn-danger invite-button float-right" id="@profile.Id" data-meeting-id="@Model.MeetingId">Remove</button>
                                 } else {

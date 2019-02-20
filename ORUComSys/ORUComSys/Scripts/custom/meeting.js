@@ -8,7 +8,6 @@ $("body").on("click", ".btn-participant-list", ToggleParticipantsDiv);
 
 function AcceptInvite() {
     var meetingId = $(this).data("meeting-id");
-    var elementId = "#meeting-id-" + meetingId;
     $.ajax({
         url: "/Meeting/AcceptMeetingInvite/" + meetingId,
         type: "POST",
@@ -17,7 +16,7 @@ function AcceptInvite() {
             var counter = $($(this).parents().eq(1)[0].childNodes[3]).text();
             $($(this).parents().eq(1)[0].childNodes[3]).text(parseInt(counter, 10) + 1);
             SetBorders($(this).parents().eq(2));
-            ButtonGroup(elementId);
+            ButtonGroup($(this).parents().eq(0));
         },
         error: () => {
             console.log("Error: Unable to accept invite");
@@ -88,7 +87,6 @@ function GetParticipantsContent(passedThis) {
         success: function (data) {
             $("#ParticipantsDiv").html(data);
             CreateParticipantsPopper(passedThis);
-            ToggleParticipantsDisplay();
         },
         error: () => {
             console.log("Error: Unable to get participants content.");
@@ -108,6 +106,7 @@ function CreateParticipantsPopper(passedThis) {
             }
         }
     });
+    ToggleParticipantsDisplay();
 }
 
 function ToggleParticipantsDisplay() {

@@ -11,17 +11,18 @@ namespace Datalayer.Models {
         [Required]
         [ForeignKey("Proposal")]
         public int ProposalId { get; set; }
-        public virtual MeetingProposalModels Proposal { get; set; }
+        public virtual ProposedMeetingModels Proposal { get; set; }
 
         [Required]
         [ForeignKey("Profile")]
         public string ProfileId { get; set; }
         public virtual ProfileModels Profile { get; set; }
 
-        [Required]
-        public DateTime ProposalInviteDateTime { get; set; }
+        public DateTime NotificationDateTime { get; set; }
+        
+        public DateTime ProposedDateTime { get; set; }
 
         [Required]
-        public bool ProposalAccepted { get; set; } = false;
+        public bool Accepted { get; set; } = false;
     }
 }

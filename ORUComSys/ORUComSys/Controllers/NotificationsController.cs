@@ -7,6 +7,7 @@ using System.Linq;
 using System.Web.Mvc;
 
 namespace ORUComSys.Controllers {
+    [Authorize]
     public class NotificationsController : Controller {
         private FollowingCategoryRepository followingCategoryRepository;
         private MeetingInviteRepository meetingInviteRepository;
@@ -29,7 +30,7 @@ namespace ORUComSys.Controllers {
             }
             ProfileModels profile = profileRepository.Get(currentUserId);
             // Get all meeting invites for the profile id, then select only the ones which have not been accepted.
-            List<MeetingInviteModels> meetingInvites = meetingInviteRepository.GetAllMeetingInvitesForProfileId(currentUserId).Where(meetingInvite => !meetingInvite.Accepted).ToList();
+            List<MeetingInviteModels> meetingInvites = meetingInviteRepository.GetAllInvitesForProfileId(currentUserId).Where(meetingInvite => !meetingInvite.Accepted).ToList();
             List<int> followedCategoryIds = followingCategoryRepository.GetAllFollowedCategoriesByUserId(currentUserId).Select(followedCategory => followedCategory.CategoryId).ToList();
             List<PostModels> newPosts = postRepository.GetAllPostsInFollowedCategoriesSinceLastLogout(followedCategoryIds, profile.LastLogout, currentUserId);
             return Json(new { Number = meetingInvites.Count + newPosts.Count });
@@ -44,7 +45,7 @@ namespace ORUComSys.Controllers {
             }
             ProfileModels profile = profileRepository.Get(currentUserId);
             // Get all meeting invites for the profile id, then select only the ones which have not been accepted.
-            List<MeetingInviteModels> meetingInvites = meetingInviteRepository.GetAllMeetingInvitesForProfileId(currentUserId).Where(meetingInvite => !meetingInvite.Accepted).ToList();
+            List<MeetingInviteModels> meetingInvites = meetingInviteRepository.GetAllInvitesForProfileId(currentUserId).Where(meetingInvite => !meetingInvite.Accepted).ToList();
             List<int> followedCategoryIds = followingCategoryRepository.GetAllFollowedCategoriesByUserId(currentUserId).Select(followedCategory => followedCategory.CategoryId).ToList();
             List<PostModels> newPosts = postRepository.GetAllPostsInFollowedCategoriesSinceLastLogout(followedCategoryIds, profile.LastLogout, currentUserId).OrderByDescending(post => post.PostDateTime).ToList();
             List<ProfileModels> profiles = new List<ProfileModels>();

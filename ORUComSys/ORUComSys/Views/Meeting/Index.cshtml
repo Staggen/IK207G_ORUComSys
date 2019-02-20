@@ -25,8 +25,8 @@
                         <strong>Place: </strong>@meeting.Location
                         <button type="button" data-meeting-id="@meeting.Id" class="btn btn-secondary float-right btn-participant-list">@numberOfInvites</button><br />
                         <strong>Time: </strong>@meeting.MeetingDateTime
-                        @if(Model.MyMeetingInvites.Any((i) => i.MeetingId.Equals(meeting.Id) && i.ProfileId.Equals(Model.ProfileId) && !i.Accepted)) {
-                            <div id="meeting-id-@meeting.Id">
+                        @if(Model.MyMeetingInvites.Any(invite => invite.MeetingId.Equals(meeting.Id) && invite.ProfileId.Equals(Model.ProfileId) && !invite.Accepted)) {
+                            <div>
                                 <button type="button" class="btn btn-success accept-meeting-invite-button" data-meeting-id="@meeting.Id">Accept</button>
                                 <button type="button" class="btn btn-danger decline-meeting-invite-button" data-meeting-id="@meeting.Id">Decline</button>
                             </div>

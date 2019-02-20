@@ -26,9 +26,9 @@ namespace Datalayer.Repositories {
         // Meetings
         public DbSet<MeetingModels> Meetings { get; set; }
         public DbSet<MeetingInviteModels> MeetingInvites { get; set; }
-        // Meeting Proposals (not done)
-        //public DbSet<MeetingProposalModels> Proposals { get; set; }
-        //public DbSet<MeetingInviteeModels> ProposalInvitees { get; set; }
+        // Meeting Proposals
+        public DbSet<ProposedMeetingModels> Proposals { get; set; }
+        public DbSet<ProposalInviteModels> ProposalInvites { get; set; }
         // Reactions
         public DbSet<ReactionModels> Reactions { get; set; }
         // Following
