@@ -12,19 +12,20 @@ namespace ORUComSys.Models {
 
         [Required]
         public string Description { get; set; }
-
-        [Required]
+        
+        [Display(Name = "First Time (YYYY-MM-DD HH:MM)")]
         [DataType(DataType.DateTime)]
         public DateTime FirstTime { get; set; }
 
+        [Display(Name = "Second Time (YYYY-MM-DD HH:MM)")]
         [DataType(DataType.DateTime)]
-        public DateTime SecondTime { get; set; }
+        public DateTime? SecondTime { get; set; }
 
+        [Display(Name = "Third Time (YYYY-MM-DD HH:MM)")]
         [DataType(DataType.DateTime)]
-        public DateTime ThirdTime { get; set; }
+        public DateTime? ThirdTime { get; set; }
 
         [Required]
-        [Display(Name = "Select Meeting Type")]
         public MeetingType Type { get; set; }
     }
 }

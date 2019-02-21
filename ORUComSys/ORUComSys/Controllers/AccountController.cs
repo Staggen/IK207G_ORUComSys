@@ -84,7 +84,7 @@ namespace ORUComSys.Controllers {
                     string currentUserId = userRepository.GetUserIdByEmail(model.Email);
                     if(userRepository.Get(currentUserId).LockoutEnabled) { // If user is banned
                         AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie); // Sign them back out
-                        return View("Lockout"); // Redirect them to the banned screen.
+                        return View("Banned"); // Redirect them to the banned screen.
                     }
                     if (!profileRepository.IfProfileExists(currentUserId)) { // If user has no profile
                         return RedirectToAction("Create", "Profile"); // Redirect to Profile/Create

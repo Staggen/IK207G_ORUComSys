@@ -71,9 +71,9 @@ function CreateCalendarEvent(meetingArray) {
                 location: meetingArray[i].Location,
                 start: startDateTime,
                 end: endDateTime,
-                color: "red"
+                color: "indianred"
             };
-        } else {
+        } else if (meetingArray[i].Type == 1) {
             event = {
                 id: meetingArray[i].Id,
                 title: meetingArray[i].Title,
@@ -81,7 +81,17 @@ function CreateCalendarEvent(meetingArray) {
                 location: meetingArray[i].Location,
                 start: startDateTime,
                 end: endDateTime,
-                color: "green"
+                color: "lightblue"
+            };
+        } else if (meetingArray[i].Type == 2) {
+            event = {
+                id: meetingArray[i].Id,
+                title: meetingArray[i].Title,
+                description: meetingArray[i].Description,
+                location: meetingArray[i].Location,
+                start: startDateTime,
+                end: endDateTime,
+                color: "lightgreen"
             };
         }
         $("#calendar").fullCalendar("renderEvent", event, true); // true: stick = true

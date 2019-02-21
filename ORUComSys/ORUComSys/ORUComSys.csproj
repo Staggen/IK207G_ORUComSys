@@ -238,11 +238,11 @@
     <Content Include="Scripts\custom\forum-posts.js" />
     <Content Include="Scripts\custom\forum-reactions.js" />
     <Content Include="Scripts\custom\global-notifications.js" />
+    <Content Include="Scripts\custom\meeting-create.js" />
     <Content Include="Scripts\custom\meeting-invites.js" />
     <Content Include="Scripts\custom\forum-post-subscriptions.js" />
     <Content Include="Scripts\custom\meeting.js" />
     <Content Include="Scripts\custom\profile.js" />
-    <Content Include="Scripts\custom\proposal-create.js" />
     <Content Include="Scripts\custom\proposal-invites.js" />
     <Content Include="Scripts\custom\proposal.js" />
     <Content Include="Scripts\custom\search.js" />
@@ -448,6 +448,8 @@
     <Content Include="Views\Proposal\Index.cshtml" />
     <Content Include="Views\Proposal\CreateProposal.cshtml" />
     <Content Include="Views\Proposal\ProposalInvitePeople.cshtml" />
+    <Content Include="Views\Shared\Banned.cshtml" />
+    <Content Include="Views\Proposal\EditProposal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

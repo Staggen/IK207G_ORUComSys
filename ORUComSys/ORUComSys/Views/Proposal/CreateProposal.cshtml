@@ -1,5 +1,4 @@
 ﻿@model ORUComSys.Models.ProposedMeetingVesselModel
-@using Datalayer.Models
 @{
     ViewBag.Title = "Propose Meeting";
 }
@@ -9,79 +8,75 @@
 @using(Html.BeginForm()) {
     @Html.AntiForgeryToken()
 
-    <div class="form-horizontal">
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <hr />
-        <div class="form-group">
-            @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "col-md-4" })
-            @Html.DropDownListFor(category => category.Type, new SelectList(Enum.GetValues(typeof(MeetingType))), "Select Meeting Type:", new { @class = "form-control", @id = "meeting-type-selector" })
-            @Html.ValidationMessageFor(category => category.Type)
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Location, htmlAttributes: new { @class = "col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="col-md-4">First Time (HH-MM YYYY-MM-DD)</label>
-            <span class="btn btn-success" id="add-second-time">Add Time</span>
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.FirstTime, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.FirstTime, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group d-none">
-            <label class="col-md-4">Second Time (HH-MM YYYY-MM-DD): </label>
-            <span class="btn btn-danger" id="add-third-time">Add Time</span>
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.SecondTime, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.SecondTime, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group d-none">
-            <label class="col-md-4">Third Time (HH-MM-YYYY-MM-DD)</label>
-            <span class="btn btn-primary" id="show-all">Show All Times</span>
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ThirdTime, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ThirdTime, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-10">
-                <input type="submit" value="Invite People" class="btn btn-outline-primary" />
-            </div>
+<div class="form-horizontal">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <hr />
+    <div class="form-group">
+        @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
         </div>
     </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Location, htmlAttributes: new { @class = "col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.FirstTime, htmlAttributes: new { @class = "col-md-4" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.FirstTime, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.FirstTime, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.SecondTime, htmlAttributes: new { @class = "col-md-4" })
+        <br /><label class="col-md-2 text-danger">Optional</label>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.SecondTime, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.SecondTime, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ThirdTime, htmlAttributes: new { @class = "col-md-4" })
+        <br /><label class="col-md-2 text-danger">Optional</label>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.ThirdTime, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.ThirdTime, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "col-md-2" })
+        <div class="col-md-10">
+            @Html.EnumDropDownListFor(model => model.Type, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-10">
+            <input type="submit" value="Invite People" class="btn btn-outline-primary" />
+        </div>
+    </div>
+</div>
 }
 
 <div>
     @Html.ActionLink("Back to List", "Index", new { area = "" }, new { @class = "btn btn-primary" })
 </div>
-
-@section Scripts{
-    @Scripts.Render("~/bundles/jqueryval")
-    <script src="~/Scripts/custom/proposal-create.js"></script>
-}

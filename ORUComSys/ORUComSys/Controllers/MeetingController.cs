@@ -68,8 +68,33 @@ namespace ORUComSys.Controllers {
                 };
                 meetingInviteRepository.Add(inviteModel); // Invite yourself to the meeting (calendar purposes)
                 meetingInviteRepository.Save();
+                if(model.Type != MeetingType.Public) { // Invite specific people if meeting is not public
+                    return RedirectToAction("MeetingInvitePeople", new { id = model.Id });
+                }
+                // If meeting however is public, invite everyone (except yourself since you already did that)
+                List<ProfileModels> exceptCurrent = profileRepository.GetAllProfilesExceptCurrent(currentUserId);
+                foreach(ProfileModels profile in exceptCurrent) {
+                    inviteModel = new MeetingInviteModels {
+                        MeetingId = model.Id,
+                        ProfileId = profile.Id,
+                        InviteDateTime = DateTime.Now,
+                        Accepted = false
+                    };
+                    meetingInviteRepository.Add(inviteModel);
 
-                return RedirectToAction("MeetingInvitePeople", new { id = model.Id });
+                    // Send notification email
+                    EmailViewModels emailModel = new EmailViewModels {
+                        Sender = profileRepository.Get(currentUserId),
+                        Recipient = profileRepository.Get(profile.Id),
+                        Meeting = meetingRepository.Get(model.Id)
+                    };
+                    string viewPath = "~/Views/Meeting/NewMeetingNotificationEmail.cshtml";
+                    string recipient = userRepository.GetEmailByUserId(profile.Id);
+                    string subject = "New Meeting Invite - ORUComSys";
+                    EmailSupport.SendNotificationEmail(ControllerContext, viewPath, emailModel, recipient, subject);
+                }
+                meetingInviteRepository.Save();
+                return RedirectToAction("Index");
             }
             return View();
         }

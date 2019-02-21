@@ -5,6 +5,7 @@
 $("body").on("click", ".accept-proposal-invite-button", AcceptProposal);
 $("body").on("click", ".decline-proposal-invite-button", DeclineProposal);
 $("body").on("click", ".btn-participant-list", ToggleParticipantsDiv);
+$("body").on("click", "#delete-proposal-btn", DeleteProposal);
 
 function AcceptProposal() {
     var proposalId = $(this).data("proposal-id");
@@ -111,4 +112,21 @@ function CreateParticipantsPopper(passedThis) {
 
 function ToggleParticipantsDisplay() {
     $("#ParticipantsDiv").toggleClass("d-none");
+}
+
+function DeleteProposal() {
+    var proposalId = this.getAttribute("data-proposal-id");
+    var leftProposalDisplay = $("#proposal-div-" + proposalId);
+    $.ajax({
+        type: "DELETE",
+        url: "/api/AjaxApi/DeleteProposal/" + proposalId,
+        contentType: "application/json;charset=UTF-8",
+        success: () => {
+            $($(this).parents()[1]).addClass("d-none");
+            leftProposalDisplay.addClass("d-none");
+        },
+        error: () => {
+            alert("Error: Failure to delete meeting");
+        }
+    });
 }

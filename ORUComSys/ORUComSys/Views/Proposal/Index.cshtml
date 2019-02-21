@@ -15,7 +15,7 @@
             @foreach(var proposal in Model.MyProposals) {
                 int numberOfInvites = Model.ProposalInvites.Where(invite => invite.ProposalId.Equals(proposal.Id) && invite.Accepted).Distinct().ToList().Count;
                 int counter = 1;
-                <div class="@Html.Raw((Model.MyProposalInvites.Any(invite => invite.ProposalId.Equals(proposal.Id) && invite.Accepted)) ? "border-success " : "border-warning ")card border mb-2 border-thicc">
+                <div class="@Html.Raw((Model.MyProposalInvites.Any(invite => invite.ProposalId.Equals(proposal.Id) && invite.Accepted)) ? "border-success " : "border-warning ")card border mb-2 border-thicc" id="proposal-div-@proposal.Id">
                     <div class="@Html.Raw((Model.MyProposalInvites.Any(invite => invite.ProposalId.Equals(proposal.Id) && invite.Accepted)) ? "border-bottom border-success " : "")card-header">
                         @proposal.Title
                     </div>
@@ -27,11 +27,11 @@
                         <button type="button" data-proposal-id="@proposal.Id" class="btn btn-secondary float-right btn-participant-list">@numberOfInvites</button><br />
                         @foreach(var proposalInvite in Model.MyProposalInvites) {
                             if(proposalInvite.ProposalId.Equals(proposal.Id)) {
+                                if(counter > 1) {
+                                    <br />
+                                }
                                 <span><strong>Proposed Time @counter: </strong>@proposalInvite.ProposedDateTime</span><br />
                                 if(Model.MyProposalInvites.Any(invite => invite.ProposalId.Equals(proposal.Id) && invite.ProfileId.Equals(Model.ProfileId) && !invite.Accepted)) {
-                                    if(counter > 1) {
-                                        <br />
-                                    }
                                     <div>
                                         <button type="button" class="btn btn-success accept-proposal-invite-button" data-proposal-id="@proposal.Id">Accept</button>
                                         <button type="button" class="btn btn-danger decline-proposal-invite-button" data-proposal-id="@proposal.Id">Decline</button>
@@ -50,12 +50,17 @@
             @Html.ActionLink("Propose New Meeting", "CreateProposal", "Proposal", new { area = "" }, new { @class = "btn btn-primary" })<br /><br />
             <h2>Edit Meetings I Proposed</h2>
             @foreach(var myProposal in Model.MyCreatedProposals) {
-                <div class="card border-border-secondary mb-2">
-                    <a class="card-link" href="@Url.Action("EditProposal", new { id = myProposal.Id })">
-                        <div class="card-body">
-                            @myProposal.Title
-                        </div>
-                    </a>
+                string TargetId = "deleteProposal" + myProposal.Id;
+                string HashTargetId = "#deleteProposal" + myProposal.Id;
+                <div class="mb-2">
+                    <div class="d-flex flex-row card border border-secondary">
+                        <a class="card-link flex-fill" href="@Url.Action("EditProposal", new { id = myProposal.Id })">
+                            <div class="card-body">
+                                @myProposal.Title
+                            </div>
+                        </a>
+                        <button type="button" id="delete-proposal-btn" class="btn close mr-4" data-proposal-id="@myProposal.Id">&times;</button>
+                    </div>
                 </div>
             }
         </div>

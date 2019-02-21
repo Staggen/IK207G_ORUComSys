@@ -6,11 +6,10 @@
     <div class="row">
         <div class="col-md-8">
             <h2>@ViewBag.Title</h2>
-        </div>
-        <div class="col-md-4">
-            <div class="mb-1">Legend:</div>
-            <div class="bg-danger p-1 mb-1 rounded">Red = Public Event</div>
-            <div class="bg-success p-1 rounded">Green = Private Event</div>
+            <span class="">Legend:</span>
+            <span class="p-1 rounded" style="background-color: indianred;">Red = Public Event</span>
+            <span class="p-1 rounded" style="background-color: lightblue;">Blue = Private Event (Invite only)</span>
+            <span class="p-1 rounded" style="background-color: lightgreen;">Green = Secret Event (Invite only)</span>
         </div>
         <div class="col-md-12">
             <div id="calendar"></div>

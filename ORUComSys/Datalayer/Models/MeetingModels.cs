@@ -23,7 +23,7 @@ namespace Datalayer.Models {
 
         [Required]
         [DataType(DataType.DateTime)]
-        [Display(Name = "Time and Date (HH:MM YYYY-MM-DD)")]
+        [Display(Name = "Time and Date (YYYY-MM-DD HH:MM)")]
         public DateTime MeetingDateTime { get; set; }
 
         [Required]

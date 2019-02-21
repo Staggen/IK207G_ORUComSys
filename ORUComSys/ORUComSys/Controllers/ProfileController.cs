@@ -90,7 +90,7 @@ namespace ORUComSys.Controllers {
             // Excludes ProfileImage from controller call so the program does not crash.
             if(ModelState.IsValid) { // If model is correct
                 string currentUserId = User.Identity.GetUserId();
-                byte[] profileImageBackup = profileRepository.Get(currentUserId).ProfileImage; // Create backup of current profile image, in case they don't add a new one
+                ProfileModels reference = profileRepository.Get(profile.Id); // Required to not have all the non-edited data reset.
                 byte[] imageData = null; // Holds possible new image
                 if(Request.Files["ProfileImage"].ContentLength >= 1) { // If a file was submitted
                     HttpPostedFileBase profileImgFile = Request.Files["ProfileImage"];
@@ -99,8 +99,12 @@ namespace ORUComSys.Controllers {
                     }
                     profile.ProfileImage = imageData; // Set new profile image
                 } else { // If no file was submitted
-                    profile.ProfileImage = profileImageBackup; // Re-set old profile image
+                    profile.ProfileImage = reference.ProfileImage; // Re-set old profile image
                 }
+                // Set non-edited values
+                profile.IsActivated = reference.IsActivated;
+                profile.IsAdmin = reference.IsAdmin;
+                profile.LastLogout = reference.LastLogout;
                 // Edit profile in database
                 profileRepository.Edit(profile);
                 profileRepository.Save();
@@ -127,11 +131,22 @@ namespace ORUComSys.Controllers {
 
         [Authorize(Roles = "Profiled")]
         [HttpPost]
-        public void MakeAdmin(string Id) {
+        public ActionResult MakeAdmin(string Id) {
             ProfileModels profile = profileRepository.Get(Id);
             profile.IsAdmin = true;
             profileRepository.Edit(profile);
             profileRepository.Save();
+            return Json(new { result = true });
+        }
+
+        [Authorize(Roles = "Profiled")]
+        [HttpPost]
+        public ActionResult RemoveAdmin(string Id) {
+            ProfileModels profile = profileRepository.Get(Id);
+            profile.IsAdmin = false;
+            profileRepository.Edit(profile);
+            profileRepository.Save();
+            return Json(new { result = true });
         }
 
         [Authorize(Roles = "Profiled")]

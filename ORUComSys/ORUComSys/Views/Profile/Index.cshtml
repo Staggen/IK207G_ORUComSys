@@ -14,10 +14,10 @@
             @Html.DisplayFor((m) => m.Title)
             <br /><strong>Description</strong><br />
             @Html.DisplayFor((m) => m.Description)
-            @if(Request.IsAuthenticated && !ViewBag.CurrentUserId.Equals(ViewBag.ProfileId) && ViewBag.IsAdmin && !Model.IsAdmin) {
+            @if(Request.IsAuthenticated && !ViewBag.CurrentUserId.Equals(ViewBag.ProfileId) && ViewBag.IsAdmin) {
                 <br /><br />
-                <button type="button" class="btn btn-success mr-1" id="MakeAdmin">Make Admin</button>
-                <button type="button" class="@Html.Raw(!ViewBag.Banned ? "btn-danger " : "btn-success ")btn" id="BanUser">@Html.Raw(!ViewBag.Banned ? "Ban User" : "Unban User")</button>
+                <button type="button" class="@Html.Raw(Model.IsAdmin ? "btn-danger " : "btn-success ")btn mr-1" id="ToggleAdmin">@Html.Raw(Model.IsAdmin ? "Remove Admin" : "Make Admin")</button>
+                <button type="button" class="@Html.Raw(!ViewBag.Banned ? "btn-danger " : "btn-success ")btn" id="ToggleBanned">@Html.Raw(!ViewBag.Banned ? "Ban User" : "Unban User")</button>
             }
             @if(Request.IsAuthenticated && ViewBag.ProfileId.Equals(ViewBag.CurrentUserId)) {
                 <br />

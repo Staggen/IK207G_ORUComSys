@@ -43,7 +43,8 @@ namespace ORUComSys.Controllers {
         }
 
         public ActionResult CreateProposal() {
-            return View();
+            ProposedMeetingVesselModel test = new ProposedMeetingVesselModel();
+            return View(test);
         }
 
         [HttpPost]
@@ -67,23 +68,23 @@ namespace ORUComSys.Controllers {
                 ProposedDateTime = vessel.FirstTime
             };
             proposalInviteRepository.Add(firstInvite);
-            if(!vessel.SecondTime.Year.Equals(0001)) {
+            if(vessel.SecondTime != null) {
                 ProposalInviteModels secondInvite = new ProposalInviteModels {
                     ProposalId = proposal.Id,
                     ProfileId = currentUserId,
                     NotificationDateTime = DateTime.Now,
                     Accepted = true,
-                    ProposedDateTime = vessel.SecondTime
+                    ProposedDateTime = (DateTime)vessel.SecondTime
                 };
                 proposalInviteRepository.Add(secondInvite);
             }
-            if(!vessel.SecondTime.Year.Equals(0001)) {
+            if(vessel.ThirdTime != null) {
                 ProposalInviteModels thirdInvite = new ProposalInviteModels {
                     ProposalId = proposal.Id,
                     ProfileId = currentUserId,
                     NotificationDateTime = DateTime.Now,
                     Accepted = true,
-                    ProposedDateTime = vessel.ThirdTime
+                    ProposedDateTime = (DateTime)vessel.ThirdTime
                 };
                 proposalInviteRepository.Add(thirdInvite);
             }

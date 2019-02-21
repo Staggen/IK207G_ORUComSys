@@ -10,6 +10,7 @@ namespace ORUComSys.Controllers {
         private CommentRepository commentRepository;
         private MeetingRepository meetingRepository;
         private PostRepository postRepository;
+        private ProposedMeetingRepository proposedMeetingRepository;
         private ReactionRepository reactionRepository;
 
         public AjaxApiController() {
@@ -18,6 +19,7 @@ namespace ORUComSys.Controllers {
             commentRepository = new CommentRepository(context);
             meetingRepository = new MeetingRepository(context);
             postRepository = new PostRepository(context);
+            proposedMeetingRepository = new ProposedMeetingRepository(context);
             reactionRepository = new ReactionRepository(context);
         }
 
@@ -83,6 +85,12 @@ namespace ORUComSys.Controllers {
         public void DeleteComment(int id) {
             commentRepository.Remove(id);
             commentRepository.Save();
+        }
+
+        [HttpDelete]
+        public void DeleteProposal(int id) {
+            proposedMeetingRepository.Remove(id);
+            proposedMeetingRepository.Save();
         }
     }
 }
