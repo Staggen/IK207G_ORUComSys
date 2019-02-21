@@ -1,12 +1,12 @@
 ﻿@model IEnumerable<Datalayer.Models.CommentModels>
 
 @foreach(var comment in Model) {
-    <div class="d-flex flex-row">
-        <div class="media mb-3">
+    <div class="d-flex flex-row comment-area" data-comment-id="@comment.Id">
+        <div class="media mb-3 flex-fill">
             <a href="@Url.Action("Index", "Profile", new { id = comment.ProfileId })" class="card-link">
                 <img class="mr-1 rounded-circle" src="@Url.Action("RenderProfileImage", "Profile", new { id = comment.ProfileId })" height="32" width="32" />
             </a>
-            <div class="media-body flex-grow-1">
+            <div class="media-body">
                 <div class="badge bg-white border border-primary text-left">
                     <a href="@Url.Action("Index", "Profile", new { id = comment.ProfileId })" class="alert-link">
                         <span>@comment.Profile.FirstName @comment.Profile.LastName</span>
@@ -15,6 +15,7 @@
                 </div>
                 <br /><span class="badge"><strong>Published: </strong>@comment.CommentDateTime</span>
             </div>
+            <button type="button" class="justify-content-end ml-3 close invisible comment-delete-btn" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
     </div>
 }

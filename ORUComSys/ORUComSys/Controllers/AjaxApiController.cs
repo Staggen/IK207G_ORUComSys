@@ -7,12 +7,16 @@ using System.Web.Http;
 namespace ORUComSys.Controllers {
     public class AjaxApiController : ApiController {
         private AttachmentRepository attachmentRepository;
+        private CommentRepository commentRepository;
+        private MeetingRepository meetingRepository;
         private PostRepository postRepository;
         private ReactionRepository reactionRepository;
 
         public AjaxApiController() {
             ApplicationDbContext context = new ApplicationDbContext();
             attachmentRepository = new AttachmentRepository(context);
+            commentRepository = new CommentRepository(context);
+            meetingRepository = new MeetingRepository(context);
             postRepository = new PostRepository(context);
             reactionRepository = new ReactionRepository(context);
         }
@@ -67,6 +71,18 @@ namespace ORUComSys.Controllers {
         [HttpGet]
         public byte[] GetAttachment(int id) {
             return attachmentRepository.GetAttachmentByteArrayById(id);
+        }
+
+        [HttpDelete]
+        public void DeleteMeeting(int id) {
+            meetingRepository.Remove(id);
+            meetingRepository.Save();
+        }
+
+        [HttpDelete]
+        public void DeleteComment(int id) {
+            commentRepository.Remove(id);
+            commentRepository.Save();
         }
     }
 }

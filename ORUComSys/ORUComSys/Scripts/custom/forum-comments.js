@@ -4,6 +4,30 @@
 
 $("#postWall").on("keyup", ".commentTextArea", AdjustTextArea);
 $("#postWall").on("click", ".comment-button", AddComment);
+$("#postWall").on("click", ".comment-delete-btn", DeleteComment);
+$("#postWall").on("mouseenter", ".comment-area", ToggleX);
+$("#postWall").on("mouseleave", ".comment-area", ToggleX);
+
+function ToggleX() {
+    var targetElement = $(this.childNodes[1].childNodes[5])[0];
+    $(targetElement).toggleClass("invisible");
+}
+
+function DeleteComment() {
+    var postId = $(this).parents().eq(2).data("post-id");
+    var commentId = $(this).parents().eq(1).data("comment-id");
+    $.ajax({
+        type: "DELETE",
+        url: "/Api/AjaxApi/DeleteComment/" + commentId,
+        dataType: "JSON",
+        success: () => {
+            Update_Comment_Section(postId);
+        },
+        error: () => {
+            console.log("Error: Unable to delete comment!");
+        }
+    });
+}
 
 function AdjustTextArea(id) {
     if (typeof (id) == "object") { // Actively adjust size as one is typing.

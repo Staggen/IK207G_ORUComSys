@@ -1,31 +1,35 @@
 ﻿@model Datalayer.Models.ProfileModels
-@{ 
+@{
     ViewBag.Title = "Profile";
 }
-
-<div class="row" id="ProfilePageDiv">
-    <div class="col-md-4">
-        <img src="@Url.Action("RenderProfileImage", "Profile", new { userId = ViewBag.ProfileId })" id="ProfileImage" />
-        <br /><strong>Name</strong><br />
-        @Html.DisplayFor((m) => m.FirstName) @Html.DisplayFor((m) => m.LastName)
-        <br /><strong>Phone Number</strong><br />
-        @Html.DisplayFor((m) => m.PhoneNumber)
-        <br /><strong>Title</strong><br />
-        @Html.DisplayFor((m) => m.Title)
-        <br /><strong>Description</strong><br />
-        @Html.DisplayFor((m) => m.Description)
-        @if (Request.IsAuthenticated && !ViewBag.CurrentUserId.Equals(ViewBag.ProfileId) && ViewBag.IsAdmin && !Model.IsAdmin) {
-            <button type="button" class="btn btn-success" id="MakeAdmin">Make Admin</button>
-        }
-        @if (Request.IsAuthenticated && ViewBag.ProfileId.Equals(ViewBag.CurrentUserId)) {
-            <br />
-            @Html.ActionLink("Edit Profile Information", "Manage", "Profile", new { area = "" }, new { id = "EditProfileInfoBtn", @class = "btn btn-info" })
-            <br />
-            @Html.ActionLink("Manage Account Details", "Index", "Manage", new { area = "" }, new { id = "ManageAccountBtn", @class = "btn btn-info" })
-            <br />
-        }
+<div class="container" data-profile-id="@Model.Id">
+    <div class="row" id="ProfilePageDiv">
+        <div class="col-md-4">
+            <img src="@Url.Action("RenderProfileImage", "Profile", new { userId = ViewBag.ProfileId })" id="ProfileImage" />
+            <br /><strong>Name</strong><br />
+            @Html.DisplayFor((m) => m.FirstName) @Html.DisplayFor((m) => m.LastName)
+            <br /><strong>Phone Number</strong><br />
+            @Html.DisplayFor((m) => m.PhoneNumber)
+            <br /><strong>Title</strong><br />
+            @Html.DisplayFor((m) => m.Title)
+            <br /><strong>Description</strong><br />
+            @Html.DisplayFor((m) => m.Description)
+            @if(Request.IsAuthenticated && !ViewBag.CurrentUserId.Equals(ViewBag.ProfileId) && ViewBag.IsAdmin && !Model.IsAdmin) {
+                <br /><br />
+                <button type="button" class="btn btn-success mr-1" id="MakeAdmin">Make Admin</button>
+                <button type="button" class="@Html.Raw(!ViewBag.Banned ? "btn-danger " : "btn-success ")btn" id="BanUser">@Html.Raw(!ViewBag.Banned ? "Ban User" : "Unban User")</button>
+            }
+            @if(Request.IsAuthenticated && ViewBag.ProfileId.Equals(ViewBag.CurrentUserId)) {
+                <br />
+                @Html.ActionLink("Edit Profile Information", "Manage", "Profile", new { area = "" }, new { id = "EditProfileInfoBtn", @class = "btn btn-info" })
+                <br />
+                @Html.ActionLink("Manage Account Details", "Index", "Manage", new { area = "" }, new { id = "ManageAccountBtn", @class = "btn btn-info" })
+                <br />
+            }
+        </div>
     </div>
 </div>
+
 @section Scripts{
     <script src="~/Scripts/custom/profile.js"></script>
 }

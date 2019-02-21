@@ -1,12 +1,17 @@
 ﻿$(document).ready(() => {
     console.log("Script loaded: calendar.js");
+    GetPublicCalendar();
+    GetUserSpecificCalendar();
 });
 
 $("#calendar").fullCalendar({
     eventClick: function (calEvent) {
-        alert('Description: ' + calEvent.description);
-        // change the border color just for fun
-        $(this).css('border-color', 'red');
+        $("#meeting-modal-title").text(calEvent.title);
+        $("#meeting-modal-description").text(calEvent.description);
+        $("#meeting-modal-location").text(calEvent.location);
+        $("#meeting-modal-start").text(calEvent.start);
+        $("#meeting-modal-end").text(calEvent.end);
+        $('#informationModal').modal("toggle");
     }
 });
 
@@ -14,15 +19,16 @@ $("#private-data-btn").on("click", GetUserSpecificCalendar);
 $("#public-data-btn").on("click", GetPublicCalendar);
 
 function GetPublicCalendar() {
-    $("#public-data-btn").prop("disabled", true);
     $.ajax({
-        type: "GET",
+        type: "POST",
         url: "/Calendar/GetPublicCalendar/",
-        data: {},
         contentType: "application/json;charset=UTF-8",
-        dataType: "JSON",
         success: function (data) {
-            convertIncomingDataToCalendarEvent(data.allEntries);
+            if (data.result) {
+                CreateCalendarEvent(data.allEntries);
+            } else {
+                console.log("Controller Error: Unable to get calendar events.");
+            }
         },
         error: () => {
             console.log("Error: Failed to load public calendar data!");
@@ -31,15 +37,16 @@ function GetPublicCalendar() {
 }
 
 function GetUserSpecificCalendar() {
-    $("#private-data-btn").prop("disabled", true);
     $.ajax({
-        type: "GET",
+        type: "POST",
         url: "/Calendar/GetUserSpecificCalendar/",
-        data: {},
         contentType: "application/json;charset=UTF-8",
-        dataType: "JSON",
         success: function (data) {
-            convertIncomingDataToCalendarEvent(data.allEntries);
+            if (data.result) {
+                CreateCalendarEvent(data.allEntries);
+            } else {
+                console.log("Controller Error: Unable to get calendar events.");
+            }
         },
         error: () => {
             console.log("Error: Failed to load public calendar data!");
@@ -47,30 +54,36 @@ function GetUserSpecificCalendar() {
     });
 }
 
-function convertIncomingDataToCalendarEvent(meetingArray) {
+function CreateCalendarEvent(meetingArray) {
     var event;
+    var startDateTime;
+    var endDateTime;
     for (var i = 0; i < meetingArray.length; i++) {
-        console.log(meetingArray[i].MeetingDateTime);
+        startDateTime = new Date(); // While initial time is in UTC, it adjusts it before display to correct time for timezone.
+        startDateTime.setTime(meetingArray[i].MeetingDateTime.split("(")[1].split(")")[0], 10);
+        endDateTime = new Date(); // 2 hours later than initial time
+        endDateTime.setTime(parseInt(meetingArray[i].MeetingDateTime.split("(")[1].split(")")[0], 10) + 7200000);
         if (meetingArray[i].Type == 0) {
             event = {
                 id: meetingArray[i].Id,
                 title: meetingArray[i].Title,
                 description: meetingArray[i].Description,
-                start: meetingArray[i].MeetingDateTime,
-                end: new Date(meetingArray[i].MeetingDateTime + 1),
-                color: "green"
+                location: meetingArray[i].Location,
+                start: startDateTime,
+                end: endDateTime,
+                color: "red"
             };
         } else {
             event = {
                 id: meetingArray[i].Id,
                 title: meetingArray[i].Title,
                 description: meetingArray[i].Description,
-                start: meetingArray[i].MeetingDateTime,
-                end: new Date(meetingArray[i].MeetingDateTime + 1),
-                color: "red"
+                location: meetingArray[i].Location,
+                start: startDateTime,
+                end: endDateTime,
+                color: "green"
             };
         }
-        console.log(event);
         $("#calendar").fullCalendar("renderEvent", event, true); // true: stick = true
     }
 }

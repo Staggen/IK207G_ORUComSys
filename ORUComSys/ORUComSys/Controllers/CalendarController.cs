@@ -21,18 +21,18 @@ namespace ORUComSys.Controllers {
             return View();
         }
 
-        [HttpGet]
-        public JsonResult GetPublicCalendar() {
+        [HttpPost]
+        public ActionResult GetPublicCalendar() {
             List<MeetingModels> allPublicCalendarEntries = meetingRepository.GetMeetingsByMeetingType(MeetingType.Public);
-            return Json(new { allEntries = allPublicCalendarEntries }, JsonRequestBehavior.AllowGet);
+            return Json(new { result = true, allEntries = allPublicCalendarEntries });
         }
 
-        [HttpGet]
-        public JsonResult GetUserSpecificCalendar() {
+        [HttpPost]
+        public ActionResult GetUserSpecificCalendar() {
             string currentUserId = User.Identity.GetUserId();
-            List<int> meetingIds = meetingInviteRepository.GetAllInvitesForProfileId(currentUserId).Select(invite => invite.MeetingId).ToList();
+            List<int> meetingIds = meetingInviteRepository.GetAllInvitesForProfileId(currentUserId).Where(invite => invite.Accepted).Select(invite => invite.MeetingId).ToList();
             List<MeetingModels> myMeetings = meetingRepository.GetMeetingsByMeetingIds(meetingIds).Where(meeting => meeting.Type != MeetingType.Public).ToList();
-            return Json(new { allEntries = myMeetings }, JsonRequestBehavior.AllowGet);
+            return Json(new { result = true, allEntries = myMeetings });
         }
     }
 }

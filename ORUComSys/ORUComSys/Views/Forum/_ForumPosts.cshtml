@@ -68,7 +68,7 @@
                 <!-- Here goes the second card footer, used for the comments section. Yes, you can have two footers. -->
                 <footer class="card-footer">
                     <!-- Add partial view for Comment here! -->
-                    <div class="comment-wall" id="comment-section-@post.Id">
+                    <div class="comment-wall" id="comment-section-@post.Id" data-post-id="@post.Id">
                         @Html.Partial("_ForumPostComments", post.Comments)
                     </div>
                     <div class="d-flex flex-row">
@@ -153,7 +153,7 @@
                 <!-- Here goes the second card footer, used for the comments section. Yes, you can have two footers. -->
                 <footer class="card-footer">
                     <!-- Add partial view for Comment here! -->
-                    <div class="comment-wall" id="comment-section-@post.Id">
+                    <div class="comment-wall" id="comment-section-@post.Id" data-post-id="@post.Id">
                         @Html.Partial("_ForumPostComments", post.Comments)
                     </div>
                     <div class="d-flex flex-row">

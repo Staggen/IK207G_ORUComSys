@@ -25,10 +25,12 @@ namespace ORUComSys.Controllers {
             ProfileModels profile = null;
             if(!string.IsNullOrWhiteSpace((string)profileId)) {
                 profile = profileRepository.Get((string)profileId);
+                ViewBag.Banned = userRepository.Get((string)profileId).LockoutEnabled;
                 ViewBag.ProfileId = (string)profileId;
                 ViewBag.CurrentUserId = currentUserId;
                 ViewBag.IsAdmin = profileRepository.Get(currentUserId).IsAdmin;
             } else {
+                ViewBag.Banned = false;
                 profile = profileRepository.Get(currentUserId);
                 ViewBag.ProfileId = currentUserId;
                 ViewBag.CurrentUserId = currentUserId;
@@ -130,6 +132,26 @@ namespace ORUComSys.Controllers {
             profile.IsAdmin = true;
             profileRepository.Edit(profile);
             profileRepository.Save();
+        }
+
+        [Authorize(Roles = "Profiled")]
+        [HttpPost]
+        public ActionResult BanUser(string Id) {
+            ApplicationUser user = userRepository.Get(Id);
+            user.LockoutEnabled = true;
+            userRepository.Edit(user);
+            userRepository.Save();
+            return Json(new { result = true });
+        }
+
+        [Authorize(Roles = "Profiled")]
+        [HttpPost]
+        public ActionResult UnbanUser(string Id) {
+            ApplicationUser user = userRepository.Get(Id);
+            user.LockoutEnabled = false;
+            userRepository.Edit(user);
+            userRepository.Save();
+            return Json(new { result = true });
         }
     }
 }

@@ -135,7 +135,7 @@ function DeletePost() {
     var PostId = this.getAttribute("data-post-id");
     $.ajax({
         type: "DELETE",
-        url: "/api/AjaxApi/" + PostId,
+        url: "/api/AjaxApi/DeletePost/" + PostId,
         contentType: "application/json;charset=UTF-8",
         success: () => {
             Update_Posts(forumType);

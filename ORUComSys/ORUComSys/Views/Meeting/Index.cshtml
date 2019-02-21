@@ -14,7 +14,7 @@
             <br />
             @foreach(var meeting in Model.MyMeetings) {
                 int numberOfInvites = Model.MeetingInvites.Where(invite => invite.MeetingId.Equals(meeting.Id)).ToList().Count;
-                <div class="@Html.Raw((Model.MyMeetingInvites.Any(invite => invite.MeetingId.Equals(meeting.Id) && invite.Accepted)) ? "border-success " : "border-warning ")card border mb-2 border-thicc">
+                <div class="@Html.Raw((Model.MyMeetingInvites.Any(invite => invite.MeetingId.Equals(meeting.Id) && invite.Accepted)) ? "border-success " : "border-warning ")card border mb-2 border-thicc" id="meeting-div-@meeting.Id">
                     <div class="@Html.Raw((Model.MyMeetingInvites.Any(invite => invite.MeetingId.Equals(meeting.Id) && invite.Accepted)) ? "border-bottom border-success " : "")card-header">
                         @meeting.Title
                     </div>
@@ -41,12 +41,17 @@
             @Html.ActionLink("Create New Meeting", "CreateMeeting", new { area = "" }, new { @class = "btn btn-primary" })<br /><br />
             <h2>Edit Meetings I Created</h2>
             @foreach(var meeting in Model.MyCreatedMeetings) {
-                <div class="card border border-secondary mb-2">
-                    <a class="card-link" href="@Url.Action("EditMeeting", new { id = meeting.Id })">
-                        <div class="card-body">
-                            @meeting.Title
-                        </div>
-                    </a>
+                string TargetId = "deleteMeeting" + meeting.Id;
+                string HashTargetId = "#deleteMeeting" + meeting.Id;
+                <div class="mb-2">
+                    <div class="d-flex flex-row card border border-secondary">
+                        <a class="card-link flex-fill" href="@Url.Action("EditMeeting", new { id = meeting.Id })">
+                            <div class="card-body">
+                                @meeting.Title
+                            </div>
+                        </a>
+                        <button type="button" id="delete-meeting-btn" class="btn close mr-4" data-meeting-id="@meeting.Id">&times;</button>
+                    </div>
                 </div>
             }
         </div>

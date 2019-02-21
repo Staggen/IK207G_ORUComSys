@@ -57,6 +57,9 @@ namespace ORUComSys.Controllers {
                 if(!UserManager.IsInRole(User.Identity.GetUserId(), "Profiled")) {
                     return RedirectToAction("Create", "Profile");
                 }
+                // Refresh sign-in for user after having created their profile, this is required for the SignInCookie to update the IdentityUser's Roles attribute.
+                SignInManager.SignIn(userRepository.Get(User.Identity.GetUserId()), false, false);
+                return RedirectToLocal(returnUrl);
             }
             ViewBag.ReturnUrl = returnUrl;
             return View();
@@ -75,13 +78,18 @@ namespace ORUComSys.Controllers {
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
             var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            
             switch (result) {
                 case SignInStatus.Success:
                     string currentUserId = userRepository.GetUserIdByEmail(model.Email);
-                    if (!profileRepository.IfProfileExists(currentUserId)) {
-                        return RedirectToAction("Create", "Profile"); // If user has no profile, they get to create one
+                    if(userRepository.Get(currentUserId).LockoutEnabled) { // If user is banned
+                        AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie); // Sign them back out
+                        return View("Lockout"); // Redirect them to the banned screen.
                     }
-                    return RedirectToLocal(returnUrl);
+                    if (!profileRepository.IfProfileExists(currentUserId)) { // If user has no profile
+                        return RedirectToAction("Create", "Profile"); // Redirect to Profile/Create
+                    }
+                    return RedirectToLocal(returnUrl); // Normal SignIn
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:

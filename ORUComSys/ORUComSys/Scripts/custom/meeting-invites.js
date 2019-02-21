@@ -53,7 +53,7 @@ function SendInvite(UserId, MeetingId) {
         contentType: "application/json;charset=UTF-8",
         success: function (data) {
             if (data.result) { // If invite successfully sent in controller
-                SetButtonGroup(UserId);
+                SetBanButton(UserId);
             } else {
                 console.log("Controller Error: Unable to send invite.");
             }
@@ -73,7 +73,7 @@ function RemoveInvite(UserId, MeetingId) {
         contentType: "application/json;charset=UTF-8",
         success: function (data) {
             if (data.result) { // If invite successfully removed in controller
-                SetButtonGroup(UserId);
+                SetBanButton(UserId);
             } else {
                 console.log("Controller Error: Unable to remove invite.");
             }
@@ -84,7 +84,7 @@ function RemoveInvite(UserId, MeetingId) {
     });
 }
 
-function SetButtonGroup(UserId) {
+function SetBanButton(UserId) {
     var SelectedButton = document.getElementById(UserId);
     if ($(SelectedButton).text() == "Invite") {
         $(SelectedButton).text("Remove");
