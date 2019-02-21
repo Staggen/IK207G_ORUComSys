@@ -15,8 +15,8 @@ function AcceptInvite() {
         dataType: "JSON",
         success: () => {
             // Set notifications
-            SetNumberOfNotifications();
-            GetNotificationsContent();
+            GetNumberOfNotifications();
+            RefreshNotificationsContent();
             // Set other UI elements
             var counter = $($(this).parents().eq(1)[0].childNodes[3]).text();
             $($(this).parents().eq(1)[0].childNodes[3]).text(parseInt(counter, 10) + 1);

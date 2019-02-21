@@ -1,6 +1,7 @@
 ﻿using Datalayer.Models;
 using Datalayer.Repositories;
 using Microsoft.AspNet.Identity;
+using ORUComSys.Extensions;
 using ORUComSys.Models;
 using System;
 using System.Collections.Generic;
@@ -48,44 +49,46 @@ namespace ORUComSys.Controllers {
             return View("FormalForum", forumViewModel);
         }
         [HttpPost]
-        public ActionResult Formal(ForumViewModel postViewModel) { // Formal forum
-            int categoryId = (int)postViewModel.Category;
+        public ActionResult Formal(ForumViewModel postVessel) { // Formal forum
+            if(!ModelState.IsValid) {
+                return RedirectToAction("Formal");
+            }
+            string currentUserId = User.Identity.GetUserId();
+            int categoryId = (int)postVessel.Category;
             if(categoryId.Equals(0)) {
                 categoryId = 5;
             }
-            string currentUserId = User.Identity.GetUserId();
             // Convert to PostModels.
-            PostModels postModel = new PostModels {
+            PostModels post = new PostModels {
                 PostFromId = currentUserId,
                 CategoryId = categoryId,
                 Forum = ForumType.Formal,
-                Content = postViewModel.Content,
+                Content = postVessel.Content,
                 PostDateTime = DateTime.Now
             };
             // Add to database and save changes.
-            postRepository.Add(postModel);
+            postRepository.Add(post);
             postRepository.Save();
             // Get post so you can access it's ID.
             PostModels addedPost = postRepository.GetLastPostCreatedByProfileId(currentUserId);
-            byte[] attachmentData = null;
-            string filename = null;
-            if(Request.Files["AttachedFile"].ContentLength >= 1) { // Check if a file is entered
+            // If there are attached files
+            if(Request.Files["AttachedFile"].ContentLength >= 1) {
                 for(int i = 0; i < Request.Files.Count; i++) {
                     HttpPostedFileBase attachedFile = Request.Files[i];
-                    filename = attachedFile.FileName.Substring(attachedFile.FileName.LastIndexOf(@"\") + 1);
+                    string filename = attachedFile.FileName.Substring(attachedFile.FileName.LastIndexOf(@"\") + 1);
 
                     using(var binary = new BinaryReader(attachedFile.InputStream)) {
                         // This is the byte-array we set as the ProfileImage property on the profile.
-                        attachmentData = binary.ReadBytes(attachedFile.ContentLength);
+                        byte[] attachmentData = binary.ReadBytes(attachedFile.ContentLength);
+                        // Make AttachmentModel
+                        AttachmentModels attachmentModel = new AttachmentModels {
+                            AttachedFile = attachmentData,
+                            FileName = filename,
+                            FileExtension = filename.Substring(filename.LastIndexOf(".")),
+                            PostId = addedPost.Id
+                        };
+                        attachmentRepository.Add(attachmentModel);
                     }
-                    // Make AttachmentModel
-                    AttachmentModels attachmentModel = new AttachmentModels {
-                        AttachedFile = attachmentData,
-                        FileName = filename,
-                        FileExtension = filename.Substring(filename.LastIndexOf(".")),
-                        PostId = addedPost.Id
-                    };
-                    attachmentRepository.Add(attachmentModel);
                 }
                 attachmentRepository.Save();
             }
@@ -110,7 +113,6 @@ namespace ORUComSys.Controllers {
                 string subject = "New Post In Category You Follow - ORUComSys";
                 EmailSupport.SendNotificationEmail(ControllerContext, viewPath, emailModel, recipient, subject);
             }
-
             return RedirectToAction("Formal");
         }
 
@@ -126,44 +128,46 @@ namespace ORUComSys.Controllers {
         }
 
         [HttpPost]
-        public ActionResult Informal(ForumViewModel postViewModel) { // Informal forum
-            var categoryId = (int)postViewModel.Category;
+        public ActionResult Informal(ForumViewModel postVessel) { // Informal forum
+            if(!ModelState.IsValid) {
+                return RedirectToAction("Informal");
+            }
+            string currentUserId = User.Identity.GetUserId();
+            var categoryId = (int)postVessel.Category;
             if(categoryId.Equals(0)) {
                 categoryId = 5;
             }
-            string currentUserId = User.Identity.GetUserId();
             // Convert to PostModels.
-            PostModels postModel = new PostModels {
+            PostModels post = new PostModels {
                 PostFromId = currentUserId,
                 CategoryId = categoryId,
                 Forum = ForumType.Informal,
-                Content = postViewModel.Content,
+                Content = postVessel.Content,
                 PostDateTime = DateTime.Now
             };
             // Add to database and save changes.
-            postRepository.Add(postModel);
+            postRepository.Add(post);
             postRepository.Save();
             // Get post so you can access it's ID.
             PostModels addedPost = postRepository.GetLastPostCreatedByProfileId(currentUserId);
-            byte[] attachmentData = null;
-            string filename = null;
-            if(Request.Files["AttachedFile"].ContentLength >= 1) { // Check if a file is entered
+            // If there are attached files
+            if(Request.Files["AttachedFile"].ContentLength >= 1) {
                 for(int i = 0; i < Request.Files.Count; i++) {
                     HttpPostedFileBase attachedFile = Request.Files[i];
-                    filename = attachedFile.FileName.Substring(attachedFile.FileName.LastIndexOf(@"\") + 1);
+                    string filename = attachedFile.FileName.Substring(attachedFile.FileName.LastIndexOf(@"\") + 1);
 
                     using(var binary = new BinaryReader(attachedFile.InputStream)) {
                         // This is the byte-array we set as the ProfileImage property on the profile.
-                        attachmentData = binary.ReadBytes(attachedFile.ContentLength);
+                        byte[] attachmentData = binary.ReadBytes(attachedFile.ContentLength);
+                        // Make AttachmentModel
+                        AttachmentModels attachmentModel = new AttachmentModels {
+                            AttachedFile = attachmentData,
+                            FileName = filename,
+                            FileExtension = filename.Substring(filename.LastIndexOf(".")),
+                            PostId = addedPost.Id
+                        };
+                        attachmentRepository.Add(attachmentModel);
                     }
-                    // Make AttachmentModel
-                    AttachmentModels attachmentModel = new AttachmentModels {
-                        AttachedFile = attachmentData,
-                        FileName = filename,
-                        FileExtension = filename.Substring(filename.LastIndexOf(".")),
-                        PostId = addedPost.Id
-                    };
-                    attachmentRepository.Add(attachmentModel);
                 }
                 attachmentRepository.Save();
             }
@@ -188,7 +192,6 @@ namespace ORUComSys.Controllers {
                 string subject = "New Post In Category You Follow - ORUComSys";
                 EmailSupport.SendNotificationEmail(ControllerContext, viewPath, emailModel, recipient, subject);
             }
-
             return RedirectToAction("Informal");
         }
 
@@ -198,36 +201,48 @@ namespace ORUComSys.Controllers {
             return PartialView("_ForumPosts", ConvertPostsToViewModels(type));
         }
 
+        public PartialViewResult GetAllCommentsByPostId(int id) {
+            CommentsViewModel commentsViewModel = new CommentsViewModel {
+                CurrentCommenter = profileRepository.Get(User.Identity.GetUserId()),
+                Comments = commentRepository.GetAllCommentsByPostId(id)
+            };
+            return PartialView("_PostComments", commentsViewModel);
+        }
+
         public PartialViewResult GetReactionList(int Id) {
             List<ReactionModels> postReactions = reactionRepository.GetAllReactionsByPostId(Id);
             return PartialView("_ReactionList", postReactions);
         }
 
-        public PostViewModelsForUsers ConvertPostsToViewModels(ForumType type) {
+        public PostsViewModel ConvertPostsToViewModels(ForumType type) {
             string currentUserId = User.Identity.GetUserId();
             List<PostModels> allPosts = postRepository.GetAllPostsByForumType(type);
-            List<PostViewModels> allPostViewModel = new List<PostViewModels>();
+            List<PostViewModel> allPostViewModels = new List<PostViewModel>();
             foreach(var post in allPosts) {
-                PostViewModels postViewModel = new PostViewModels {
+                CommentsViewModel commentsViewModel = new CommentsViewModel {
+                    CurrentCommenter = profileRepository.Get(currentUserId),
+                    Comments = commentRepository.GetAllCommentsByPostId(post.Id)
+                };
+                PostViewModel postViewModel = new PostViewModel {
                     Id = post.Id,
                     PostFrom = post.PostFrom,
                     Category = post.Category.Category,
                     Forum = post.Forum,
                     Content = post.Content,
                     PostDateTime = post.PostDateTime,
-                    CurrentUser = profileRepository.Get(currentUserId),
+                    CurrentPoster = profileRepository.Get(currentUserId),
                     Reactions = reactionRepository.GetAllReactionsByPostId(post.Id),
                     Categories = categoryRepository.GetAll(),
                     Attachments = attachmentRepository.GetAttachmentsByPostId(post.Id),
-                    Comments = commentRepository.GetAllCommentsByPostId(post.Id)
+                    Comments = commentsViewModel
                 };
-                allPostViewModel.Add(postViewModel);
+                allPostViewModels.Add(postViewModel);
             }
-            PostViewModelsForUsers postViewModelForUsers = new PostViewModelsForUsers {
-                Posts = allPostViewModel,
+            PostsViewModel postsViewModel = new PostsViewModel {
+                Posts = allPostViewModels,
                 CurrentUser = profileRepository.Get(currentUserId)
             };
-            return postViewModelForUsers;
+            return postsViewModel;
         }
 
         [HttpPost]
@@ -282,11 +297,6 @@ namespace ORUComSys.Controllers {
             }
             // Save changes in the database
             followingCategoryRepository.Save();
-        }
-
-        public PartialViewResult GetAllCommentsByPostId(int id) {
-            List<CommentModels> comments = commentRepository.GetAllCommentsByPostId(id);
-            return PartialView("_ForumPostComments", comments);
         }
 
         [HttpPost]

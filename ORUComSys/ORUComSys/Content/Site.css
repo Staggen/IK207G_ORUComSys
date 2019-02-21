@@ -105,3 +105,16 @@ select {
 .border-thicc{
     border-width: 2px !important;
 }
+
+/* FONT-AWESOME ALTERATIONS BELOW */
+.bell-light {
+    color: #f7f7f7;
+}
+.bell-info {
+    color: #5bc0de;
+}
+
+/* Notification Bell Shenanigans */
+#NotificationNumberSpan{
+    transform: translate(-50%, -30%);
+}

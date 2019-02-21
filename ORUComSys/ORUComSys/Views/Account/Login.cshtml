@@ -13,7 +13,7 @@
                 @Html.AntiForgeryToken()
                 <p class="text-center" id="login-subtitle">New to the system? @Html.ActionLink("Register a new account", "Register")</p>
                 <hr />
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.ValidationSummary(true, "", new { @class = "text-center text-danger" })
                 <div id="login-content" class="centered-box">
                     <div class="form-group">
                         <div class="col-md-12 text-center">

@@ -59,6 +59,10 @@ namespace ORUComSys.Controllers {
                 }
                 // Refresh sign-in for user after having created their profile, this is required for the SignInCookie to update the IdentityUser's Roles attribute.
                 SignInManager.SignIn(userRepository.Get(User.Identity.GetUserId()), false, false);
+                if(string.IsNullOrWhiteSpace(returnUrl)) {
+                    // Used for refreshing the Identity cookie and its claims.
+                    return RedirectToAction("Index", "Profile");
+                }
                 return RedirectToLocal(returnUrl);
             }
             ViewBag.ReturnUrl = returnUrl;

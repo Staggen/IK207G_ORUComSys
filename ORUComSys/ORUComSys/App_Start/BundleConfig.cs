@@ -23,8 +23,7 @@ namespace ORUComSys {
             bundles.Add(new ScriptBundle("~/bundles/popper").Include(
                 "~/Scripts/custom/global-notifications.js",
                 "~/Scripts/umd/popper.js",
-                "~/Scripts/umd/popper-utils.js"
-            ));
+                "~/Scripts/umd/popper-utils.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",

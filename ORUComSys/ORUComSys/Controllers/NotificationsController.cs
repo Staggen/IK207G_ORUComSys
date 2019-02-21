@@ -52,13 +52,11 @@ namespace ORUComSys.Controllers {
             foreach(var post in newPosts) {
                 profiles.Add(profileRepository.Get(post.PostFromId));
             }
-
             NotificationsViewModels notifications = new NotificationsViewModels {
                 Invites = meetingInvites.OrderByDescending(meetingInvite => meetingInvite.InviteDateTime).ToList(),
                 Posts = newPosts,
                 PostFrom = profiles.Distinct().ToList()
             };
-
             return PartialView("_Notifications", notifications);
         }
     }

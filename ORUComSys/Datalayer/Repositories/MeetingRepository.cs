@@ -17,5 +17,9 @@ namespace Datalayer.Repositories {
         public List<MeetingModels> GetMeetingsByMeetingType(MeetingType type) {
             return items.Where(meeting => meeting.Type == type).ToList();
         }
+
+        public MeetingModels GetLastMeetingCreatedByProfileId(string profileId) {
+            return items.Where(meeting => meeting.CreatorId.Equals(profileId)).First();
+        }
     }
 }

@@ -38,7 +38,7 @@ namespace ORUComSys.Controllers {
             }
             return View(profile);
         }
-        
+
         public ActionResult Create() {
             return View();
         }
@@ -50,29 +50,33 @@ namespace ORUComSys.Controllers {
             if(!ModelState.IsValid) { // If model is invalid
                 return RedirectToAction("Create");
             }
-            byte[] imageData = null;
             if(Request.Files["ProfileImage"].ContentLength >= 1) { // If a file was submitted
                 HttpPostedFileBase profileImgFile = Request.Files["ProfileImage"];
                 using(BinaryReader binary = new BinaryReader(profileImgFile.InputStream)) {
-                    imageData = binary.ReadBytes(profileImgFile.ContentLength); // Set the profile image to the variable imageData
+                    profile.ProfileImage = binary.ReadBytes(profileImgFile.ContentLength); // Set the profile image to the variable imageData
                 }
             } else { // If no file was submitted, set default avatar
                 string path = AppDomain.CurrentDomain.BaseDirectory + "/Content/Images/defaultAvatar.png";
                 FileStream file = new FileStream(path, FileMode.Open);
                 using(BinaryReader binary = new BinaryReader(file)) {
-                    imageData = binary.ReadBytes((int)file.Length);
+                    profile.ProfileImage = binary.ReadBytes((int)file.Length);
                 }
             }
-            // Set profile data
+            // Fill out the data that is missing from the submitted model
             profile.Id = User.Identity.GetUserId();
-            profile.ProfileImage = imageData;
             profile.IsActivated = false;
+            profile.IsAdmin = false;
             profile.LastLogout = DateTime.Now;
             // Add profile to database
             profileRepository.Add(profile);
             profileRepository.Save();
             // Add user to role "Profiled", meaning that they have a profile.
             userRepository.AddUserToProfiledRole(User.Identity.GetUserId());
+            // Set the DisplayName for the notification bar
+            ApplicationUser user = userRepository.Get(User.Identity.GetUserId());
+            user.LockoutEnabled = false;
+            user.DisplayName = (profile.FirstName + " " + profile.LastName);
+            userRepository.Edit(user);
             userRepository.Save();
             // Send user to their profile page
             return RedirectToAction("Index");
@@ -86,34 +90,54 @@ namespace ORUComSys.Controllers {
         [Authorize(Roles = "Profiled")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Manage([Bind(Exclude = "ProfileImage")] ProfileModels profile) {
-            // Excludes ProfileImage from controller call so the program does not crash.
-            if(ModelState.IsValid) { // If model is correct
-                string currentUserId = User.Identity.GetUserId();
-                ProfileModels reference = profileRepository.Get(profile.Id); // Required to not have all the non-edited data reset.
-                byte[] imageData = null; // Holds possible new image
-                if(Request.Files["ProfileImage"].ContentLength >= 1) { // If a file was submitted
-                    HttpPostedFileBase profileImgFile = Request.Files["ProfileImage"];
-                    using(BinaryReader binary = new BinaryReader(profileImgFile.InputStream)) {
-                        imageData = binary.ReadBytes(profileImgFile.ContentLength); // Set the profile image to the variable imageData
-                    }
-                    profile.ProfileImage = imageData; // Set new profile image
-                } else { // If no file was submitted
-                    profile.ProfileImage = reference.ProfileImage; // Re-set old profile image
+        public ActionResult Manage([Bind(Exclude = "ProfileImage")] ProfileModels updates) {
+            // Excludes ProfileImage from controller call so the program does not crash
+            if(!ModelState.IsValid) { // If model not valid
+                return RedirectToAction("Manage"); // Return the original page
+            }
+            string currentUserId = User.Identity.GetUserId();
+            // Get the existing profile
+            ProfileModels profile = profileRepository.Get(currentUserId);
+            // If nothing was changed
+            if(
+                profile.FirstName.Equals(updates.FirstName) &&
+                profile.LastName.Equals(updates.LastName) &&
+                profile.PhoneNumber.Equals(updates.PhoneNumber) &&
+                profile.Title.Equals(updates.Title) &&
+                profile.Description.Equals(updates.Description) &&
+                Request.Files["ProfileImage"].ContentLength < 1
+                ) {
+                return RedirectToAction("Index");
+            }
+            // Set possibly edited values
+            profile.PhoneNumber = updates.PhoneNumber;
+            profile.Title = updates.Title;
+            profile.Description = updates.Description;
+            if(Request.Files["ProfileImage"].ContentLength >= 1) { // If a new profile image was submitted
+                HttpPostedFileBase profileImgFile = Request.Files["ProfileImage"];
+                using(BinaryReader binary = new BinaryReader(profileImgFile.InputStream)) {
+                    profile.ProfileImage = binary.ReadBytes(profileImgFile.ContentLength); // Update the model's profile image to the new one
                 }
-                // Set non-edited values
-                profile.IsActivated = reference.IsActivated;
-                profile.IsAdmin = reference.IsAdmin;
-                profile.LastLogout = reference.LastLogout;
+            }
+            // If there is no change in name, there is no need to change the display name.
+            if(profile.FirstName.Equals(updates.FirstName) && profile.LastName.Equals(updates.LastName)) {
                 // Edit profile in database
                 profileRepository.Edit(profile);
                 profileRepository.Save();
-                // Send user back to their profile page
-                ViewBag.CurrentUserId = currentUserId;
                 return RedirectToAction("Index");
-            } else {
-                return RedirectToAction("Manage");
             }
+            // If names do not match, edit names
+            profile.FirstName = updates.FirstName;
+            profile.LastName = updates.LastName;
+            profileRepository.Edit(profile);
+            profileRepository.Save();
+            // Set the DisplayName for the notification bar
+            ApplicationUser user = userRepository.Get(User.Identity.GetUserId());
+            user.DisplayName = (updates.FirstName + " " + updates.LastName);
+            userRepository.Edit(user);
+            userRepository.Save();
+            // Refresh their login token to update the IdentityUser's IdentityClaim in the AuthenticationCookie
+            return RedirectToAction("Login", "Account");
         }
 
         [AllowAnonymous]

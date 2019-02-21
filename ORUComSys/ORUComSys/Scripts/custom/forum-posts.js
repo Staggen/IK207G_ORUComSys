@@ -17,8 +17,8 @@ $("#AttachedFile").bind("change", ResetFileUpload);
 function ResetFileUpload() {
     for (var i = 0; i < this.files.length; i++) {
         var fileSize = this.files[i].size;
-        if (fileSize > 4096000) {
-            alert("The maximum allowed file size is 4MB.");
+        if (fileSize > 104857600) {
+            alert("The maximum allowed file size is 100 MB.");
             $("#AttachedFile").wrap('<form>').closest('form').get(0).reset();
             $("#AttachedFile").unwrap();
         }

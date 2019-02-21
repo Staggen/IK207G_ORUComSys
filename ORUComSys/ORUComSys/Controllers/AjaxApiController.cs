@@ -57,7 +57,6 @@ namespace ORUComSys.Controllers {
                     ReactionModels existingReaction = reactionRepository.GetReactionByPostAndProfileId(reaction.PostId, currentUserId);
                     existingReaction.Reaction = reactionType;
                     reactionRepository.Edit(existingReaction);
-                    reactionRepository.Save();
                 } else {
                     ReactionModels reactionModel = new ReactionModels() {
                         ProfileId = currentUserId,
@@ -65,8 +64,8 @@ namespace ORUComSys.Controllers {
                         PostId = reaction.PostId
                     };
                     reactionRepository.Add(reactionModel);
-                    reactionRepository.Save();
                 }
+                reactionRepository.Save();
             }
         }
 

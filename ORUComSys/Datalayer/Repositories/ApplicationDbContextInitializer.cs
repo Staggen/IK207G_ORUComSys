@@ -39,63 +39,72 @@ namespace Datalayer.Repositories {
             // Define User(s)
             ApplicationUser albinU = new ApplicationUser {
                 Email = "albin@orucomsys.com",
-                UserName = "albin@orucomsys.com"
+                UserName = "albin@orucomsys.com",
+                DisplayName = "Albin Salmonsson"
             };
             userManager.Create(albinU, "password"); // manager.Create(ApplicationUser user, string password);
             userManager.AddToRole(albinU.Id, "Profiled"); // Add user to role
 
             ApplicationUser darioU = new ApplicationUser {
                 Email = "dario@orucomsys.com",
-                UserName = "dario@orucomsys.com"
+                UserName = "dario@orucomsys.com",
+                DisplayName = "Dario Borojevic"
             };
             userManager.Create(darioU, "password"); // manager.Create(ApplicationUser user, string password);
             userManager.AddToRole(darioU.Id, "Profiled"); // Add user to role
 
             ApplicationUser eliasU = new ApplicationUser {
                 Email = "elias.stagg@gmail.com",
-                UserName = "elias.stagg@gmail.com"
+                UserName = "elias.stagg@gmail.com",
+                DisplayName = "Elias Stagg"
             };
             userManager.Create(eliasU, "password"); // manager.Create(ApplicationUser user, string password);
             userManager.AddToRole(eliasU.Id, "Profiled"); // Add user to role
 
             ApplicationUser moazU = new ApplicationUser {
                 Email = "moaz@orucomsys.com",
-                UserName = "moaz@orucomsys.com"
+                UserName = "moaz@orucomsys.com",
+                DisplayName = "Moaz Bahtiti"
             };
             userManager.Create(moazU, "password"); // manager.Create(ApplicationUser user, string password);
             userManager.AddToRole(moazU.Id, "Profiled"); // Add user to role
 
             ApplicationUser nicoU = new ApplicationUser {
                 Email = "nico@orucomsys.com",
-                UserName = "nico@orucomsys.com"
+                UserName = "nico@orucomsys.com",
+                DisplayName = "Nicolas Björkefors"
             };
             userManager.Create(nicoU, "password"); // manager.Create(ApplicationUser user, string password);
             userManager.AddToRole(nicoU.Id, "Profiled"); // Add user to role
 
             ApplicationUser oskarU = new ApplicationUser {
                 Email = "orre.b3000@gmail.com",
-                UserName = "orre.b3000@gmail.com"
+                UserName = "orre.b3000@gmail.com",
+                DisplayName = "Oskar Olofsson"
             };
             userManager.Create(oskarU, "password"); // manager.Create(ApplicationUser user, string password);
             userManager.AddToRole(oskarU.Id, "Profiled"); // Add user to role
 
             ApplicationUser patrikU = new ApplicationUser {
                 Email = "patrik@orucomsys.com",
-                UserName = "patrik@orucomsys.com"
+                UserName = "patrik@orucomsys.com",
+                DisplayName = "Patrik Zetterblom"
             };
             userManager.Create(patrikU, "password"); // manager.Create(ApplicationUser user, string password);
             userManager.AddToRole(patrikU.Id, "Profiled"); // Add user to role
 
             ApplicationUser pernillaU = new ApplicationUser {
                 Email = "pernilla@orucomsys.com",
-                UserName = "pernilla@orucomsys.com"
+                UserName = "pernilla@orucomsys.com",
+                DisplayName = "Pernilla Gerdin"
             };
             userManager.Create(pernillaU, "password"); // manager.Create(ApplicationUser user, string password);
             userManager.AddToRole(pernillaU.Id, "Profiled"); // Add user to role
 
             ApplicationUser salehU = new ApplicationUser {
                 Email = "saleh@orucomsys.com",
-                UserName = "saleh@orucomsys.com"
+                UserName = "saleh@orucomsys.com",
+                DisplayName = "Saleh Rasta"
             };
             userManager.Create(salehU, "password"); // manager.Create(ApplicationUser user, string password);
             userManager.AddToRole(salehU.Id, "Profiled"); // Add user to role
@@ -253,7 +262,7 @@ namespace Datalayer.Repositories {
                 Title = "Another One",
                 Description = "- By DJ Khaled",
                 Location = "Where the Sun Don't Shine",
-                MeetingDateTime = new DateTime(2039, 12, 03, 14, 32, 00),
+                MeetingDateTime = new DateTime(2019, 03, 15, 16, 00, 00),
                 Type = MeetingType.Public
             };
 

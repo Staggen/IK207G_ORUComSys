@@ -185,7 +185,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AjaxApiController.cs" />
     <Compile Include="Controllers\CalendarController.cs" />
-    <Compile Include="Controllers\EmailSupport.cs" />
+    <Compile Include="Extensions\EmailSupport.cs" />
     <Compile Include="Controllers\ForumController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -194,6 +194,7 @@
     <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Controllers\ProposalController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
+    <Compile Include="Extensions\IdentityExtensions.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -205,7 +206,7 @@
     <Compile Include="Models\MeetingInviteViewModels.cs" />
     <Compile Include="Models\MeetingViewModels.cs" />
     <Compile Include="Models\NotificationsViewModels.cs" />
-    <Compile Include="Models\PostViewModels.cs" />
+    <Compile Include="Models\ForumViewModel.cs" />
     <Compile Include="Models\ProposalInviteViewModels.cs" />
     <Compile Include="Models\ProposedMeetingVesselModel.cs" />
     <Compile Include="Models\ProposedMeetingViewModels.cs" />
@@ -443,7 +444,7 @@
     <Content Include="Views\Forum\NewPostNotificationEmail.cshtml" />
     <Content Include="Views\Meeting\_ParticipantsList.cshtml" />
     <Content Include="Views\Notifications\_NoProfile_Notifications.cshtml" />
-    <Content Include="Views\Forum\_ForumPostComments.cshtml" />
+    <Content Include="Views\Forum\_PostComments.cshtml" />
     <Content Include="Views\Proposal\_ParticipantsLIst.cshtml" />
     <Content Include="Views\Proposal\Index.cshtml" />
     <Content Include="Views\Proposal\CreateProposal.cshtml" />

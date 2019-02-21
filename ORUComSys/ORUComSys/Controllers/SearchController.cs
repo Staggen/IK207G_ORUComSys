@@ -17,7 +17,6 @@ namespace ORUComSys.Controllers {
 
         public ActionResult Index() {
             List<ProfileModels> allProfiles = profileRepository.GetAllProfilesExceptCurrent(User.Identity.GetUserId());
-            
             return View(allProfiles.OrderBy(profile => profile.FirstName));
         }
     }

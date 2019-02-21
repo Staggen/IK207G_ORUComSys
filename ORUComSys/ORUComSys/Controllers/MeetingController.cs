@@ -1,6 +1,7 @@
 ﻿using Datalayer.Models;
 using Datalayer.Repositories;
 using Microsoft.AspNet.Identity;
+using ORUComSys.Extensions;
 using ORUComSys.Models;
 using System;
 using System.Collections.Generic;
@@ -47,56 +48,52 @@ namespace ORUComSys.Controllers {
 
         [HttpPost]
         public ActionResult CreateMeeting(MeetingModels meeting) {
-            if(ModelState.IsValid) {
-                string currentUserId = User.Identity.GetUserId();
-                MeetingModels model = new MeetingModels {
-                    CreatorId = currentUserId,
-                    Title = meeting.Title,
-                    Description = meeting.Description,
-                    MeetingDateTime = meeting.MeetingDateTime,
-                    Location = meeting.Location,
-                    Type = meeting.Type
-                };
-                meetingRepository.Add(model); // Add meeting
-                meetingRepository.Save();
-
-                MeetingInviteModels inviteModel = new MeetingInviteModels {
-                    MeetingId = model.Id,
-                    ProfileId = currentUserId,
-                    InviteDateTime = DateTime.Now,
-                    Accepted = true
-                };
-                meetingInviteRepository.Add(inviteModel); // Invite yourself to the meeting (calendar purposes)
-                meetingInviteRepository.Save();
-                if(model.Type != MeetingType.Public) { // Invite specific people if meeting is not public
-                    return RedirectToAction("MeetingInvitePeople", new { id = model.Id });
-                }
-                // If meeting however is public, invite everyone (except yourself since you already did that)
-                List<ProfileModels> exceptCurrent = profileRepository.GetAllProfilesExceptCurrent(currentUserId);
-                foreach(ProfileModels profile in exceptCurrent) {
-                    inviteModel = new MeetingInviteModels {
-                        MeetingId = model.Id,
-                        ProfileId = profile.Id,
-                        InviteDateTime = DateTime.Now,
-                        Accepted = false
-                    };
-                    meetingInviteRepository.Add(inviteModel);
-
-                    // Send notification email
-                    EmailViewModels emailModel = new EmailViewModels {
-                        Sender = profileRepository.Get(currentUserId),
-                        Recipient = profileRepository.Get(profile.Id),
-                        Meeting = meetingRepository.Get(model.Id)
-                    };
-                    string viewPath = "~/Views/Meeting/NewMeetingNotificationEmail.cshtml";
-                    string recipient = userRepository.GetEmailByUserId(profile.Id);
-                    string subject = "New Meeting Invite - ORUComSys";
-                    EmailSupport.SendNotificationEmail(ControllerContext, viewPath, emailModel, recipient, subject);
-                }
-                meetingInviteRepository.Save();
-                return RedirectToAction("Index");
+            if(!ModelState.IsValid) {
+                return RedirectToAction("CreateMeeting");
             }
-            return View();
+            string currentUserId = User.Identity.GetUserId();
+            // Fill out the data missing from the submitted model
+            meeting.CreatorId = currentUserId;
+            meetingRepository.Add(meeting); // Add meeting
+            meetingRepository.Save();
+            // Get latest added meeting so you have access to the meetings ID
+            MeetingModels addedMeeting = meetingRepository.GetLastMeetingCreatedByProfileId(currentUserId);
+            // Invite yourself and accept this invite for calendar purposes
+            MeetingInviteModels inviteModel = new MeetingInviteModels {
+                MeetingId = addedMeeting.Id,
+                ProfileId = currentUserId,
+                InviteDateTime = DateTime.Now,
+                Accepted = true
+            };
+            meetingInviteRepository.Add(inviteModel);
+            // Invite specific people if the meeting is not public
+            if(addedMeeting.Type != MeetingType.Public) {
+                meetingInviteRepository.Save();
+                return RedirectToAction("MeetingInvitePeople", new { id = addedMeeting.Id });
+            }
+            // Invite everyone (except yourself) if the meeting is public. You have already invited yourself
+            List<ProfileModels> exceptCurrent = profileRepository.GetAllProfilesExceptCurrent(currentUserId);
+            foreach(ProfileModels profile in exceptCurrent) {
+                inviteModel = new MeetingInviteModels {
+                    MeetingId = addedMeeting.Id,
+                    ProfileId = profile.Id,
+                    InviteDateTime = DateTime.Now,
+                    Accepted = false
+                };
+                meetingInviteRepository.Add(inviteModel);
+                // Send notification email
+                EmailViewModels emailModel = new EmailViewModels {
+                    Sender = profileRepository.Get(currentUserId),
+                    Recipient = profileRepository.Get(profile.Id),
+                    Meeting = addedMeeting
+                };
+                string viewPath = "~/Views/Meeting/NewMeetingNotificationEmail.cshtml";
+                string recipient = userRepository.GetEmailByUserId(profile.Id);
+                string subject = "New Meeting Invite - ORUComSys";
+                EmailSupport.SendNotificationEmail(ControllerContext, viewPath, emailModel, recipient, subject);
+            }
+            meetingInviteRepository.Save();
+            return RedirectToAction("Index");
         }
 
         public ActionResult EditMeeting(int id) {
@@ -105,22 +102,38 @@ namespace ORUComSys.Controllers {
         }
 
         [HttpPost]
-        public ActionResult EditMeeting(MeetingModels meeting) {
+        public ActionResult EditMeeting(MeetingModels updates) {
             if(!ModelState.IsValid) {
                 return RedirectToAction("EditMeeting");
             }
-            meeting.CreatorId = User.Identity.GetUserId();
+            // Get the existing meeting
+            MeetingModels meeting = meetingRepository.Get(updates.Id);
+            // If nothing changed
+            if(
+                meeting.Title.Equals(updates.Title) &&
+                meeting.Description.Equals(updates.Description) &&
+                meeting.Location.Equals(updates.Location) &&
+                meeting.MeetingDateTime.Equals(updates.MeetingDateTime) &&
+                meeting.Type == updates.Type
+                ) {
+                return RedirectToAction("Index");
+            }
+            meeting.Title = updates.Title;
+            meeting.Description = updates.Description;
+            meeting.Location = updates.Location;
+            meeting.MeetingDateTime = updates.MeetingDateTime;
+            meeting.Type = updates.Type;
             meetingRepository.Edit(meeting);
             meetingRepository.Save();
             return RedirectToAction("Index");
         }
 
         public ActionResult MeetingInvitePeople(int Id) {
-            List<ProfileModels> allProfiles = profileRepository.GetAllProfilesExceptCurrent(User.Identity.GetUserId());
+            List<ProfileModels> allProfiles = profileRepository.GetAllProfilesExceptCurrent(User.Identity.GetUserId()).OrderBy(profile => profile.FirstName).ToList();
             List<MeetingInviteModels> allInvites = meetingInviteRepository.GetAll();
             MeetingInviteViewModels inviteViewModel = new MeetingInviteViewModels {
                 MeetingId = Id,
-                Profiles = allProfiles.OrderBy(profile => profile.FirstName).ToList(),
+                Profiles = allProfiles,
                 Invites = allInvites
             };
             return View(inviteViewModel);
@@ -128,41 +141,46 @@ namespace ORUComSys.Controllers {
 
         [HttpPost]
         public ActionResult AddMeetingInvite(InviteViewModels invite) {
-            if(ModelState.IsValid) {
-                MeetingInviteModels inviteModel = new MeetingInviteModels {
-                    MeetingId = invite.MeetingId,
-                    ProfileId = invite.ProfileId,
-                    InviteDateTime = DateTime.Now,
-                    Accepted = false
-                };
-                meetingInviteRepository.Add(inviteModel);
-                meetingInviteRepository.Save();
-                // Send notification email
-                EmailViewModels emailModel = new EmailViewModels {
-                    Sender = profileRepository.Get(User.Identity.GetUserId()),
-                    Recipient = profileRepository.Get(invite.ProfileId),
-                    Meeting = meetingRepository.Get(invite.MeetingId)
-                };
-                string viewPath = "~/Views/Meeting/NewMeetingNotificationEmail.cshtml";
-                string recipient = userRepository.GetEmailByUserId(invite.ProfileId);
-                string subject = "New Meeting Invite - ORUComSys";
-                EmailSupport.SendNotificationEmail(ControllerContext, viewPath, emailModel, recipient, subject);
-
-                return Json(new { result = true });
+            if(!ModelState.IsValid) {
+                return Json(new { result = false });
             }
+            // Convert viewmodel to datalayer model
+            MeetingInviteModels inviteModel = new MeetingInviteModels {
+                MeetingId = invite.MeetingId,
+                ProfileId = invite.ProfileId,
+                InviteDateTime = DateTime.Now,
+                Accepted = false
+            };
+            meetingInviteRepository.Add(inviteModel);
+            meetingInviteRepository.Save();
+            // Send notification email
+            EmailViewModels emailModel = new EmailViewModels {
+                Sender = profileRepository.Get(User.Identity.GetUserId()),
+                Recipient = profileRepository.Get(invite.ProfileId),
+                Meeting = meetingRepository.Get(invite.MeetingId)
+            };
+            string viewPath = "~/Views/Meeting/NewMeetingNotificationEmail.cshtml";
+            string recipient = userRepository.GetEmailByUserId(invite.ProfileId);
+            string subject = "New Meeting Invite - ORUComSys";
+            EmailSupport.SendNotificationEmail(ControllerContext, viewPath, emailModel, recipient, subject);
+            return Json(new { result = true });
+        }
 
-            return Json(new { result = false });
+        [HttpPost]
+        public PartialViewResult GetParticipantsContent(int id) {
+            List<MeetingInviteModels> meetingInvites = meetingInviteRepository.GetAllInvitesByMeetingId(id).Where(invite => invite.Accepted).ToList();
+            return PartialView("_ParticipantsList", meetingInvites);
         }
 
         [HttpPost]
         public ActionResult RemoveMeetingInvite(InviteViewModels invite) {
-            if(ModelState.IsValid) {
-                MeetingInviteModels meetingInvite = meetingInviteRepository.GetInvite(invite.ProfileId, invite.MeetingId);
-                meetingInviteRepository.Remove(meetingInvite.Id);
-                meetingInviteRepository.Save();
-                return Json(new { result = true });
+            if(!ModelState.IsValid) {
+                return Json(new { result = false });
             }
-            return Json(new { result = false });
+            MeetingInviteModels meetingInvite = meetingInviteRepository.GetInvite(invite.ProfileId, invite.MeetingId);
+            meetingInviteRepository.Remove(meetingInvite.Id);
+            meetingInviteRepository.Save();
+            return Json(new { result = true });
         }
 
         [HttpPost]
@@ -180,12 +198,6 @@ namespace ORUComSys.Controllers {
             meetingInviteRepository.Remove(meetingInvite.Id);
             meetingInviteRepository.Save();
             return Json(new { result = true });
-        }
-
-        [HttpPost]
-        public PartialViewResult GetParticipantsContent(int id) {
-            List<MeetingInviteModels> meetingInvites = meetingInviteRepository.GetAllInvitesByMeetingId(id).Where(invite => invite.Accepted).ToList();
-            return PartialView("_ParticipantsList", meetingInvites);
         }
     }
 }
